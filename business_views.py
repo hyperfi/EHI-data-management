@@ -179,7 +179,7 @@ def Create_business_view(app):
         if not data:
             return jsonify({"message": "No data provided"}), 400
         # Update the course with the new data
-        course.course_name = data.get('courseName', course.course_name)
+        course.name = data.get('courseName', course.name)
         course.description = data.get('description', course.description)
         course.duration = data.get('duration', course.duration)
         course.fee = data.get('fee', course.fee)

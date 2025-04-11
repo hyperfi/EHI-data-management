@@ -17,6 +17,11 @@ const Navbar = {
               View All Students
             </router-link>
           </li>
+          <li class="nav-item">
+            <router-link to="/courses" class="btn btn-primary">
+              Courses
+            </router-link>
+          </li>
         </ul>
       </div>
     </nav>
