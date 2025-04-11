@@ -41,3 +41,22 @@ link[rel="icon"] {
     transform: scale(1.05);
     transition: transform 0.2s ease-in-out;
 }
+
+/* Default text size for larger screens */
+.table {
+    font-size: 1rem; /* Default font size */
+}
+
+/* Medium screens (tablets) */
+@media (max-width: 768px) {
+    .table {
+        font-size: 0.9rem; /* Slightly smaller font size */
+    }
+}
+
+/* Small screens (mobile devices) */
+@media (max-width: 576px) {
+    .table {
+        font-size: 0.7rem; /* Smaller font size for mobile */
+    }
+}

@@ -9,33 +9,35 @@ const ViewAllStudents = {
                 <input type="text" v-model="searchQuery" class="form-control" placeholder="Search students by name, course, or contact..." />
             </div>
             
-            <!-- Table -->
-            <table class="table table-hover table-bordered">
-                <thead class="table-dark">
-                    <tr>
-                        <th @click="sortTable('parentName')" style="cursor: pointer">Parent Name <i class="bi bi-arrow-down-up"></i></th>
-                        <th @click="sortTable('address')" style="cursor: pointer">Address <i class="bi bi-arrow-down-up"></i></th>
-                        <th @click="sortTable('visitingDate')" style="cursor: pointer">Visiting Date <i class="bi bi-arrow-down-up"></i></th>
-                        <th @click="sortTable('childName')" style="cursor: pointer">Child Name <i class="bi bi-arrow-down-up"></i></th>
-                        <th @click="sortTable('courseEnrolled')" style="cursor: pointer">Course Enrolled <i class="bi bi-arrow-down-up"></i></th>
-                        <th @click="sortTable('parentContact')" style="cursor: pointer">Contact <i class="bi bi-arrow-down-up"></i></th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="student in currentStudents" :key="student.parentContact">
-                        <td>{{ student.parentName }}</td>
-                        <td>{{ student.address }}</td>
-                        <td>{{ student.visitingDate }}</td>
-                        <td>{{ student.childName }}</td>
-                        <td>{{ student.courseEnrolled }}</td>
-                        <td>{{ student.parentContact }}</td>
-                        <td>
-                            <button class="btn btn-danger btn-sm" @click="deleteStudent(student.parentContact)">Delete</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <!-- Responsive Table -->
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th @click="sortTable('parentName')" style="cursor: pointer">Parent Name <i class="bi bi-arrow-down-up"></i></th>
+                            <th @click="sortTable('address')" style="cursor: pointer">Address <i class="bi bi-arrow-down-up"></i></th>
+                            <th @click="sortTable('visitingDate')" style="cursor: pointer">Visiting Date <i class="bi bi-arrow-down-up"></i></th>
+                            <th @click="sortTable('childName')" style="cursor: pointer">Child Name <i class="bi bi-arrow-down-up"></i></th>
+                            <th @click="sortTable('courseEnrolled')" style="cursor: pointer">Course Enrolled <i class="bi bi-arrow-down-up"></i></th>
+                            <th @click="sortTable('parentContact')" style="cursor: pointer">Contact <i class="bi bi-arrow-down-up"></i></th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="student in currentStudents" :key="student.parentContact">
+                            <td>{{ student.parentName }}</td>
+                            <td>{{ student.address }}</td>
+                            <td>{{ student.visitingDate }}</td>
+                            <td>{{ student.childName }}</td>
+                            <td>{{ student.courseEnrolled }}</td>
+                            <td>{{ student.parentContact }}</td>
+                            <td>
+                                <button class="btn btn-danger btn-sm" @click="deleteStudent(student.parentContact)">Delete</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
             <!-- Pagination -->
             <nav v-if="paginatedStudents.length > 1">
