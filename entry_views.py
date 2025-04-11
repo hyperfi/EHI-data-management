@@ -50,11 +50,32 @@ def create_entery_view(app):
             })
         return jsonify(data), 200
 
-    @app.route('/api/entry/<contact>', methods=['DELETE'])
-    def delete_entry(contact):
-        entry = parent_customer.query.filter_by(parent_contact=contact).first()
+    @app.route('/api/entry/<contact>/<child_name>', methods=['DELETE'])
+    def delete_entry(contact, child_name):
+        entry = parent_customer.query.filter(
+            (parent_customer.parent_contact == contact) & (parent_customer.child_name == child_name)).first()
         if not entry:
             return jsonify({"message": "Entry not found"}), 404
         db.session.delete(entry)
         db.session.commit()
         return jsonify({"message": "Entry deleted successfully"}), 200
+
+    @app.route('/api/entry/<contact>/<child_name>', methods=['PUT'])
+    def update_entry(contact, child_name):
+        entry = parent_customer.query.filter(
+            (parent_customer.parent_contact == contact) & (parent_customer.child_name == child_name)).first()
+        if not entry:
+            return jsonify({"message": "Entry not found"}), 404
+        data = request.get_json()
+        if not data:
+            return jsonify({"message": "No data provided"}), 400
+        # Update the entry with the new data
+        entry.parent_name = data.get('parentName', entry.parent_name)
+        entry.address = data.get('address', entry.address)
+        entry.visiting_date = data.get('visitingDate', entry.visiting_date)
+        entry.child_name = data.get('childName', entry.child_name)
+        entry.course_enrolled = data.get(
+            'courseEnrolled', entry.course_enrolled)
+        entry.parent_contact = data.get('parentContact', entry.parent_contact)
+        db.session.commit()
+        return jsonify({"message": "Entry updated successfully"}), 200

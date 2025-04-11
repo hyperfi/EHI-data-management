@@ -32,7 +32,8 @@ const ViewAllStudents = {
                             <td>{{ student.courseEnrolled }}</td>
                             <td>{{ student.parentContact }}</td>
                             <td>
-                                <button class="btn btn-danger btn-sm" @click="deleteStudent(student.parentContact)">Delete</button>
+                                <button class="btn btn-danger btn-sm" @click="deleteStudent(student.parentContact, student.childName)">Delete</button>
+                                <button class="btn btn-info btn-sm" @click="openUpdateModal(student)">Update</button>
                             </td>
                         </tr>
                     </tbody>
@@ -54,6 +55,52 @@ const ViewAllStudents = {
                 </ul>
             </nav>
         </div>
+
+        <!-- Update Modal -->
+        <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="updateModalLabel">Update Student</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Error Messages -->
+                        <div v-if="updateErrors.length" class="alert alert-danger">
+                            <ul>
+                                <li v-for="error in updateErrors" :key="error">{{ error }}</li>
+                            </ul>
+                        </div>
+                        <form>
+                            <div class="mb-3">
+                                <label for="updateParentName" class="form-label">Parent Name</label>
+                                <input type="text" id="updateParentName" v-model="updateForm.parentName" class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <label for="updateAddress" class="form-label">Address</label>
+                                <input type="text" id="updateAddress" v-model="updateForm.address" class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <label for="updateVisitingDate" class="form-label">Visiting Date</label>
+                                <input type="date" id="updateVisitingDate" v-model="updateForm.visitingDate" class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <label for="updateChildName" class="form-label">Child Name</label>
+                                <input type="text" id="updateChildName" v-model="updateForm.childName" class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <label for="updateCourseEnrolled" class="form-label">Course Enrolled</label>
+                                <input type="text" id="updateCourseEnrolled" v-model="updateForm.courseEnrolled" class="form-control">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" @click="updateStudent">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     `,
     data() {
@@ -64,11 +111,19 @@ const ViewAllStudents = {
             sortOrder: 'asc', // 'asc' or 'desc'
             currentPage: 1,
             itemsPerPage: 5,
+            updateForm: {
+                parentName: '',
+                address: '',
+                visitingDate: '',
+                childName: '',
+                courseEnrolled: '',
+                parentContact: '',
+            },
+            updateErrors: [], // To store validation errors for the update form
         };
     },
     computed: {
         filteredStudents() {
-            // Filter students based on the search query
             return this.students.filter(student => {
                 const query = this.searchQuery.toLowerCase();
                 return (
@@ -80,7 +135,6 @@ const ViewAllStudents = {
             });
         },
         paginatedStudents() {
-            // Paginate the filtered students
             const pages = [];
             for (let i = 0; i < this.filteredStudents.length; i += this.itemsPerPage) {
                 pages.push(this.filteredStudents.slice(i, i + this.itemsPerPage));
@@ -88,7 +142,6 @@ const ViewAllStudents = {
             return pages;
         },
         currentStudents() {
-            // Get the students for the current page
             return this.paginatedStudents[this.currentPage - 1] || [];
         },
     },
@@ -99,26 +152,74 @@ const ViewAllStudents = {
             if (response.ok) {
                 const data = await response.json();
                 this.students = data;
-                console.log("Fetched students:", this.students);
             } else {
                 console.error("Failed to fetch students:", response.statusText);
             }
         },
-        async deleteStudent(parentContact) {
+        async deleteStudent(parentContact, childName) {
             const url = window.location.origin;
-            const response = await fetch(url + "/api/entry" + "/" + parentContact, {
+            const response = await fetch(url + `/api/entry/${parentContact}/${childName}`, {
                 method: 'DELETE'
             });
-            if (!response.ok) {
-                let data = await response.json();
-                console.error('Failed to delete entry:', data.message);
-            } else {
-                console.log('Entry deleted successfully');
+            if (response.ok) {
                 this.fetchStudents();
+            } else {
+                console.error('Failed to delete entry');
+            }
+        },
+        openUpdateModal(student) {
+            this.updateForm = { ...student };
+            const modal = new bootstrap.Modal(document.getElementById('updateModal'));
+            modal.show();
+        },
+        validateUpdateForm() {
+            const errors = [];
+            if (!this.updateForm.parentName || !/^[a-zA-Z\s]+$/.test(this.updateForm.parentName)) {
+                errors.push("Parent Name must contain only letters and spaces. Name is required.");
+            }
+            if (!this.updateForm.address) {
+                errors.push("Address is required.");
+            }
+            const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+            if (!this.updateForm.visitingDate || this.updateForm.visitingDate < today) {
+                errors.push("Visiting Date must be today or in the future.");
+            }
+            if (!this.updateForm.childName || !/^[a-zA-Z\s]+$/.test(this.updateForm.childName)) {
+                errors.push("Child Name must contain only letters and spaces.");
+            }
+            if (!this.updateForm.courseEnrolled) {
+                errors.push("Course Enrolled is required.");
+            }
+            if (!this.updateForm.parentContact || !/^\d{10}$/.test(this.updateForm.parentContact)) {
+                errors.push("Parent Contact must be a 10-digit number.");
+            }
+            this.updateErrors = errors; // Bind errors to the modal
+            return errors;
+        },
+        async updateStudent() {
+            const errors = this.validateUpdateForm();
+            if (errors.length > 0) {
+                return; // Stop if there are validation errors
+            }
+
+            const { parentContact, childName } = this.updateForm;
+            const url = window.location.origin + `/api/entry/${parentContact}/${childName}`;
+            const response = await fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(this.updateForm),
+            });
+            if (response.ok) {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('updateModal'));
+                modal.hide();
+                this.fetchStudents();
+            } else {
+                console.error('Failed to update entry');
             }
         },
         sortTable(key) {
-            // Sort the table by the given key
             if (this.sortKey === key) {
                 this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
             } else {
@@ -134,7 +235,6 @@ const ViewAllStudents = {
             });
         },
         changePage(page) {
-            // Change the current page
             if (page > 0 && page <= this.paginatedStudents.length) {
                 this.currentPage = page;
             }
