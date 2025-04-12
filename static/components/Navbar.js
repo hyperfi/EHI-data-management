@@ -22,6 +22,11 @@ const Navbar = {
               Courses
             </router-link>
           </li>
+          <li class="nav-item">
+            <router-link to="/batches" class="btn btn-primary">
+              Batches
+            </router-link>
+          </li>
         </ul>
       </div>
     </nav>

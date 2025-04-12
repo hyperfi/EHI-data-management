@@ -11,35 +11,56 @@ const AddCourses = {
           </button>
         </div>
 
+        <!-- Search Bar -->
+        <div class="mb-4">
+          <input
+            type="text"
+            v-model="searchQuery"
+            class="form-control"
+            placeholder="Search courses by name, description, or instructor..."
+          />
+        </div>
+
         <!-- Courses Table -->
         <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
-          <h4 class="mt-4">Existing Courses</h4>
-          <table class="table table-hover table-bordered">
-            <thead class="table-dark">
+          <table class="table table-hover table-striped table-bordered align-middle">
+            <thead class="table-dark text-center">
               <tr>
-                <th>Course ID</th>
-                <th>Course Name</th>
-                <th>Description</th>
-                <th>Duration (Hrs)</th>
-                <th>Fee</th>
-                <th>Instructor</th>
+                <th @click="sortTable('id')" style="cursor: pointer">
+                  Course ID <i :class="getSortIcon('id')"></i>
+                </th>
+                <th @click="sortTable('course_name')" style="cursor: pointer">
+                  Course Name <i :class="getSortIcon('course_name')"></i>
+                </th>
+                <th @click="sortTable('description')" style="cursor: pointer">
+                  Description <i :class="getSortIcon('description')"></i>
+                </th>
+                <th @click="sortTable('duration')" style="cursor: pointer">
+                  Duration (Hrs) <i :class="getSortIcon('duration')"></i>
+                </th>
+                <th @click="sortTable('fee')" style="cursor: pointer">
+                  Fee <i :class="getSortIcon('fee')"></i>
+                </th>
+                <th @click="sortTable('instructor')" style="cursor: pointer">
+                  Instructor <i :class="getSortIcon('instructor')"></i>
+                </th>
                 <th>Action</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-if="courses.length === 0">
-                <td colspan="7" class="text-center">No courses available</td>
+              <tr v-if="filteredCourses.length === 0">
+                <td colspan="7" class="text-center text-muted">No courses available</td>
               </tr>
-              <tr v-else v-for="course in courses" :key="course.id">
-                <td>{{ course.id }}</td>
+              <tr v-else v-for="course in filteredCourses" :key="course.id">
+                <td class="text-center">{{ course.id }}</td>
                 <td>{{ course.course_name }}</td>
                 <td>{{ course.description }}</td>
-                <td>{{ course.duration }}</td>
-                <td>{{ course.fee }}</td>
+                <td class="text-center">{{ course.duration }}</td>
+                <td class="text-center">{{ course.fee }}</td>
                 <td>{{ course.instructor }}</td>
-                <td>
+                <td class="text-center">
                   <button
-                    class="btn btn-danger btn-sm"
+                    class="btn btn-danger btn-sm me-2"
                     @click="deleteCourse(course.id)"
                   >
                     Delete
@@ -203,6 +224,9 @@ const AddCourses = {
   data() {
     return {
       courses: [], // List of courses
+      searchQuery: "", // Search query for filtering courses
+      sortKey: "", // Key to sort by
+      sortOrder: "asc", // Sort order: 'asc' or 'desc'
       newCourse: {
         courseName: "",
         description: "",
@@ -220,6 +244,29 @@ const AddCourses = {
       },
     };
   },
+  computed: {
+    filteredCourses() {
+      // Filter courses based on the search query
+      const query = this.searchQuery.toLowerCase();
+      return this.courses
+        .filter(
+          (course) =>
+            course.course_name.toLowerCase().includes(query) ||
+            course.description.toLowerCase().includes(query) ||
+            course.instructor.toLowerCase().includes(query)
+        )
+        .sort((a, b) => {
+          if (!this.sortKey) return 0;
+          const valueA = a[this.sortKey];
+          const valueB = b[this.sortKey];
+          if (this.sortOrder === "asc") {
+            return valueA > valueB ? 1 : valueA < valueB ? -1 : 0;
+          } else {
+            return valueA < valueB ? 1 : valueA > valueB ? -1 : 0;
+          }
+        });
+    },
+  },
   methods: {
     async fetchCourses() {
       try {
@@ -232,6 +279,22 @@ const AddCourses = {
       } catch (error) {
         console.error("Error fetching courses:", error);
       }
+    },
+    sortTable(key) {
+      if (this.sortKey === key) {
+        // Toggle sort order if the same column is clicked
+        this.sortOrder = this.sortOrder === "asc" ? "desc" : "asc";
+      } else {
+        // Set the new sort key and default to ascending order
+        this.sortKey = key;
+        this.sortOrder = "asc";
+      }
+    },
+    getSortIcon(key) {
+      if (this.sortKey === key) {
+        return this.sortOrder === "asc" ? "bi bi-arrow-up" : "bi bi-arrow-down";
+      }
+      return "bi bi-arrow-down-up";
     },
     async addCourse() {
       try {
@@ -299,7 +362,6 @@ const AddCourses = {
       modal.show();
     },
     openUpdateCourseModal(course) {
-      // Populate the updateCourseForm with the selected course's details
       this.updateCourseForm = {
         id: course.id,
         courseName: course.course_name,
@@ -308,8 +370,6 @@ const AddCourses = {
         fee: course.fee,
         instructor: course.instructor,
       };
-      console.log(this.updateCourseForm);
-      // Open the modal
       const modal = new bootstrap.Modal(document.getElementById("updateCourseModal"));
       modal.show();
     },

@@ -3,7 +3,12 @@ const ViewAllStudents = {
     <div class="d-flex justify-content-center align-items-center vh-100 bg-light">
         <div class="card shadow-lg p-4" style="width: 90%; max-height: 90%; overflow-y: auto;">
             <h1 class="text-center mb-4">All Students</h1>
-            
+
+            <!-- Notification Message -->
+            <div v-if="notification.message" :class="'alert alert-' + notification.type" role="alert">
+                {{ notification.message }}
+            </div>
+
             <!-- Search Bar -->
             <div class="mb-3">
                 <input type="text" v-model="searchQuery" class="form-control" placeholder="Search students by name, course, or contact..." />
@@ -24,7 +29,7 @@ const ViewAllStudents = {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="student in currentStudents" :key="student.parentContact">
+                        <tr v-for="student in currentStudents" :key="student.parentContact + student.childName">
                             <td>{{ student.parentName }}</td>
                             <td>{{ student.address }}</td>
                             <td>{{ student.visitingDate }}</td>
@@ -34,6 +39,7 @@ const ViewAllStudents = {
                             <td>
                                 <button class="btn btn-danger btn-sm" @click="deleteStudent(student.parentContact, student.childName)">Delete</button>
                                 <button class="btn btn-info btn-sm" @click="openUpdateModal(student)">Update</button>
+                                <button class="btn btn-success btn-sm" @click="openAssignBatchModal(student)">Assign to Batch</button>
                             </td>
                         </tr>
                     </tbody>
@@ -101,11 +107,41 @@ const ViewAllStudents = {
                 </div>
             </div>
         </div>
+
+        <!-- Assign to Batch Modal -->
+        <div class="modal fade" id="assignBatchModal" tabindex="-1" aria-labelledby="assignBatchModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="assignBatchModalLabel">Assign Student to Batch</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="mb-3">
+                                <label for="batchSelect" class="form-label">Select Batch</label>
+                                <select id="batchSelect" v-model="selectedBatchId" class="form-select" required>
+                                    <option value="" disabled>Select a batch</option>
+                                    <option v-for="batch in batches" :key="batch.id" :value="batch.id">
+                                        {{ batch.course_name }} ({{ batch.start_time }} - {{ batch.end_time }})
+                                    </option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" @click="assignStudentToBatch">Assign</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     `,
     data() {
         return {
             students: [],
+            batches: [], // List of available batches
             searchQuery: '',
             sortKey: '',
             sortOrder: 'asc', // 'asc' or 'desc'
@@ -120,6 +156,12 @@ const ViewAllStudents = {
                 parentContact: '',
             },
             updateErrors: [], // To store validation errors for the update form
+            selectedStudent: null, // Student to be assigned to a batch
+            selectedBatchId: '', // Selected batch ID
+            notification: {
+                message: '',
+                type: '', // 'success' or 'danger'
+            },
         };
     },
     computed: {
@@ -153,7 +195,17 @@ const ViewAllStudents = {
                 const data = await response.json();
                 this.students = data;
             } else {
-                console.error("Failed to fetch students:", response.statusText);
+                this.showNotification("Failed to fetch students.", "danger");
+            }
+        },
+        async fetchBatches() {
+            const url = window.location.origin;
+            const response = await fetch(url + "/api/get_batches");
+            if (response.ok) {
+                const data = await response.json();
+                this.batches = data;
+            } else {
+                this.showNotification("Failed to fetch batches.", "danger");
             }
         },
         async deleteStudent(parentContact, childName) {
@@ -163,8 +215,9 @@ const ViewAllStudents = {
             });
             if (response.ok) {
                 this.fetchStudents();
+                this.showNotification("Student deleted successfully.", "success");
             } else {
-                console.error('Failed to delete entry');
+                this.showNotification("Failed to delete student.", "danger");
             }
         },
         openUpdateModal(student) {
@@ -215,8 +268,35 @@ const ViewAllStudents = {
                 const modal = bootstrap.Modal.getInstance(document.getElementById('updateModal'));
                 modal.hide();
                 this.fetchStudents();
+                this.showNotification("Student updated successfully.", "success");
             } else {
-                console.error('Failed to update entry');
+                this.showNotification("Failed to update student.", "danger");
+            }
+        },
+        openAssignBatchModal(student) {
+            this.selectedStudent = student;
+            const modal = new bootstrap.Modal(document.getElementById('assignBatchModal'));
+            modal.show();
+        },
+        async assignStudentToBatch() {
+            if (!this.selectedBatchId || !this.selectedStudent) {
+                this.showNotification("Please select a batch and a student.", "danger");
+                return;
+            }
+
+            const url = window.location.origin + `/api/add_student_to_batch/${this.selectedBatchId}/${this.selectedStudent.id}`;
+            const response = await fetch(url, {
+                method: 'GET',
+            });
+
+            if (response.ok) {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('assignBatchModal'));
+                modal.hide();
+                this.fetchStudents(); // Refresh the student list
+                this.showNotification("Student assigned to batch successfully.", "success");
+            } else {
+                const responseData = await response.json();
+                this.showNotification(`Failed to assign student to batch: ${responseData.message}`, "danger");
             }
         },
         sortTable(key) {
@@ -239,9 +319,18 @@ const ViewAllStudents = {
                 this.currentPage = page;
             }
         },
+        showNotification(message, type) {
+            this.notification.message = message;
+            this.notification.type = type;
+            setTimeout(() => {
+                this.notification.message = '';
+                this.notification.type = '';
+            }, 2000); // Clear the notification after 2 seconds
+        },
     },
     mounted() {
         this.fetchStudents();
+        this.fetchBatches();
     },
 };
 

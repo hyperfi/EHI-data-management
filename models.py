@@ -60,6 +60,7 @@ class Student(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     className = db.Column(db.String(50), nullable=False)
+    parent_contact = db.Column(db.String(15), nullable=False)
 
     def __repr__(self):
         return f'<Student {self.name}>'
@@ -79,13 +80,16 @@ class Batch(db.Model):
     course_id = db.Column(db.Integer, db.ForeignKey(
         'course.id'), nullable=False)  # Foreign key to Course
     batch_name = db.Column(db.String(100), nullable=False)
-    start_date = db.Column(db.String(50), nullable=False)
-    end_date = db.Column(db.String(50), nullable=False)
+    # Changed from start_date
+    start_time = db.Column(db.String(50), nullable=False)
+    # Changed from end_date
+    end_time = db.Column(db.String(50), nullable=False)
 
     course = db.relationship('Course', backref='batch', lazy=True)
     # One-to-many relationship with Student
     enrolled_students = db.relationship(
-        'Student', backref='batch', lazy=True, secondary='batch_students')
+        'Student', backref='batch', lazy=True, secondary='batch_students'
+    )
 
     def __repr__(self):
         return f'<Batch {self.batch_name}>'

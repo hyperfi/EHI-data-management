@@ -1,6 +1,6 @@
 from flask import jsonify, render_template, render_template_string, request, send_file
 from extentions import db
-from models import ParentCustomer as parent_customer
+from models import ParentCustomer as parent_customer, Student
 
 
 def create_entery_view(app):
@@ -29,7 +29,14 @@ def create_entery_view(app):
             course_enrolled=data['courseEnrolled'],
             parent_contact=data['parentContact'],
         )
+        # Extract the class name from the course enrolled
+        class_name = data['courseEnrolled'].split(' ')[0]
+        # add the child_name,class_name to the student table
+        student = Student(name=data['childName'], className=class_name,
+                          parent_contact=data['parentContact'])
+
         # # For example, you might want to save it to the database
+        db.session.add(student)
         db.session.add(entry)
         db.session.commit()
         return jsonify({"message": "Entry added successfully"}), 201

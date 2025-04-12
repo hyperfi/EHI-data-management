@@ -16,15 +16,15 @@ def Create_business_view(app):
             return jsonify({"message": "Batch already exists"}), 400
 
         found_course = db.session.query(Course).filter_by(
-            id=data['courseId']).first()
+            name=data['courseName']).first()
         if not found_course:
             return jsonify({"message": "Course not found"}), 404
 
         batch = Batch(
             course_id=found_course.id,
             batch_name=data['batchName'],
-            start_date=data['startDate'],
-            end_date=data['endDate'],
+            start_time=data['startTime'],  # Changed to start_time
+            end_time=data['endTime'],      # Changed to end_time
             course=found_course,
             enrolled_students=[],
         )
@@ -43,9 +43,9 @@ def Create_business_view(app):
                 'id': batch.id,
                 'course_id': batch.course_id,
                 'batch_name': batch.batch_name,
-                'start_date': batch.start_date,
-                'end_date': batch.end_date,
-                'course_name': batch.course.course_name if batch.course else None,
+                'start_time': batch.start_time,  # Changed to start_time
+                'end_time': batch.end_time,      # Changed to end_time
+                'course_name': batch.course.name if batch.course else None,
                 'enrolled_students': [student.name for student in batch.enrolled_students],
             })
         return jsonify(batch_list), 200
@@ -69,8 +69,8 @@ def Create_business_view(app):
             return jsonify({"message": "No data provided"}), 400
         # Update the batch with the new data
         batch.batch_name = data.get('batchName', batch.batch_name)
-        batch.start_date = data.get('startDate', batch.start_date)
-        batch.end_date = data.get('endDate', batch.end_date)
+        batch.start_time = data['startTime']  # Changed to start_time
+        batch.end_time = data['endTime']      # Changed to end_time
         course_name = data.get('courseName', batch.course_name)
         course = db.session.query(Course).filter_by(
             course_name=course_name).first()
@@ -93,15 +93,17 @@ def Create_business_view(app):
 
     @app.route('/api/add_student_to_batch/<int:batch_id>/<int:student_id>', methods=['GET'])
     def add_student_to_batch(batch_id, student_id):
-        data = request.get_json()
-        if not data:
-            return jsonify({"message": "No data provided"}), 400
-        # Process the data as needed
+
         batch = db.session.query(Batch).filter_by(id=batch_id).first()
         if not batch:
             return jsonify({"message": "Batch not found"}), 404
+        found_entry = db.session.query(ParentCustomer).filter_by(
+            id=student_id).first()
+        if not found_entry:
+            return jsonify({"message": "Student not found"}), 404
 
-        student = db.session.query(Student).filter_by(id=student_id).first()
+        student = db.session.query(Student).filter(
+            (Student.name == found_entry.child_name) & (Student.parent_contact == found_entry.parent_contact)).first()
         if not student:
             return jsonify({"message": "Student not found"}), 404
         # Check if the student is already enrolled in the batch
@@ -236,3 +238,26 @@ def Create_business_view(app):
         db.session.add(student)
         db.session.commit()
         return jsonify({"message": "Student added successfully"}), 201
+
+    @app.route('/api/get_student_details', methods=['POST'])
+    def get_students():
+        data = request.get_json()
+        if not data:
+            return jsonify({"message": "No data provided"}), 400
+        # Process the data as needed
+        students = data.get('students', [])
+        print(students)
+        if not students:
+            return jsonify({"message": "No students provided"}), 400
+        student_list = []
+        for name in students:
+            student = Student.query.filter_by(name=name).first()
+            if not student:
+                return jsonify({"message": f"Student '{name}' not found"}), 404
+            student_list.append({
+                'id': student.id,
+                'name': student.name,
+                'className': student.className,
+                'parent_contact': student.parent_contact,
+            })
+        return jsonify(student_list), 200

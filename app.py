@@ -3,6 +3,7 @@ from flask import Flask
 from extentions import db, security, cache
 import entry_views
 import business_views
+from flask_migrate import Migrate
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
@@ -22,7 +23,7 @@ def create_app():
     app.config["DEBUG"] = True         # some Flask specific configs
 
     db.init_app(app)
-
+    migrate = Migrate(app, db)
     with app.app_context():
         from models import ParentCustomer
         from flask_security import SQLAlchemyUserDatastore
