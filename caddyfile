@@ -1,3 +1,0 @@
-http://172.22.42.158{
-    reverse_proxy localhost:8000
-}
