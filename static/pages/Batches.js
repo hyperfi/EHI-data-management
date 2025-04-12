@@ -4,6 +4,11 @@ const Batches = {
       <div class="card shadow-lg p-4" style="width: 90%; max-height: 90%; overflow-y: auto;">
         <h1 class="text-center mb-4">Manage Batches</h1>
 
+        <!-- Notification Message -->
+        <div v-if="notification.message" :class="'alert alert-' + notification.type" role="alert">
+          {{ notification.message }}
+        </div>
+
         <!-- Add New Batch Button -->
         <div class="mb-4 text-end">
           <button class="btn btn-primary" @click="openAddBatchModal">
@@ -241,6 +246,10 @@ const Batches = {
         endTime: "",
       },
       selectedStudents: [], // List of students in the selected batch
+      notification: {
+        message: "",
+        type: "", // 'success' or 'danger'
+      },
     };
   },
   methods: {
@@ -250,10 +259,11 @@ const Batches = {
         if (response.ok) {
           this.batches = await response.json();
         } else {
-          alert("Error fetching batches");
+          this.showNotification("Error fetching batches", "danger");
         }
       } catch (error) {
         console.error("Error fetching batches:", error);
+        this.showNotification("Error fetching batches", "danger");
       }
     },
     async fetchCourses() {
@@ -262,10 +272,11 @@ const Batches = {
         if (response.ok) {
           this.courses = await response.json();
         } else {
-          alert("Error fetching courses");
+          this.showNotification("Error fetching courses", "danger");
         }
       } catch (error) {
         console.error("Error fetching courses:", error);
+        this.showNotification("Error fetching courses", "danger");
       }
     },
     async addBatch() {
@@ -278,16 +289,17 @@ const Batches = {
           body: JSON.stringify(this.newBatch),
         });
         if (response.ok) {
-          alert("Batch added successfully!");
+          this.showNotification("Batch added successfully!", "success");
           this.fetchBatches();
           const modal = bootstrap.Modal.getInstance(document.getElementById("addBatchModal"));
           modal.hide();
         } else {
           const errorData = await response.json();
-          alert("Error adding batch: " + errorData.message);
+          this.showNotification("Error adding batch: " + errorData.message, "danger");
         }
       } catch (error) {
         console.error("Error adding batch:", error);
+        this.showNotification("Error adding batch", "danger");
       }
     },
     async updateBatch() {
@@ -300,16 +312,17 @@ const Batches = {
           body: JSON.stringify(this.updateBatchForm),
         });
         if (response.ok) {
-          alert("Batch updated successfully!");
+          this.showNotification("Batch updated successfully!", "success");
           this.fetchBatches();
           const modal = bootstrap.Modal.getInstance(document.getElementById("updateBatchModal"));
           modal.hide();
         } else {
           const errorData = await response.json();
-          alert("Error updating batch: " + errorData.message);
+          this.showNotification("Error updating batch: " + errorData.message, "danger");
         }
       } catch (error) {
         console.error("Error updating batch:", error);
+        this.showNotification("Error updating batch", "danger");
       }
     },
     async deleteBatch(batchId) {
@@ -318,14 +331,15 @@ const Batches = {
           method: "DELETE",
         });
         if (response.ok) {
-          alert("Batch deleted successfully!");
+          this.showNotification("Batch deleted successfully!", "success");
           this.fetchBatches();
         } else {
           const errorData = await response.json();
-          alert("Error deleting batch: " + errorData.message);
+          this.showNotification("Error deleting batch: " + errorData.message, "danger");
         }
       } catch (error) {
         console.error("Error deleting batch:", error);
+        this.showNotification("Error deleting batch", "danger");
       }
     },
     openAddBatchModal() {
@@ -343,7 +357,6 @@ const Batches = {
       const modal = new bootstrap.Modal(document.getElementById("updateBatchModal"));
       modal.show();
     },
-
     async fetchStudentDetails(enrolledStudents) {
       try {
         const response = await fetch("/api/get_student_details", {
@@ -356,19 +369,26 @@ const Batches = {
         if (response.ok) {
           this.selectedStudents = await response.json();
         } else {
-          alert("Error fetching student details");
+          this.showNotification("Error fetching student details", "danger");
         }
       } catch (error) {
         console.error("Error fetching student details:", error);
+        this.showNotification("Error fetching student details", "danger");
       }
     },
     viewStudents(enrolledStudents) {
       this.selectedStudents = enrolledStudents;
-      console.log(this.selectedStudents);
-      // Fetch student details if needed
       this.fetchStudentDetails(enrolledStudents);
       const modal = new bootstrap.Modal(document.getElementById("viewStudentsModal"));
       modal.show();
+    },
+    showNotification(message, type) {
+      this.notification.message = message;
+      this.notification.type = type;
+      setTimeout(() => {
+        this.notification.message = "";
+        this.notification.type = "";
+      }, 2000); // Clear the notification after 2 seconds
     },
   },
   mounted() {
