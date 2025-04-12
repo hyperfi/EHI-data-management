@@ -369,6 +369,9 @@ const Batches = {
         if (response.ok) {
           this.selectedStudents = await response.json();
         } else {
+          const errorData = await response.json();
+
+          console.error("Error fetching student details:", errorData.message);
           this.showNotification("Error fetching student details", "danger");
         }
       } catch (error) {

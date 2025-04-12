@@ -247,8 +247,8 @@ def Create_business_view(app):
         # Process the data as needed
         students = data.get('students', [])
         print(students)
-        if not students:
-            return jsonify({"message": "No students provided"}), 400
+        # if not students:
+        #     return jsonify({"message": "No students provided"}), 400
         student_list = []
         for name in students:
             student = Student.query.filter_by(name=name).first()
