@@ -2,11 +2,31 @@ const PaymentStatus = {
   template: `
     <div class="d-flex justify-content-center align-items-center vh-100 bg-light">
       <div class="card shadow-lg p-4" style="width: 90%; max-height: 90%; overflow-y: auto;">
-        <h1 class="text-center mb-4">Payment Status</h1>
+        <h1 class="text-center mb-4 display-5">Payment Details</h1>
 
         <!-- Notification Message -->
         <div v-if="notification.message" :class="'alert alert-' + notification.type" role="alert">
           {{ notification.message }}
+        </div>
+
+        <!-- Search and Sort Controls -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <input
+            type="text"
+            v-model="searchQuery"
+            class="form-control w-50"
+            placeholder="Search by Parent Name, Child Name, or Course"
+          />
+          <select v-model="sortKey" class="form-select w-25">
+            <option value="parentName">Sort by Parent Name</option>
+            <option value="childName">Sort by Child Name</option>
+            <option value="courseEnrolled">Sort by Course</option>
+            <option value="fee">Sort by Fee</option>
+            <option value="paymentDate">Sort by Payment Date</option>
+          </select>
+          <button class="btn btn-secondary" @click="toggleSortOrder">
+            {{ sortOrder === 'asc' ? 'Ascending' : 'Descending' }}
+          </button>
         </div>
 
         <!-- Payment Status Table -->
@@ -27,10 +47,10 @@ const PaymentStatus = {
               </tr>
             </thead>
             <tbody>
-              <tr v-if="payments.length === 0">
-                <td colspan="9" class="text-center text-muted">No payment records available</td>
+              <tr v-if="filteredAndSortedPayments.length === 0">
+                <td colspan="10" class="text-center text-muted">No payment records found</td>
               </tr>
-              <tr v-else v-for="payment in payments" :key="payment.id">
+              <tr v-else v-for="payment in filteredAndSortedPayments" :key="payment.id">
                 <td>{{ payment.parentName }}</td>
                 <td>{{ payment.address }}</td>
                 <td>{{ payment.visitingDate }}</td>
@@ -102,6 +122,9 @@ const PaymentStatus = {
   data() {
     return {
       payments: [], // List of payment records
+      searchQuery: "", // Search input
+      sortKey: "parentName", // Default sort key
+      sortOrder: "asc", // Default sort order
       updateForm: {
         id: null,
         paymentStatus: "",
@@ -112,6 +135,27 @@ const PaymentStatus = {
         type: "", // 'success' or 'danger'
       },
     };
+  },
+  computed: {
+    filteredAndSortedPayments() {
+      // Filter payments based on the search query
+      let filtered = this.payments.filter((payment) => {
+        const query = this.searchQuery.toLowerCase();
+        return (
+          payment.parentName.toLowerCase().includes(query) ||
+          payment.childName.toLowerCase().includes(query) ||
+          payment.courseEnrolled.toLowerCase().includes(query)
+        );
+      });
+
+      // Sort the filtered payments
+      return filtered.sort((a, b) => {
+        let result = 0;
+        if (a[this.sortKey] < b[this.sortKey]) result = -1;
+        if (a[this.sortKey] > b[this.sortKey]) result = 1;
+        return this.sortOrder === "asc" ? result : -result;
+      });
+    },
   },
   methods: {
     async fetchPayments() {
@@ -126,6 +170,9 @@ const PaymentStatus = {
         console.error("Error fetching payment records:", error);
         this.showNotification("Error fetching payment records", "danger");
       }
+    },
+    toggleSortOrder() {
+      this.sortOrder = this.sortOrder === "asc" ? "desc" : "asc";
     },
     openUpdateModal(payment) {
       this.updateForm = {

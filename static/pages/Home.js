@@ -2,7 +2,7 @@ const Home = {
   template: `
   <div class="d-flex justify-content-center align-items-center vh-100 bg-light">
       <div class="card shadow-lg p-4" style="width: 70%; max-height: 90%; overflow-y: auto;">
-          <h1 class="text-center mb-5">Parent Customer Entry</h1>
+          <h1 class="text-center mb-5 display-5">Parent Customer Entry</h1>
           <!-- Display error message if it exists -->
           <div v-if="errorMessage" class="alert alert-danger text-center" role="alert">
               {{ errorMessage }}

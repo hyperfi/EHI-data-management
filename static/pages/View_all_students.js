@@ -2,7 +2,7 @@ const ViewAllStudents = {
     template: `
     <div class="d-flex justify-content-center align-items-center vh-100 bg-light">
         <div class="card shadow-lg p-4" style="width: 90%; max-height: 90%; overflow-y: auto;">
-            <h1 class="text-center mb-4">All Students</h1>
+            <h1 class="text-center mb-4 display-5">All Students</h1>
 
             <!-- Notification Message -->
             <div v-if="notification.message" :class="'alert alert-' + notification.type" role="alert">
