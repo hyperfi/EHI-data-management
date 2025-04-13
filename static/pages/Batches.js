@@ -41,7 +41,8 @@ const Batches = {
                 <td class="text-center">{{ batch.start_time }}</td>
                 <td class="text-center">{{ batch.end_time }}</td>
                 <td>
-                  <a href="#" @click.prevent="viewStudents(batch.enrolled_students)">
+                  <a href="#" @click.prevent="viewStudents(batch)" class="text-decoration-none text-primary">
+                    <i class="fas fa-users"></i>
                     {{ batch.enrolled_students.length }} Students
                   </a>
                 </td>
@@ -208,6 +209,7 @@ const Batches = {
                       <th>Student Name</th>
                       <th>Class</th>
                       <th>Parent Contact</th>
+                      <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -215,6 +217,14 @@ const Batches = {
                       <td>{{ student.name }}</td>
                       <td>{{ student.className }}</td>
                       <td>{{ student.parent_contact }}</td>
+                      <td class="text-center">
+                        <button
+                          class="btn btn-danger btn-sm"
+                          @click="removeStudentFromBatch(currentBatch.id, student.id)"
+                        >
+                          Remove
+                        </button>
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -246,6 +256,7 @@ const Batches = {
         endTime: "",
       },
       selectedStudents: [], // List of students in the selected batch
+      currentBatch: null, // Current batch for which students are being viewed
       notification: {
         message: "",
         type: "", // 'success' or 'danger'
@@ -371,7 +382,7 @@ const Batches = {
         } else {
           const errorData = await response.json();
 
-          console.error("Error fetching student details:", errorData.message);
+          console.error("Error fetching student details:1", errorData.message);
           this.showNotification("Error fetching student details", "danger");
         }
       } catch (error) {
@@ -379,9 +390,33 @@ const Batches = {
         this.showNotification("Error fetching student details", "danger");
       }
     },
-    viewStudents(enrolledStudents) {
-      this.selectedStudents = enrolledStudents;
-      this.fetchStudentDetails(enrolledStudents);
+
+    async removeStudentFromBatch(batchId, studentId) {
+      try {
+        const response = await fetch(`/api/remove_student_from_batch/${batchId}/${studentId}`, {
+          method: "GET",
+        });
+        if (response.ok) {
+          this.showNotification("Student removed from batch successfully", "success");
+          // Refresh the batch data
+          this.fetchBatches();
+          // Remove the student from the modal view
+          this.selectedStudents = this.selectedStudents.filter(student => student.id !== studentId);
+        } else {
+          const errorData = await response.json();
+          this.showNotification(`Error: ${errorData.message}`, "danger");
+        }
+      } catch (error) {
+        console.error("Error removing student from batch:", error);
+        this.showNotification("Error removing student from batch", "danger");
+      }
+      // console.log("Removing student from batch:", batchId, studentId);
+    },
+
+    viewStudents(batch) {
+      this.selectedStudents = batch.enrolled_students;
+      this.currentBatch = batch;
+      this.fetchStudentDetails(batch.enrolled_students);
       const modal = new bootstrap.Modal(document.getElementById("viewStudentsModal"));
       modal.show();
     },

@@ -13,6 +13,9 @@ class ParentCustomer(db.Model):
     child_name = db.Column(db.String(100), nullable=False)
     course_enrolled = db.Column(db.String(100), nullable=False)
     parent_contact = db.Column(db.String(15), nullable=False)
+    payment_status = db.Column(
+        db.String(50), nullable=False)  # e.g., paid, unpaid
+    payment_date = db.Column(db.String(50), nullable=True)  # Date of payment
 
     def __repr__(self):
         return f'<ParentCustomer {self.parent_name} - {self.child_name}>'

@@ -1,6 +1,8 @@
 from flask import jsonify, render_template, render_template_string, request, send_file
 from extentions import db
 from models import ParentCustomer as parent_customer, Student
+from models import student_course as StudentCourse
+from models import batch_students as BatchStudents
 
 
 def create_entery_view(app):
@@ -28,6 +30,8 @@ def create_entery_view(app):
             child_name=data['childName'],
             course_enrolled=data['courseEnrolled'],
             parent_contact=data['parentContact'],
+            payment_status='unpaid',
+            payment_date=None
         )
         # Extract the class name from the course enrolled
         class_name = data['courseEnrolled'].split(' ')[0]
@@ -64,6 +68,21 @@ def create_entery_view(app):
         if not entry:
             return jsonify({"message": "Entry not found"}), 404
         db.session.delete(entry)
+        # also delete the student entry
+        student_entry = Student.query.filter(
+            (Student.parent_contact == contact) & (Student.name == child_name)).first()
+        if student_entry:
+            db.session.delete(student_entry)
+            # also delete the student entry from the student_course table
+            student_course_entry = StudentCourse.query.filter(
+                (StudentCourse.student_id == student_entry.id)).first()
+            if student_course_entry:
+                db.session.delete(student_course_entry)
+            # also delete student entry from the batch_students table
+            batch_students_entry = BatchStudents.query.filter(
+                (BatchStudents.student_id == student_entry.id)).first()
+            if batch_students_entry:
+                db.session.delete(batch_students_entry)
         db.session.commit()
         return jsonify({"message": "Entry deleted successfully"}), 200
 

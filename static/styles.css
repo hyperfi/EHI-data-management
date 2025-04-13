@@ -60,3 +60,18 @@ link[rel="icon"] {
         font-size: 0.7rem; /* Smaller font size for mobile */
     }
 }
+
+.brand-text {
+    font-family: 'Poppins', sans-serif;
+    /* Use a modern font */
+    font-size: 1.5rem;
+    /* Increase font size */
+    font-weight: bold;
+    /* Make the text bold */
+    color: #ffffff;
+    /* White text color */
+    letter-spacing: 1px;
+    /* Add some spacing between letters */
+    text-transform: uppercase;
+    /* Make the text uppercase */
+}

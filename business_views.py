@@ -110,8 +110,28 @@ def Create_business_view(app):
         if student in batch.enrolled_students:
             return jsonify({"message": "Student already enrolled in the batch"}), 400
         batch.enrolled_students.append(student)
+        course_batch = batch.course
+        # Check if the student is already enrolled in the course
+        if student in course_batch.enrolled_students:
+            return jsonify({"message": "Student already enrolled in the course"}), 400
+        course_batch.enrolled_students.append(student)
         db.session.commit()
         return jsonify({"message": "Student added to batch successfully"}), 201
+
+    @app.route('/api/remove_student_from_batch/<int:batch_id>/<int:student_id>', methods=['GET'])
+    def remove_student_from_batch(batch_id, student_id):
+        batch = db.session.query(Batch).filter_by(id=batch_id).first()
+        if not batch:
+            return jsonify({"message": "Batch not found"}), 404
+        student = db.session.query(Student).filter_by(id=student_id).first()
+        if not student:
+            return jsonify({"message": "Student not found"}), 404
+        # Check if the student is enrolled in the batch
+        if student not in batch.enrolled_students:
+            return jsonify({"message": "Student not enrolled in the batch"}), 400
+        batch.enrolled_students.remove(student)
+        db.session.commit()
+        return jsonify({"message": "Student removed from batch successfully"}), 200
 
     @app.route('/api/create_course', methods=['POST'])
     def create_course():

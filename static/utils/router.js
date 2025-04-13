@@ -3,7 +3,7 @@ import Home from "../pages/Home.js";
 import ViewAllStudents from "../pages/View_all_students.js";  
 import AddCourses from "../pages/add_courses.js"; 
 import Batches from "../pages/Batches.js";
-
+import Pay from "../pages/payments_reciepts.js";
 const routes = [
   { path: "/", 
     name: "/",
@@ -29,6 +29,13 @@ const routes = [
     path: "/batches",
     name: "/batches",
     component: Batches,
+    meta:{requiresLogout:false},
+  },
+
+  {
+    path: "/payments",
+    name: "/payments",
+    component: Pay,
     meta:{requiresLogout:false},
   },
 

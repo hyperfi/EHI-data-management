@@ -1,44 +1,51 @@
 const Navbar = {
   template: `
-    <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
-      <div class="container-fluid d-flex justify-content-center">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
         <!-- Logo -->
-        <img src="/static/images/logo.jpg" alt="Logo" width="50" height="50" class="rounded-circle me-3">
-        
+        <a class="navbar-brand d-flex align-items-center" href="#">
+          <img src="/static/images/logo.jpg" alt="Logo" width="40" height="40" class="rounded-circle me-2">
+          <span class="brand-text">Event Horizon Institute</span>
+        </a>
+
+        <!-- Toggler Button for Mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
         <!-- Navbar Links -->
-        <ul class="navbar-nav d-flex flex-row gap-3">
-          <li class="nav-item">
-            <router-link to="/" class="btn btn-primary">
-              Home
-            </router-link>
-          </li>
-          <li class="nav-item">
-            <router-link to="/view_all_students" class="btn btn-primary">
-              View All Students
-            </router-link>
-          </li>
-          <li class="nav-item">
-            <router-link to="/courses" class="btn btn-primary">
-              Courses
-            </router-link>
-          </li>
-          <li class="nav-item">
-            <router-link to="/batches" class="btn btn-primary">
-              Batches
-            </router-link>
-          </li>
-        </ul>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <router-link to="/" class="nav-link">
+                Home
+              </router-link>
+            </li>
+            <li class="nav-item">
+              <router-link to="/view_all_students" class="nav-link">
+                View All Students
+              </router-link>
+            </li>
+            <li class="nav-item">
+              <router-link to="/courses" class="nav-link">
+                Courses
+              </router-link>
+            </li>
+            <li class="nav-item">
+              <router-link to="/batches" class="nav-link">
+                Batches
+              </router-link>
+            </li>
+            <li class="nav-item">
+              <router-link to="/payments" class="nav-link">
+                Payments
+              </router-link>
+            </li>
+          </ul>
+        </div>
       </div>
     </nav>
   `,
-
-  data() {
-    return {
-      LoginState: { true: "&#128994", false: "&#128997" }
-    };
-  },
-
-  methods: {}
 };
 
 export default Navbar;

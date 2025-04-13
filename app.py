@@ -3,6 +3,7 @@ from flask import Flask
 from extentions import db, security, cache
 import entry_views
 import business_views
+import payment_views
 from flask_migrate import Migrate
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -39,6 +40,7 @@ def create_app():
 
     entry_views.create_entery_view(app)
     business_views.Create_business_view(app)
+    payment_views.create_payment_view(app)
     return app
 
 
