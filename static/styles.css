@@ -59,6 +59,15 @@ link[rel="icon"] {
     .table {
         font-size: 0.7rem; /* Smaller font size for mobile */
     }
+    .btn {
+        font-size: 12px; /* Smaller font size for buttons */
+    }
+}
+
+@media (min-width: 577px) {
+    .btn {
+        font-size: 14px; /* Default font size for buttons */
+    }
 }
 
 .brand-text {

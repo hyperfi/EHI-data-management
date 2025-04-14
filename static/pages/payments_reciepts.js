@@ -71,7 +71,9 @@ const PaymentStatus = {
                 </td>
                 <td>{{ payment.paymentDate }}</td>
                 <td class="text-center">
-                  <button class="btn btn-info btn-sm me-2" @click="openUpdateModal(payment)">Update</button>
+                  <button class="btn btn-info btn-sm me-2" @click="openUpdateModal(payment)">
+                    Update
+                  </button>
                   <button
                     v-if="payment.paymentStatus === 'Paid'"
                     class="btn btn-primary btn-sm"
