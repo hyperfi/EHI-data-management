@@ -41,13 +41,13 @@ const PaymentStatus = {
                 <th>Course Enrolled</th>
                 <th>Parent Contact</th>
                 <th>Fee (₹)</th>
-                <th>No. of Months</th> <!-- New column -->
+                <th>No. of Months</th>
                 <th>Payment Status</th>
                 <th>Payment Date</th>
                 <th>Action</th>
               </tr>
             </thead>
-            <tbody class ="text-center">
+            <tbody class="text-center">
               <tr v-if="filteredAndSortedPayments.length === 0">
                 <td colspan="11" class="text-center text-muted">No payment records found</td>
               </tr>
@@ -59,8 +59,8 @@ const PaymentStatus = {
                 <td>{{ payment.courseEnrolled }}</td>
                 <td>{{ payment.parentContact }}</td>
                 <td>{{ payment.fee }}</td>
-                <td>{{ payment.noOfMonths }}</td> <!-- Display noOfMonths -->
-                <td class="text-center">
+                <td>{{ payment.noOfMonths }}</td>
+                <td>
                   <span
                     class="badge"
                     :class="{
@@ -72,10 +72,8 @@ const PaymentStatus = {
                   </span>
                 </td>
                 <td>{{ payment.paymentDate }}</td>
-                <td class="text-center">
-                  <button class="btn btn-info btn-sm me-2" @click="openUpdateModal(payment)">
-                    Update
-                  </button>
+                <td>
+                  <button class="btn btn-info btn-sm me-2" @click="openUpdateModal(payment)">Update</button>
                   <button
                     v-if="payment.paymentStatus === 'Paid'"
                     class="btn btn-primary btn-sm"
@@ -87,6 +85,10 @@ const PaymentStatus = {
               </tr>
             </tbody>
           </table>
+          <!-- Add the Download CSV Button -->
+          <div class="text-center mt-3">
+            <button class="btn btn-success" @click="downloadCSV">Download Table</button>
+          </div>
         </div>
       </div>
 
@@ -461,6 +463,44 @@ const PaymentStatus = {
         this.notification.message = "";
         this.notification.type = "";
       }, 2000); // Clear the notification after 2 seconds
+    },
+    downloadCSV() {
+      const headers = [
+        "Parent Name",
+        "Address",
+        "Visiting Date",
+        "Child Name",
+        "Course Enrolled",
+        "Parent Contact",
+        "Fee (₹)",
+        "No. of Months",
+        "Payment Status",
+        "Payment Date",
+      ];
+      const rows = this.filteredAndSortedPayments.map((payment) => [
+        payment.parentName,
+        payment.address,
+        payment.visitingDate,
+        payment.childName,
+        payment.courseEnrolled,
+        payment.parentContact,
+        payment.fee,
+        payment.noOfMonths,
+        payment.paymentStatus,
+        payment.paymentDate,
+      ]);
+
+      const csvContent =
+        "data:text/csv;charset=utf-8," +
+        [headers, ...rows].map((e) => e.join(",")).join("\n");
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "payment_records.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     },
   },
   mounted() {
