@@ -110,7 +110,7 @@ const AddCourses = {
                   ></textarea>
                 </div>
                 <div class="mb-3">
-                  <label for="duration" class="form-label">Duration (in hours)</label>
+                  <label for="duration" class="form-label">Duration (Hrs)</label>
                   <input
                     type="number"
                     id="duration"
