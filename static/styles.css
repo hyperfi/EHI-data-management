@@ -47,10 +47,18 @@ link[rel="icon"] {
     font-size: 1rem; /* Default font size */
 }
 
+.brand-text {
+
+    color: rgb(190, 210, 248);
+    font-size: 2.5rem; /* Default font size for brand text */
+}
 /* Medium screens (tablets) */
 @media (max-width: 768px) {
     .table {
         font-size: 0.9rem; /* Slightly smaller font size */
+    }
+    .brand-text {
+        font-size: 2.0rem; /* Slightly smaller font size */
     }
 }
 
@@ -58,6 +66,9 @@ link[rel="icon"] {
 @media (max-width: 576px) {
     .table {
         font-size: 0.7rem; /* Smaller font size for mobile */
+    }
+    .brand-text {
+        font-size: 1.8rem; /* Smaller font size for mobile */
     }
     .btn {
         font-size: 12px; /* Smaller font size for buttons */
@@ -70,20 +81,6 @@ link[rel="icon"] {
     }
 }
 
-.brand-text {
-    font-family: 'Poppins', sans-serif;
-    /* Use a modern font */
-    font-size: 1.5rem;
-    /* Increase font size */
-    font-weight: bold;
-    /* Make the text bold */
-    color: #ffffff;
-    /* White text color */
-    letter-spacing: 1px;
-    /* Add some spacing between letters */
-    text-transform: uppercase;
-    /* Make the text uppercase */
-}
 
 .router-link-active {
   color: rgb(188, 208, 37) !important; /* Highlight active link in yellow */

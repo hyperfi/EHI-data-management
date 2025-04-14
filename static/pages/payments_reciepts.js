@@ -208,130 +208,228 @@ const PaymentStatus = {
         this.showNotification("Error updating payment status", "danger");
       }
     },
+
+    textToNumber(text) {
+    let number = 0;
+    const prime = 31; // A prime number helps distribute the values
+
+    for (let i = 0; i < text.length; i++) {
+      number = number * prime + text.charCodeAt(i);
+    }
+
+    return number;
+    },
+
+    generateReceiptNumber(parentName, childName, fee) {
+      // Generate a unique receipt number using a combination of parentName, childName, and fee
+      const parentNameNumber = this.textToNumber(parentName);
+      const childNameNumber = this.textToNumber(childName);
+      const feeNumber = this.textToNumber(fee);
+      const receiptNumber = (parentNameNumber + childNameNumber + feeNumber) % 1000000; // Limit to 6 digits
+      return receiptNumber.toString().padStart(6, '0'); // Pad with leading zeros if necessary
+    },
     generateReceipt(payment) {
       const { parentName, childName, courseEnrolled, paymentDate, paymentStatus, fee } = payment;
-
+      const receiptNumber = this.generateReceiptNumber(parentName, childName, fee); // Generate a receipt number from the parentName and childName and fee using a math function
       // Get the current date and time for the "Generated On" timestamp
       const generatedOn = new Date().toLocaleString();
 
       // Create a new HTML structure for the receipt
       const receiptHTML = `
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Payment Receipt</title>
-          <style>
-            @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>Payment Receipt</title>
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
-            @media print {
-              body {
-                margin: 0;
-                padding: 0;
-              }
-              .receipt-container {
-                page-break-inside: avoid; /* Prevent page breaks inside the container */
-              }
-            }
+          @page {
+            size: A4;
+            margin: 20mm;
+          }
+
+          @media print {
             body {
-              font-family: 'Poppins', sans-serif;
               margin: 0;
               padding: 0;
-              background-color: #f4f8fb;
-              color: #333;
+              background-color: #fff !important;
             }
+
             .receipt-container {
-              width: 210mm; /* A4 width */
-              margin: 20mm auto; /* Center the receipt with margins */
-              background-color: #fff;
-              border: 1px solid #ddd;
-              border-radius: 8px;
-              box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-              padding: 20mm; /* Add padding for better layout */
-              box-sizing: border-box;
+              box-shadow: none;
+              border: none;
+              page-break-inside: avoid;
             }
-            .top-bar {
-              background-color: #007bff;
-              color: #fff;
-              padding: 10px 20px;
-              border-radius: 8px 8px 0 0;
-              text-align: center;
+
+            .no-print {
+              display: none !important;
             }
-            .top-bar h1 {
-              margin: 0;
-              font-size: 24px;
-              font-weight: 600;
-            }
-            .header {
-              text-align: center;
-              margin: 20px 0;
-            }
-            .header img {
-              width: 60px;
-              height: 60px;
-              border-radius: 50%;
-              object-fit: cover;
-            }
-            .header h2 {
-              color: #007bff;
-              margin: 10px 0 0;
-              font-size: 20px;
-              font-weight: 600;
-            }
-            .details {
-              margin: 30px 0;
-              font-size: 16px;
-            }
-            .details p {
-              margin: 8px 0;
-            }
-            .footer {
-              text-align: center;
-              margin-top: 30px;
-              font-size: 14px;
-              color: #555;
-            }
-            .footer .generated-on {
-              margin-top: 10px;
-              font-size: 12px;
-              color: #777;
-            }
-            .graphics {
-              text-align: center;
-              margin-top: 20px;
-            }
-            .graphics img {
-              width: 200px;
-              opacity: 0.8;
-            }
-          </style>
-        </head>
-        <body>
-          <div class="receipt-container">
-            <div class="top-bar">
-              <h1>Payment Receipt</h1>
-            </div>
-            <div class="header">
+          }
+
+          body {
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f8fa;
+            color: #333;
+          }
+
+          .receipt-container {
+            width: 210mm;
+            margin: 20mm auto;
+            background-color: #ffffff;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+            box-sizing: border-box;
+          }
+
+          .top-bar {
+            background-color: rgb(22, 34, 58);
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 8px 8px 0 0;
+            text-align: center;
+          }
+
+          .top-bar h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+          }
+
+          .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 30px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 20px;
+          }
+
+          .header .logo {
+            display: flex;
+            align-items: center;
+          }
+
+          .header .logo img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+          }
+
+          .header .institute-name {
+            font-family: 'Segoe UI', Tahoma, Geneva, sans-serif;
+            font-size: 24px;
+            font-weight: 600;
+            color: rgb(22, 34, 58);
+
+            
+          }
+
+          .header .contact {
+            text-align: right;
+            font-size: 14px;
+            color: #666;
+          }
+
+          .details {
+            margin-top: 30px;
+            font-size: 16px;
+            line-height: 1.6;
+          }
+
+          .details p {
+            margin: 8px 0;
+          }
+
+          .details p strong {
+            width: 180px;
+            display: inline-block;
+          }
+
+          .receipt-info {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f1f5fb;
+            border-left: 4px solid #007bff;
+            border-radius: 6px;
+            font-size: 15px;
+          }
+
+          .footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 14px;
+            color: #555;
+          }
+
+          .footer .generated-on {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #888;
+          }
+
+          .graphics {
+            text-align: center;
+            margin-top: 30px;
+          }
+
+          .graphics img {
+            width: 200px;
+            opacity: 0.75;
+          }
+
+        </style>
+      </head>
+      <body>
+        <div class="receipt-container">
+          <div class="top-bar">
+            <h1>Payment Receipt</h1>
+          </div>
+
+          <div class="header">
+            <div class="logo">
               <img src="/static/images/logo.jpg" alt="Logo">
-              <h2>Event Horizon Institute</h2>
+              <div class="institute-name">Event Horizon Institute</div>
             </div>
-            <div class="details">
-              <p><strong>Parent Name:</strong> ${parentName}</p>
-              <p><strong>Child Name:</strong> ${childName}</p>
-              <p><strong>Course Enrolled:</strong> ${courseEnrolled}</p>
-              <p><strong>Payment Date:</strong> ${paymentDate}</p>
-              <p><strong>Payment Status:</strong> ${paymentStatus}</p>
-              <p><strong>Fee:</strong> Rs. ${fee}</p>
-            </div>
-            <div class="footer">
-              <p>Thank you for your payment!</p>
-              <p>&copy; ${new Date().getFullYear()} Event Horizon Institute</p>
-              <p class="generated-on"><strong>Generated On:</strong> ${generatedOn}</p>
+            <div class="contact">
+              abhishek@eventhorizoninstitute.info<br/>
+              +91-82954-33285
             </div>
           </div>
-        </body>
-        </html>
+
+          <div class="receipt-info">
+            <p><strong>Receipt Number:</strong> #${receiptNumber}</p>
+            <p><strong>Payment Date:</strong> ${paymentDate}</p>
+            <p><strong>Payment Status:</strong> ${paymentStatus}</p>
+          </div>
+
+          <div class="details">
+            <p><strong>Parent Name:</strong> ${parentName}</p>
+            <p><strong>Child Name:</strong> ${childName}</p>
+            <p><strong>Course Enrolled:</strong> ${courseEnrolled}</p>
+            <p><strong>Amount Paid:</strong> ₹${fee}</p>
+          </div>
+
+          <div class="footer">
+            <p>Thank you for your payment and trust in us.</p>
+            <p>&copy; ${new Date().getFullYear()} Event Horizon Institute. All rights reserved.</p>
+            <p class="generated-on"><strong>Generated On:</strong> ${generatedOn}</p>
+          </div>
+          <button onclick="window.print()" class = "no-print" >Print Receipt</button>
+
+
+          
+        </div>
+      </body>
+      </html>
+
       `;
 
       // Open the receipt in a new tab
