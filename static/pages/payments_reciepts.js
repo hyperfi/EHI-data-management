@@ -19,7 +19,7 @@ const PaymentStatus = {
           />
           <select v-model="sortKey" class="form-select w-25">
             <option value="parentName">Sort by Parent Name</option>
-            <option value="childName">Sort by Child Name</option>
+            <option value="childName">Sort by Student Name</option>
             <option value="courseEnrolled">Sort by Course</option>
             <option value="fee">Sort by Fee</option>
             <option value="paymentDate">Sort by Payment Date</option>
@@ -37,7 +37,7 @@ const PaymentStatus = {
                 <th>Parent Name</th>
                 <th>Address</th>
                 <th>Visiting Date</th>
-                <th>Child Name</th>
+                <th>Student Name</th>
                 <th>Course Enrolled</th>
                 <th>Parent Contact</th>
                 <th>Fee (₹)</th>
@@ -429,7 +429,7 @@ const PaymentStatus = {
 
           <div class="details">
             <p><strong>Parent Name:</strong> ${parentName}</p>
-            <p><strong>Child Name:</strong> ${childName}</p>
+            <p><strong>Student Name:</strong> ${childName}</p>
             <p><strong>Course Enrolled:</strong> ${courseEnrolled}</p>
             <p><strong>Enrolled for: </strong> ${months}</p>
             <p><strong>Amount Paid:</strong> ₹${totalFee}</p>

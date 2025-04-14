@@ -22,7 +22,7 @@ const ViewAllStudents = {
                             <th @click="sortTable('parentName')" style="cursor: pointer">Parent Name <i class="bi bi-arrow-down-up"></i></th>
                             <th @click="sortTable('address')" style="cursor: pointer">Address <i class="bi bi-arrow-down-up"></i></th>
                             <th @click="sortTable('visitingDate')" style="cursor: pointer">Visiting Date <i class="bi bi-arrow-down-up"></i></th>
-                            <th @click="sortTable('childName')" style="cursor: pointer">Child Name <i class="bi bi-arrow-down-up"></i></th>
+                            <th @click="sortTable('childName')" style="cursor: pointer">Student Name <i class="bi bi-arrow-down-up"></i></th>
                             <th @click="sortTable('courseEnrolled')" style="cursor: pointer">Course Enrolled <i class="bi bi-arrow-down-up"></i></th>
                             <th @click="sortTable('parentContact')" style="cursor: pointer">Contact <i class="bi bi-arrow-down-up"></i></th>
                             <th>Action</th>

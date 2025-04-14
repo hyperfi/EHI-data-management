@@ -23,7 +23,7 @@ const Home = {
                   <small class="text-danger" v-if="errors.visitingDate">{{ errors.visitingDate }}</small>
               </div>
               <div class="mb-3">
-                  <label for="childName" class="form-label">Child Name:</label>
+                  <label for="childName" class="form-label">Student Name:</label>
                   <input type="text" id="childName" v-model="formData.childName" @input="validateChildName" class="form-control" required>
                   <small class="text-danger" v-if="errors.childName">{{ errors.childName }}</small>
               </div>
