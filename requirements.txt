@@ -30,3 +30,4 @@ WTForms==3.2.1
 setuptools
 gunicorn==23.0.0
 flask_migrate==4.1.0
+argon2_cffi==23.1.0
