@@ -40,15 +40,16 @@ const PaymentStatus = {
                 <th>Child Name</th>
                 <th>Course Enrolled</th>
                 <th>Parent Contact</th>
-                <th>Fee (Rs.)</th>
+                <th>Fee (₹)</th>
+                <th>No. of Months</th> <!-- New column -->
                 <th>Payment Status</th>
                 <th>Payment Date</th>
                 <th>Action</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody class ="text-center">
               <tr v-if="filteredAndSortedPayments.length === 0">
-                <td colspan="10" class="text-center text-muted">No payment records found</td>
+                <td colspan="11" class="text-center text-muted">No payment records found</td>
               </tr>
               <tr v-else v-for="payment in filteredAndSortedPayments" :key="payment.id">
                 <td>{{ payment.parentName }}</td>
@@ -58,6 +59,7 @@ const PaymentStatus = {
                 <td>{{ payment.courseEnrolled }}</td>
                 <td>{{ payment.parentContact }}</td>
                 <td>{{ payment.fee }}</td>
+                <td>{{ payment.noOfMonths }}</td> <!-- Display noOfMonths -->
                 <td class="text-center">
                   <span
                     class="badge"
@@ -110,6 +112,10 @@ const PaymentStatus = {
                   <label for="paymentDate" class="form-label">Payment Date</label>
                   <input type="date" id="paymentDate" v-model="updateForm.paymentDate" class="form-control" required />
                 </div>
+                <div class="mb-3">
+                  <label for="noOfMonths" class="form-label">No. of Months</label>
+                  <input type="number" id="noOfMonths" v-model="updateForm.noOfMonths" class="form-control" min="1" required />
+                </div>
               </form>
             </div>
             <div class="modal-footer">
@@ -131,6 +137,7 @@ const PaymentStatus = {
         id: null,
         paymentStatus: "",
         paymentDate: "",
+        noOfMonths: 1, // Default value for noOfMonths
       },
       notification: {
         message: "",
@@ -181,6 +188,7 @@ const PaymentStatus = {
         id: payment.id,
         paymentStatus: payment.paymentStatus,
         paymentDate: payment.paymentDate,
+        noOfMonths: payment.noOfMonths || 1, // Default to 1 if no value is provided
       };
       const modal = new bootstrap.Modal(document.getElementById("updatePaymentModal"));
       modal.show();
@@ -229,11 +237,18 @@ const PaymentStatus = {
       return receiptNumber.toString().padStart(6, '0'); // Pad with leading zeros if necessary
     },
     generateReceipt(payment) {
-      const { parentName, childName, courseEnrolled, paymentDate, paymentStatus, fee } = payment;
+      const { parentName, childName, courseEnrolled, paymentDate, paymentStatus, fee, noOfMonths } = payment;
       const receiptNumber = this.generateReceiptNumber(parentName, childName, fee); // Generate a receipt number from the parentName and childName and fee using a math function
+      const totalFee = Number(fee) * Number(noOfMonths); // Calculate the total fee based on the number of months
       // Get the current date and time for the "Generated On" timestamp
       const generatedOn = new Date().toLocaleString();
-
+      let months = noOfMonths; // Store the number of months in a variable for later use
+      if (Number(noOfMonths) > 1) {
+        months = Number(noOfMonths) + " Months";
+      } else {
+        months = Number(noOfMonths) + " Month";
+      }
+      
       // Create a new HTML structure for the receipt
       const receiptHTML = `
       <!DOCTYPE html>
@@ -414,7 +429,8 @@ const PaymentStatus = {
             <p><strong>Parent Name:</strong> ${parentName}</p>
             <p><strong>Child Name:</strong> ${childName}</p>
             <p><strong>Course Enrolled:</strong> ${courseEnrolled}</p>
-            <p><strong>Amount Paid:</strong> ₹${fee}</p>
+            <p><strong>Enrolled for: </strong> ${months}</p>
+            <p><strong>Amount Paid:</strong> ₹${totalFee}</p>
           </div>
 
           <div class="footer">

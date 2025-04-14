@@ -22,7 +22,8 @@ def create_payment_view(app):
                 'parentContact': entry.parent_contact,
                 'fee': fee,
                 'paymentStatus': entry.payment_status,
-                'paymentDate': entry.payment_date
+                'paymentDate': entry.payment_date,
+                'noOfMonths': entry.no_of_months if entry.no_of_months else 1,
             })
         return jsonify(data), 200
 
@@ -40,6 +41,7 @@ def create_payment_view(app):
         # Update the payment status and date
         entry.payment_status = data['paymentStatus']
         entry.payment_date = data['paymentDate']
+        entry.no_of_months = data['noOfMonths']
 
         db.session.commit()
 

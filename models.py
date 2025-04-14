@@ -17,6 +17,9 @@ class ParentCustomer(db.Model):
         db.String(50), nullable=False)  # e.g., paid, unpaid
     payment_date = db.Column(db.String(50), nullable=True)  # Date of payment
 
+    # Number of months enrolled
+    no_of_months = db.Column(db.Integer, nullable=True)
+
     def __repr__(self):
         return f'<ParentCustomer {self.parent_name} - {self.child_name}>'
 
