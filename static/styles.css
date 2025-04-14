@@ -86,6 +86,19 @@ link[rel="icon"] {
 }
 
 .router-link-active {
-  color: yellow !important; /* Highlight active link in yellow */
-  font-weight: bold; /* Optional: Make the active link bold */
+  color: rgb(188, 208, 37) !important; /* Highlight active link in yellow */
+  font-weight: bold; /* Make the active link bold */
+  animation: jump 0.5s ease-in-out; /* Add jumping animation */
+}
+
+/* Define the jumping animation */
+@keyframes jump {
+  0%, 100% {
+    transform: translateY(0); /* Start and end at the original position */
+    scale: 1; /* Ensure the scale is normal at start and end */
+  }
+  50% {
+    transform: translateY(-5px); /* Move up slightly */
+    scale: 1.05; /* Slightly increase the size at the peak of the jump */
+  }
 }
