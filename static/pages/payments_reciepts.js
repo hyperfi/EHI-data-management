@@ -329,9 +329,6 @@ const PaymentStatus = {
               <p>&copy; ${new Date().getFullYear()} Event Horizon Institute</p>
               <p class="generated-on"><strong>Generated On:</strong> ${generatedOn}</p>
             </div>
-            <div class="graphics">
-              <img src="/static/images/sign.jpg" alt="Graphic">
-            </div>
           </div>
         </body>
         </html>

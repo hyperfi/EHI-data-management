@@ -5,6 +5,7 @@ import entry_views
 import business_views
 import payment_views
 from flask_migrate import Migrate
+from create_initial_data import create_data
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
@@ -26,13 +27,13 @@ def create_app():
     db.init_app(app)
     migrate = Migrate(app, db)
     with app.app_context():
-        from models import ParentCustomer
+        from models import User, Role
         from flask_security import SQLAlchemyUserDatastore
 
-        # user_datastore = SQLAlchemyUserDatastore(db, User, Role)
-        # security.init_app(app, user_datastore)
+        user_datastore = SQLAlchemyUserDatastore(db, User, Role)
+        security.init_app(app, user_datastore)
         db.create_all()
-        # create_data(user_datastore)
+        create_data(user_datastore)
     # disable CSRF security
     app.config['WTF_CSRF_CHECK_DEFAULT'] = False
     app.config['SECURITY_CSRF_PROTECT_MECHANISHMS'] = []

@@ -84,3 +84,8 @@ link[rel="icon"] {
     text-transform: uppercase;
     /* Make the text uppercase */
 }
+
+.router-link-active {
+  color: yellow !important; /* Highlight active link in yellow */
+  font-weight: bold; /* Optional: Make the active link bold */
+}

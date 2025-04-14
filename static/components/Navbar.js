@@ -17,7 +17,7 @@ const Navbar = {
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
             <li class="nav-item">
-              <router-link to="/" class="nav-link">
+              <router-link to="/" exact class="nav-link">
                 Home
               </router-link>
             </li>
