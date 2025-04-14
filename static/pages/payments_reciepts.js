@@ -73,7 +73,7 @@ const PaymentStatus = {
                 </td>
                 <td>{{ payment.paymentDate }}</td>
                 <td>
-                  <button class="btn btn-info btn-sm me-2" @click="openUpdateModal(payment)">Update</button>
+                  <button class="btn btn-info btn-sm mb-2" @click="openUpdateModal(payment)">Update</button> <!-- Added 'me-3' for spacing -->
                   <button
                     v-if="payment.paymentStatus === 'Paid'"
                     class="btn btn-primary btn-sm"
@@ -416,7 +416,7 @@ const PaymentStatus = {
               <div class="institute-name">Event Horizon Institute</div>
             </div>
             <div class="contact">
-              abhishek@eventhorizoninstitute.info<br/>
+              eventhorizoninstitute25@gmail.com<br/>
               +91-82954-33285
             </div>
           </div>
