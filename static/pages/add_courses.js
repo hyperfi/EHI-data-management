@@ -9,7 +9,7 @@ const AddCourses = {
             Your browser does not support the video tag.
         </video>
     <div class="d-flex justify-content-center align-items-center vh-100 bg-light bg-opacity-25" style="height: 80vh;">
-      <div class="card shadow-lg p-4" style="width: 90%; max-height: 90%; overflow-y: auto;">
+      <div class="card shadow-lg p-4" style="width: 90%; max-height: 90%; overflow-y: auto; background-color: rgba(255, 255, 255, 0.9);">
         <h1 class="text-center mb-4 display-5">Courses</h1>
 
         <!-- Add New Course Button -->
