@@ -58,7 +58,7 @@ link[rel="icon"] {
         font-size: 0.9rem; /* Slightly smaller font size */
     }
     .brand-text {
-        font-size: 2.0rem; /* Slightly smaller font size */
+        font-size: 1.8rem; /* Slightly smaller font size */
     }
 }
 
@@ -75,6 +75,12 @@ link[rel="icon"] {
     }
 }
 
+@media (max-width:370px) {
+    .brand-text {
+        font-size: 1.4rem; /* Smaller font size for brand text on very small screens */
+    }
+}
+
 @media (min-width: 577px) {
     .btn {
         font-size: 14px; /* Default font size for buttons */
@@ -83,7 +89,7 @@ link[rel="icon"] {
 
 
 .router-link-active {
-  color: rgb(188, 208, 37) !important; /* Highlight active link in yellow */
+  color: rgb(179, 254, 18) !important; /* Highlight active link in yellow */
   font-weight: bold; /* Make the active link bold */
   animation: jump 0.5s ease-in-out; /* Add jumping animation */
 }

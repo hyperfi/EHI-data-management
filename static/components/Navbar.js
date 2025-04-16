@@ -55,7 +55,7 @@ const Navbar = {
               </router-link>
             </li>
             <li class="nav-item" v-if="isLoggedIn">
-              <button type="button" class="btn btn-danger me-3" @click="logout">
+              <button type="button" class="btn btn-danger me-3 mt-1" @click="logout">
                 Logout
               </button>
             </li>
