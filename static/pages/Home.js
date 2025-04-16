@@ -3,7 +3,7 @@ import store from '../utils/store.js'; // Import the Vuex store
 const Home = {
   template: `
   <div class="d-flex justify-content-center align-items-center vh-100 bg-light">
-      <div class="card shadow-lg p-4" style="width: 30%; max-height: 90%; overflow-y: auto;">
+      <div class="card shadow-lg p-4 w-100" style="max-width: 400px; max-height: 90%; overflow-y: auto;">
           <h1 class="text-center mb-4 display-6">Login</h1>
           <!-- Display error message if it exists -->
           <div v-if="errorMessage" class="alert alert-danger text-center" role="alert">
