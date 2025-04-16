@@ -10,7 +10,7 @@ const Home = {
       </video>
 
       <!-- Login Card -->
-      <div class="d-flex justify-content-center align-items-center bg-light bg-opacity-25" style="height: 80vh;">
+      <div class="d-flex justify-content-center align-items-center bg-light bg-opacity-25 homestyle" >
           <div class="card shadow-lg p-4 w-100" style="max-width: 400px; max-height: 90%; overflow-y: auto; background-color: rgba(255, 255, 255, 0.8);">
               <h1 class="text-center mb-4 display-6">Login</h1>
               <!-- Display error message if it exists -->

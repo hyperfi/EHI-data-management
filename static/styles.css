@@ -2,6 +2,10 @@ link[rel="icon"] {
     border-radius: 50%;
 }
 
+.homestyle{
+    height: 80vh;
+}
+
 .rounded-circle {
     width: 50px; /* Adjust the size as needed */
     height: 50px; /* Adjust the size as needed */
@@ -73,11 +77,18 @@ link[rel="icon"] {
     .btn {
         font-size: 12px; /* Smaller font size for buttons */
     }
+    .homestyle {
+        height: 74vh; /* Adjust height for mobile screens */
+    }
 }
 
 @media (max-width:370px) {
     .brand-text {
         font-size: 1.4rem; /* Smaller font size for brand text on very small screens */
+    }
+    .homestyle {
+        height: 74vh;
+        /* Adjust height for mobile screens */
     }
 }
 
