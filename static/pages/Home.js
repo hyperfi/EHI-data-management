@@ -113,6 +113,7 @@ const Home = {
 
           // Redirect to /add_parent
           this.$router.push('/add_parent');
+          this.$router.go(); // Force a reload to ensure the new route is rendered
         }
       } catch (error) {
         console.error('Error during login:', error);
