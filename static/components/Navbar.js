@@ -74,6 +74,20 @@ const Navbar = {
       this.$store.dispatch("logout"); // Dispatch the logout action
       this.$router.push("/"); // Redirect to the login page
     },
+    handleOutsideClick(event) {
+      const navbar = document.getElementById("navbarNav");
+      const toggler = document.querySelector(".navbar-toggler");
+
+      if (navbar.classList.contains("show") && !navbar.contains(event.target) && !toggler.contains(event.target)) {
+        toggler.click(); // Programmatically trigger the collapse
+      }
+    },
+  },
+  mounted() {
+    document.addEventListener("click", this.handleOutsideClick);
+  },
+  beforeUnmount() {
+    document.removeEventListener("click", this.handleOutsideClick);
   },
 };
 

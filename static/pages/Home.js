@@ -2,42 +2,51 @@ import store from '../utils/store.js'; // Import the Vuex store
 
 const Home = {
   template: `
-  <div class="d-flex justify-content-center align-items-center vh-100 bg-light">
-      <div class="card shadow-lg p-4 w-100" style="max-width: 400px; max-height: 90%; overflow-y: auto;">
-          <h1 class="text-center mb-4 display-6">Login</h1>
-          <!-- Display error message if it exists -->
-          <div v-if="errorMessage" class="alert alert-danger text-center" role="alert">
-              {{ errorMessage }}
+  <div class="position-relative vh-100">
+      <!-- Background Video -->
+      <video autoplay loop muted playsinline class="position-absolute w-100 h-100" style="object-fit: cover; z-index: -1;">
+          <source src="/static/videos/background.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+      </video>
+
+      <!-- Login Card -->
+      <div class="d-flex justify-content-center align-items-center vh-100 bg-light bg-opacity-25">
+          <div class="card shadow-lg p-4 w-100" style="max-width: 400px; max-height: 90%; overflow-y: auto; background-color: rgba(255, 255, 255, 0.8);">
+              <h1 class="text-center mb-4 display-6">Login</h1>
+              <!-- Display error message if it exists -->
+              <div v-if="errorMessage" class="alert alert-danger text-center" role="alert">
+                  {{ errorMessage }}
+              </div>
+              <form @submit.prevent="login" class="needs-validation" novalidate>
+                  <div class="mb-3">
+                      <label for="email" class="form-label">Email:</label>
+                      <input 
+                        type="email" 
+                        id="email" 
+                        v-model="formData.email" 
+                        class="form-control" 
+                        placeholder="Enter your email"
+                        required
+                        @input="validateEmail">
+                      <small class="text-danger" v-if="emailError">{{ emailError }}</small>
+                  </div>
+                  <div class="mb-3">
+                      <label for="password" class="form-label">Password:</label>
+                      <input 
+                        type="password" 
+                        id="password" 
+                        v-model="formData.password" 
+                        class="form-control" 
+                        placeholder="Enter your password"
+                        required
+                        minlength="6"
+                        @input="validatePassword" 
+                      />
+                      <small class="text-danger" v-if="passwordError">{{ passwordError }}</small>
+                  </div>
+                  <button type="submit" class="btn btn-primary w-100">Login</button>
+              </form>
           </div>
-          <form @submit.prevent="login" class="needs-validation" novalidate>
-              <div class="mb-3">
-                  <label for="email" class="form-label">Email:</label>
-                  <input 
-                    type="email" 
-                    id="email" 
-                    v-model="formData.email" 
-                    class="form-control" 
-                    placeholder="Enter your email"
-                    required
-                    @input="validateEmail">
-                  <small class="text-danger" v-if="emailError">{{ emailError }}</small>
-              </div>
-              <div class="mb-3">
-                  <label for="password" class="form-label">Password:</label>
-                  <input 
-                    type="password" 
-                    id="password" 
-                    v-model="formData.password" 
-                    class="form-control" 
-                    placeholder="Enter your password"
-                    required
-                    minlength="6"
-                    @input="validatePassword" 
-                  />
-                  <small class="text-danger" v-if="passwordError">{{ passwordError }}</small>
-              </div>
-              <button type="submit" class="btn btn-primary w-100">Login</button>
-          </form>
       </div>
   </div>
   `,
