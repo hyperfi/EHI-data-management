@@ -1,3 +1,5 @@
+import store from '../utils/store.js'; // Import the Vuex store
+
 const ViewAllStudents = {
     template: `
     <div class="d-flex justify-content-center align-items-center vh-100 bg-light">
@@ -190,7 +192,12 @@ const ViewAllStudents = {
     methods: {
         async fetchStudents() {
             const url = window.location.origin;
-            const response = await fetch(url + "/api/entry");
+            const token = store.getters.authToken; // Get the token from Vuex store
+            const response = await fetch(url + "/api/entry", {
+                headers: {
+                     'Authentication-Token': `${token}`, // Include the token in the Authorization header
+                },
+            });
             if (response.ok) {
                 const data = await response.json();
                 this.students = data;
@@ -200,7 +207,12 @@ const ViewAllStudents = {
         },
         async fetchBatches() {
             const url = window.location.origin;
-            const response = await fetch(url + "/api/get_batches");
+            const token = store.getters.authToken; // Get the token from Vuex store
+            const response = await fetch(url + "/api/get_batches", {
+                headers: {
+                'Authentication-Token': `${token}`, // Include the token in the Authentication-Token header
+                },
+            });
             if (response.ok) {
                 const data = await response.json();
                 this.batches = data;
@@ -210,8 +222,12 @@ const ViewAllStudents = {
         },
         async deleteStudent(parentContact, childName) {
             const url = window.location.origin;
+            const token = store.getters.authToken; // Get the token from Vuex store
             const response = await fetch(url + `/api/entry/${parentContact}/${childName}`, {
-                method: 'DELETE'
+                method: 'DELETE',
+                headers: {
+                     'Authentication-Token': `${token}`, // Include the token in the Authorization header
+                },
             });
             if (response.ok) {
                 this.fetchStudents();
@@ -222,8 +238,9 @@ const ViewAllStudents = {
         },
         openUpdateModal(student) {
             this.updateForm = { ...student };
-            const modal = new bootstrap.Modal(document.getElementById('updateModal'));
-            modal.show();
+            const modalElement = document.getElementById('updateModal');
+            const modal = new bootstrap.Modal(modalElement); // Initialize the modal
+            modal.show(); // Show the modal
         },
         validateUpdateForm() {
             const errors = [];
@@ -257,16 +274,19 @@ const ViewAllStudents = {
 
             const { parentContact, childName } = this.updateForm;
             const url = window.location.origin + `/api/entry/${parentContact}/${childName}`;
+            const token = store.getters.authToken; // Get the token from Vuex store
             const response = await fetch(url, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authentication-Token': `${token}`, // Include the token in the Authorization header
                 },
                 body: JSON.stringify(this.updateForm),
             });
             if (response.ok) {
-                const modal = bootstrap.Modal.getInstance(document.getElementById('updateModal'));
-                modal.hide();
+                const modalElement = document.getElementById('updateModal');
+                const modal = bootstrap.Modal.getInstance(modalElement); // Get the modal instance
+                modal.hide(); // Hide the modal
                 this.fetchStudents();
                 this.showNotification("Student updated successfully.", "success");
             } else {
@@ -275,8 +295,9 @@ const ViewAllStudents = {
         },
         openAssignBatchModal(student) {
             this.selectedStudent = student;
-            const modal = new bootstrap.Modal(document.getElementById('assignBatchModal'));
-            modal.show();
+            const modalElement = document.getElementById('assignBatchModal');
+            const modal = new bootstrap.Modal(modalElement); // Initialize the modal
+            modal.show(); // Show the modal
         },
         async assignStudentToBatch() {
             if (!this.selectedBatchId || !this.selectedStudent) {
@@ -285,13 +306,18 @@ const ViewAllStudents = {
             }
 
             const url = window.location.origin + `/api/add_student_to_batch/${this.selectedBatchId}/${this.selectedStudent.id}`;
+            const token = store.getters.authToken; // Get the token from Vuex store
             const response = await fetch(url, {
                 method: 'GET',
+                headers: {
+                    'Authentication-Token': `${token}`, // Include the token in the Authorization header
+                },
             });
 
             if (response.ok) {
-                const modal = bootstrap.Modal.getInstance(document.getElementById('assignBatchModal'));
-                modal.hide();
+                const modalElement = document.getElementById('assignBatchModal');
+                const modal = bootstrap.Modal.getInstance(modalElement); // Get the modal instance
+                modal.hide(); // Hide the modal
                 this.fetchStudents(); // Refresh the student list
                 this.showNotification("Student assigned to batch successfully.", "success");
             } else {

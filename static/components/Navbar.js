@@ -16,36 +16,57 @@ const Navbar = {
         <!-- Navbar Links -->
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto justify-content-center">
-            <li class="nav-item">
+            <li class="nav-item" v-if="!isLoggedIn">
               <router-link to="/" exact class="nav-link">
                 Home
               </router-link>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" v-if="isLoggedIn">
+              <router-link to="/add_parent" exact class="nav-link">
+                Add Parent
+              </router-link>
+            </li>
+            <li class="nav-item" v-if="isLoggedIn">
               <router-link to="/view_all_students" class="nav-link">
                 View All Students
               </router-link>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" v-if="isLoggedIn">
               <router-link to="/courses" class="nav-link">
                 Courses
               </router-link>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" v-if="isLoggedIn">
               <router-link to="/batches" class="nav-link">
                 Batches
               </router-link>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" v-if="isLoggedIn">
               <router-link to="/payments" class="nav-link">
                 Payments
               </router-link>
+            </li>
+            <li class="nav-item" v-if="isLoggedIn">
+              <button type="button" class="btn btn-danger ms-3" @click="logout">
+                Logout
+              </button>
             </li>
           </ul>
         </div>
       </div>
     </nav>
   `,
+  computed: {
+    isLoggedIn() {
+      return this.$store.getters.isLoggedIn; // Access the login state from Vuex store
+    },
+  },
+  methods: {
+    logout() {
+      this.$store.dispatch("logout"); // Dispatch the logout action
+      this.$router.push("/"); // Redirect to the login page
+    },
+  },
 };
 
 export default Navbar;

@@ -1,3 +1,5 @@
+import store from '../utils/store.js'; // Import the Vuex store
+
 const AddCourses = {
   template: `
     <div class="d-flex justify-content-center align-items-center vh-100 bg-light">
@@ -270,7 +272,12 @@ const AddCourses = {
   methods: {
     async fetchCourses() {
       try {
-        const response = await fetch(window.location.origin + "/api/get_courses");
+        const token = store.getters.authToken; // Get the token from Vuex store
+        const response = await fetch(window.location.origin + "/api/get_courses", {
+          headers: {
+            "Authentication-Token": `${token}`, // Include the token in the Authentication-Token header
+          },
+        });
         if (response.ok) {
           this.courses = await response.json();
         } else {
@@ -298,10 +305,12 @@ const AddCourses = {
     },
     async addCourse() {
       try {
+        const token = store.getters.authToken; // Get the token from Vuex store
         const response = await fetch(window.location.origin + "/api/create_course", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "Authentication-Token": `${token}`, // Include the token in the Authentication-Token header
           },
           body: JSON.stringify(this.newCourse),
         });
@@ -325,10 +334,12 @@ const AddCourses = {
     },
     async updateCourse() {
       try {
+        const token = store.getters.authToken; // Get the token from Vuex store
         const response = await fetch(window.location.origin + `/api/update_course/${this.updateCourseForm.id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            "Authentication-Token": `${token}`, // Include the token in the Authentication-Token header
           },
           body: JSON.stringify(this.updateCourseForm),
         });
@@ -345,8 +356,12 @@ const AddCourses = {
     },
     async deleteCourse(courseId) {
       try {
+        const token = store.getters.authToken; // Get the token from Vuex store
         const response = await fetch(window.location.origin + `/api/delete_course/${courseId}`, {
           method: "DELETE",
+          headers: {
+            "Authentication-Token": `${token}`, // Include the token in the Authentication-Token header
+          },
         });
         if (response.ok) {
           this.fetchCourses();

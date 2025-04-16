@@ -1,3 +1,5 @@
+import store from '../utils/store.js'; // Import the Vuex store
+
 const Batches = {
   template: `
     <div class="d-flex justify-content-center align-items-center vh-100 bg-light">
@@ -266,7 +268,12 @@ const Batches = {
   methods: {
     async fetchBatches() {
       try {
-        const response = await fetch("/api/get_batches");
+        const token = store.getters.authToken; // Get the token from Vuex store
+        const response = await fetch("/api/get_batches", {
+          headers: {
+            "Authentication-Token": `${token}`, // Include the token in the Authentication-Token header
+          },
+        });
         if (response.ok) {
           this.batches = await response.json();
         } else {
@@ -279,7 +286,12 @@ const Batches = {
     },
     async fetchCourses() {
       try {
-        const response = await fetch("/api/get_courses");
+        const token = store.getters.authToken; // Get the token from Vuex store
+        const response = await fetch("/api/get_courses", {
+          headers: {
+            "Authentication-Token": `${token}`, // Include the token in the Authentication-Token header
+          },
+        });
         if (response.ok) {
           this.courses = await response.json();
         } else {
@@ -292,10 +304,12 @@ const Batches = {
     },
     async addBatch() {
       try {
+        const token = store.getters.authToken; // Get the token from Vuex store
         const response = await fetch("/api/add_batch", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "Authentication-Token": `${token}`, // Include the token in the Authentication-Token header
           },
           body: JSON.stringify(this.newBatch),
         });
@@ -315,10 +329,12 @@ const Batches = {
     },
     async updateBatch() {
       try {
+        const token = store.getters.authToken; // Get the token from Vuex store
         const response = await fetch(`/api/update_batch/${this.updateBatchForm.id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            "Authentication-Token": `${token}`, // Include the token in the Authentication-Token header
           },
           body: JSON.stringify(this.updateBatchForm),
         });
@@ -338,8 +354,12 @@ const Batches = {
     },
     async deleteBatch(batchId) {
       try {
+        const token = store.getters.authToken; // Get the token from Vuex store
         const response = await fetch(`/api/delete_batch/${batchId}`, {
           method: "DELETE",
+          headers: {
+            "Authentication-Token": `${token}`, // Include the token in the Authentication-Token header
+          },
         });
         if (response.ok) {
           this.showNotification("Batch deleted successfully!", "success");
@@ -370,10 +390,12 @@ const Batches = {
     },
     async fetchStudentDetails(enrolledStudents) {
       try {
+        const token = store.getters.authToken; // Get the token from Vuex store
         const response = await fetch("/api/get_student_details", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "Authentication-Token": `${token}`, // Include the token in the Authentication-Token header
           },
           body: JSON.stringify({ students: enrolledStudents }),
         });
@@ -381,8 +403,7 @@ const Batches = {
           this.selectedStudents = await response.json();
         } else {
           const errorData = await response.json();
-
-          console.error("Error fetching student details:1", errorData.message);
+          console.error("Error fetching student details:", errorData.message);
           this.showNotification("Error fetching student details", "danger");
         }
       } catch (error) {
@@ -393,8 +414,12 @@ const Batches = {
 
     async removeStudentFromBatch(batchId, studentId) {
       try {
+        const token = store.getters.authToken; // Get the token from Vuex store
         const response = await fetch(`/api/remove_student_from_batch/${batchId}/${studentId}`, {
           method: "GET",
+          headers: {
+            "Authentication-Token": `${token}`, // Include the token in the Authentication-Token header
+          },
         });
         if (response.ok) {
           this.showNotification("Student removed from batch successfully", "success");

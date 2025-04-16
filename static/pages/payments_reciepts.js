@@ -1,3 +1,5 @@
+import store from '../utils/store.js'; // Import the Vuex store
+
 const PaymentStatus = {
   template: `
     <div class="d-flex justify-content-center align-items-center vh-100 bg-light">
@@ -171,7 +173,12 @@ const PaymentStatus = {
   methods: {
     async fetchPayments() {
       try {
-        const response = await fetch("/api/payment_status");
+        const token = store.getters.authToken; // Get the token from Vuex store
+        const response = await fetch("/api/payment_status", {
+          headers: {
+            "Authentication-Token": `${token}`, // Include the token in the Authentication-Token header
+          },
+        });
         if (response.ok) {
           this.payments = await response.json();
         } else {
@@ -197,10 +204,12 @@ const PaymentStatus = {
     },
     async updatePaymentStatus() {
       try {
+        const token = store.getters.authToken; // Get the token from Vuex store
         const response = await fetch("/api/payment_status_update", {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            "Authentication-Token": `${token}`, // Include the token in the Authentication-Token header
           },
           body: JSON.stringify(this.updateForm),
         });

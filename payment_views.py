@@ -1,10 +1,12 @@
 from flask import jsonify, render_template, render_template_string, request, send_file
 from extentions import db
 from models import ParentCustomer, Course
+from flask_security import roles_required  # Import roles_required decorator
 
 
 def create_payment_view(app):
     @app.route('/api/payment_status', methods=['GET'])
+    @roles_required('admin')  # Require admin role
     def get_payment_status():
         entries = ParentCustomer.query.all()
         data = []
@@ -28,6 +30,7 @@ def create_payment_view(app):
         return jsonify(data), 200
 
     @app.route('/api/payment_status_update', methods=['PUT'])
+    @roles_required('admin')  # Require admin role
     def update_payment_status():
         data = request.get_json()
         if not data:

@@ -4,6 +4,7 @@ from extentions import db, security, cache
 import entry_views
 import business_views
 import payment_views
+import parent_views
 from flask_migrate import Migrate
 from create_initial_data import create_data
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -39,9 +40,10 @@ def create_app():
     app.config['SECURITY_CSRF_PROTECT_MECHANISHMS'] = []
     app.config['SECURITY_CSRF_IGNORE_UNAUTH_ENDPOINTS'] = True
 
-    entry_views.create_entery_view(app)
+    entry_views.create_entery_view(app, user_datastore)
     business_views.Create_business_view(app)
     payment_views.create_payment_view(app)
+    parent_views.create_parent_views(app)
     return app
 
 
