@@ -2,48 +2,56 @@ import store from '../utils/store.js'; // Import the Vuex store
 
 const AddParent = {
   template: `
-  <div class="d-flex justify-content-center align-items-center vh-100 bg-light">
-      <div class="card shadow-lg p-4" style="width: 70%; max-height: 90%; overflow-y: auto;">
-          <h1 class="text-center mb-5 display-5">Parent Customer Entry</h1>
-          <!-- Display error message if it exists -->
-          <div v-if="errorMessage" class="alert alert-danger text-center" role="alert">
-              {{ errorMessage }}
-          </div>
-          <form class="needs-validation" novalidate>
-              <div class="mb-3">
-                  <label for="parentName" class="form-label">Parent Name:</label>
-                  <input type="text" id="parentName" v-model="formData.parentName" @input="validateParentName" class="form-control" required>
-                  <small class="text-danger" v-if="errors.parentName">{{ errors.parentName }}</small>
-              </div>
-              <div class="mb-3">
-                  <label for="address" class="form-label">Address:</label>
-                  <input type="text" id="address" v-model="formData.address" class="form-control" required>
-              </div>
-              <div class="mb-3">
-                  <label for="visitingDate" class="form-label">Visiting Date:</label>
-                  <input type="date" id="visitingDate" v-model="formData.visitingDate" @input="validateVisitingDate" class="form-control" required>
-                  <small class="text-danger" v-if="errors.visitingDate">{{ errors.visitingDate }}</small>
-              </div>
-              <div class="mb-3">
-                  <label for="childName" class="form-label">Student Name:</label>
-                  <input type="text" id="childName" v-model="formData.childName" @input="validateChildName" class="form-control" required>
-                  <small class="text-danger" v-if="errors.childName">{{ errors.childName }}</small>
-              </div>
-              <div class="mb-3">
-                  <label for="courseEnrolled" class="form-label">Course Enrolled:</label>
-                  <select id="courseEnrolled" v-model="formData.courseEnrolled" class="form-select" required>
-                      <option value="" disabled>Select a course</option>
-                      <option v-for="course in courses" :key="course.id" :value="course.course_name">{{ course.course_name }}</option>
-                  </select>
-              </div>
-              <div class="mb-3">
-                  <label for="parentContact" class="form-label">Parent Contact:</label>
-                  <input type="text" id="parentContact" v-model="formData.parentContact" @input="validateParentContact" class="form-control" required>
-                  <small class="text-danger" v-if="errors.parentContact">{{ errors.parentContact }}</small>
-              </div>
-              <button type="submit" class="btn btn-primary w-100" @click="submitForm" :disabled="isFormInvalid">Submit</button>
-          </form>
-      </div>
+   <div class="position-relative">
+      <!-- Background Video -->
+      <video autoplay loop muted playsinline class="position-absolute w-100 h-100" style="object-fit: cover; z-index: -1;">
+            <source src="/static/videos/background.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+      </video>
+    <div class="d-flex justify-content-center align-items-center vh-100 bg-light bg-opacity-25" style="height: 80vh;">
+
+        <div class="card shadow-lg p-4" style="width: 70%; max-height: 90%; overflow-y: auto;">
+            <h1 class="text-center mb-5 display-5">Parent Customer Entry</h1>
+            <!-- Display error message if it exists -->
+            <div v-if="errorMessage" class="alert alert-danger text-center" role="alert">
+                {{ errorMessage }}
+            </div>
+            <form class="needs-validation" novalidate>
+                <div class="mb-3">
+                    <label for="parentName" class="form-label">Parent Name:</label>
+                    <input type="text" id="parentName" v-model="formData.parentName" @input="validateParentName" class="form-control" required>
+                    <small class="text-danger" v-if="errors.parentName">{{ errors.parentName }}</small>
+                </div>
+                <div class="mb-3">
+                    <label for="address" class="form-label">Address:</label>
+                    <input type="text" id="address" v-model="formData.address" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="visitingDate" class="form-label">Visiting Date:</label>
+                    <input type="date" id="visitingDate" v-model="formData.visitingDate" @input="validateVisitingDate" class="form-control" required>
+                    <small class="text-danger" v-if="errors.visitingDate">{{ errors.visitingDate }}</small>
+                </div>
+                <div class="mb-3">
+                    <label for="childName" class="form-label">Student Name:</label>
+                    <input type="text" id="childName" v-model="formData.childName" @input="validateChildName" class="form-control" required>
+                    <small class="text-danger" v-if="errors.childName">{{ errors.childName }}</small>
+                </div>
+                <div class="mb-3">
+                    <label for="courseEnrolled" class="form-label">Course Enrolled:</label>
+                    <select id="courseEnrolled" v-model="formData.courseEnrolled" class="form-select" required>
+                        <option value="" disabled>Select a course</option>
+                        <option v-for="course in courses" :key="course.id" :value="course.course_name">{{ course.course_name }}</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="parentContact" class="form-label">Parent Contact:</label>
+                    <input type="text" id="parentContact" v-model="formData.parentContact" @input="validateParentContact" class="form-control" required>
+                    <small class="text-danger" v-if="errors.parentContact">{{ errors.parentContact }}</small>
+                </div>
+                <button type="submit" class="btn btn-primary w-100" @click="submitForm" :disabled="isFormInvalid">Submit</button>
+            </form>
+        </div>
+    </div>
   </div>
   `,
   

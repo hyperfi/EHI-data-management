@@ -2,238 +2,246 @@ import store from '../utils/store.js'; // Import the Vuex store
 
 const Batches = {
   template: `
-    <div class="d-flex justify-content-center align-items-center vh-100 bg-light">
-      <div class="card shadow-lg p-4" style="width: 90%; max-height: 90%; overflow-y: auto;">
-        <h1 class="text-center mb-4 display-5">Batches</h1>
+    <div class="position-relative">
+      <!-- Background Video -->
+      <video autoplay loop muted playsinline class="position-absolute w-100 h-100" style="object-fit: cover; z-index: -1;">
+            <source src="/static/videos/background.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+      </video>
+      <div class="d-flex justify-content-center align-items-center vh-100 bg-light bg-opacity-25" style="height: 80vh;">
 
-        <!-- Notification Message -->
-        <div v-if="notification.message" :class="'alert alert-' + notification.type" role="alert">
-          {{ notification.message }}
+        <div class="card shadow-lg p-4" style="width: 90%; max-height: 90%; overflow-y: auto;">
+          <h1 class="text-center mb-4 display-5">Batches</h1>
+
+          <!-- Notification Message -->
+          <div v-if="notification.message" :class="'alert alert-' + notification.type" role="alert">
+            {{ notification.message }}
+          </div>
+
+          <!-- Add New Batch Button -->
+          <div class="mb-4 text-end">
+            <button class="btn btn-primary" @click="openAddBatchModal">
+              Add New Batch
+            </button>
+          </div>
+
+          <!-- Batches Table -->
+          <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+            <table class="table table-hover table-striped table-bordered align-middle">
+              <thead class="table-dark text-center">
+                <tr>
+                  <th>Batch ID</th>
+                  <th>Batch Name</th>
+                  <th>Course Name</th>
+                  <th>Start Time</th>
+                  <th>End Time</th>
+                  <th>Enrolled Students</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-if="batches.length === 0">
+                  <td colspan="7" class="text-center text-muted">No batches available</td>
+                </tr>
+                <tr v-else v-for="batch in batches" :key="batch.id">
+                  <td class="text-center">{{ batch.id }}</td>
+                  <td>{{ batch.batch_name }}</td>
+                  <td>{{ batch.course_name }}</td>
+                  <td class="text-center">{{ batch.start_time }}</td>
+                  <td class="text-center">{{ batch.end_time }}</td>
+                  <td>
+                    <a href="#" @click.prevent="viewStudents(batch)" class="text-decoration-none text-primary">
+                      <i class="fas fa-users"></i>
+                      {{ batch.enrolled_students.length }} Students
+                    </a>
+                  </td>
+                  <td class="text-center">
+                    <button
+                      class="btn btn-danger btn-sm me-2"
+                      @click="deleteBatch(batch.id)"
+                    >
+                      Delete
+                    </button>
+                    <button
+                      class="btn btn-info btn-sm"
+                      @click="openUpdateBatchModal(batch)"
+                    >
+                      Update
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
-        <!-- Add New Batch Button -->
-        <div class="mb-4 text-end">
-          <button class="btn btn-primary" @click="openAddBatchModal">
-            Add New Batch
-          </button>
-        </div>
-
-        <!-- Batches Table -->
-        <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
-          <table class="table table-hover table-striped table-bordered align-middle">
-            <thead class="table-dark text-center">
-              <tr>
-                <th>Batch ID</th>
-                <th>Batch Name</th>
-                <th>Course Name</th>
-                <th>Start Time</th>
-                <th>End Time</th>
-                <th>Enrolled Students</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-if="batches.length === 0">
-                <td colspan="7" class="text-center text-muted">No batches available</td>
-              </tr>
-              <tr v-else v-for="batch in batches" :key="batch.id">
-                <td class="text-center">{{ batch.id }}</td>
-                <td>{{ batch.batch_name }}</td>
-                <td>{{ batch.course_name }}</td>
-                <td class="text-center">{{ batch.start_time }}</td>
-                <td class="text-center">{{ batch.end_time }}</td>
-                <td>
-                  <a href="#" @click.prevent="viewStudents(batch)" class="text-decoration-none text-primary">
-                    <i class="fas fa-users"></i>
-                    {{ batch.enrolled_students.length }} Students
-                  </a>
-                </td>
-                <td class="text-center">
-                  <button
-                    class="btn btn-danger btn-sm me-2"
-                    @click="deleteBatch(batch.id)"
-                  >
-                    Delete
-                  </button>
-                  <button
-                    class="btn btn-info btn-sm"
-                    @click="openUpdateBatchModal(batch)"
-                  >
-                    Update
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Add Batch Modal -->
-      <div class="modal fade" id="addBatchModal" tabindex="-1" aria-labelledby="addBatchModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="addBatchModalLabel">Add New Batch</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <form @submit.prevent="addBatch">
-                <div class="mb-3">
-                  <label for="batchName" class="form-label">Batch Name</label>
-                  <input
-                    type="text"
-                    id="batchName"
-                    v-model="newBatch.batchName"
-                    class="form-control"
-                    placeholder="Enter batch name"
-                    required
-                  />
-                </div>
-                <div class="mb-3">
-                  <label for="courseName" class="form-label">Course Name</label>
-                  <select
-                    id="courseName"
-                    v-model="newBatch.courseName"
-                    class="form-select"
-                    required
-                  >
-                    <option value="" disabled>Select a course</option>
-                    <option v-for="course in courses" :key="course.id" :value="course.course_name">
-                      {{ course.course_name }}
-                    </option>
-                  </select>
-                </div>
-                <div class="mb-3">
-                  <label for="startTime" class="form-label">Start Time</label>
-                  <input
-                    type="time"
-                    id="startTime"
-                    v-model="newBatch.startTime"
-                    class="form-control"
-                    required
-                  />
-                </div>
-                <div class="mb-3">
-                  <label for="endTime" class="form-label">End Time</label>
-                  <input
-                    type="time"
-                    id="endTime"
-                    v-model="newBatch.endTime"
-                    class="form-control"
-                    required
-                  />
-                </div>
-                <button type="submit" class="btn btn-primary w-100">Add Batch</button>
-              </form>
+        <!-- Add Batch Modal -->
+        <div class="modal fade" id="addBatchModal" tabindex="-1" aria-labelledby="addBatchModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="addBatchModalLabel">Add New Batch</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form @submit.prevent="addBatch">
+                  <div class="mb-3">
+                    <label for="batchName" class="form-label">Batch Name</label>
+                    <input
+                      type="text"
+                      id="batchName"
+                      v-model="newBatch.batchName"
+                      class="form-control"
+                      placeholder="Enter batch name"
+                      required
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label for="courseName" class="form-label">Course Name</label>
+                    <select
+                      id="courseName"
+                      v-model="newBatch.courseName"
+                      class="form-select"
+                      required
+                    >
+                      <option value="" disabled>Select a course</option>
+                      <option v-for="course in courses" :key="course.id" :value="course.course_name">
+                        {{ course.course_name }}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="mb-3">
+                    <label for="startTime" class="form-label">Start Time</label>
+                    <input
+                      type="time"
+                      id="startTime"
+                      v-model="newBatch.startTime"
+                      class="form-control"
+                      required
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label for="endTime" class="form-label">End Time</label>
+                    <input
+                      type="time"
+                      id="endTime"
+                      v-model="newBatch.endTime"
+                      class="form-control"
+                      required
+                    />
+                  </div>
+                  <button type="submit" class="btn btn-primary w-100">Add Batch</button>
+                </form>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Update Batch Modal -->
-      <div class="modal fade" id="updateBatchModal" tabindex="-1" aria-labelledby="updateBatchModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="updateBatchModalLabel">Update Batch</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <form @submit.prevent="updateBatch">
-                <div class="mb-3">
-                  <label for="updateBatchName" class="form-label">Batch Name</label>
-                  <input
-                    type="text"
-                    id="updateBatchName"
-                    v-model="updateBatchForm.batchName"
-                    class="form-control"
-                    placeholder="Enter batch name"
-                    required
-                  />
-                </div>
-                <div class="mb-3">
-                  <label for="updateCourseName" class="form-label">Course Name</label>
-                  <select
-                    id="updateCourseName"
-                    v-model="updateBatchForm.courseName"
-                    class="form-select"
-                    required
-                  >
-                    <option value="" disabled>Select a course</option>
-                    <option v-for="course in courses" :key="course.id" :value="course.course_name">
-                      {{ course.course_name }}
-                    </option>
-                  </select>
-                </div>
-                <div class="mb-3">
-                  <label for="updateStartTime" class="form-label">Start Time</label>
-                  <input
-                    type="time"
-                    id="updateStartTime"
-                    v-model="updateBatchForm.startTime"
-                    class="form-control"
-                    required
-                  />
-                </div>
-                <div class="mb-3">
-                  <label for="updateEndTime" class="form-label">End Time</label>
-                  <input
-                    type="time"
-                    id="updateEndTime"
-                    v-model="updateBatchForm.endTime"
-                    class="form-control"
-                    required
-                  />
-                </div>
-                <button type="submit" class="btn btn-primary w-100">Update Batch</button>
-              </form>
+        <!-- Update Batch Modal -->
+        <div class="modal fade" id="updateBatchModal" tabindex="-1" aria-labelledby="updateBatchModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="updateBatchModalLabel">Update Batch</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form @submit.prevent="updateBatch">
+                  <div class="mb-3">
+                    <label for="updateBatchName" class="form-label">Batch Name</label>
+                    <input
+                      type="text"
+                      id="updateBatchName"
+                      v-model="updateBatchForm.batchName"
+                      class="form-control"
+                      placeholder="Enter batch name"
+                      required
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label for="updateCourseName" class="form-label">Course Name</label>
+                    <select
+                      id="updateCourseName"
+                      v-model="updateBatchForm.courseName"
+                      class="form-select"
+                      required
+                    >
+                      <option value="" disabled>Select a course</option>
+                      <option v-for="course in courses" :key="course.id" :value="course.course_name">
+                        {{ course.course_name }}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="mb-3">
+                    <label for="updateStartTime" class="form-label">Start Time</label>
+                    <input
+                      type="time"
+                      id="updateStartTime"
+                      v-model="updateBatchForm.startTime"
+                      class="form-control"
+                      required
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label for="updateEndTime" class="form-label">End Time</label>
+                    <input
+                      type="time"
+                      id="updateEndTime"
+                      v-model="updateBatchForm.endTime"
+                      class="form-control"
+                      required
+                    />
+                  </div>
+                  <button type="submit" class="btn btn-primary w-100">Update Batch</button>
+                </form>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- View Students Modal -->
-      <div class="modal fade" id="viewStudentsModal" tabindex="-1" aria-labelledby="viewStudentsModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="viewStudentsModalLabel">Enrolled Students</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <div v-if="selectedStudents.length === 0" class="text-center text-muted">
-                No students enrolled in this batch.
+        <!-- View Students Modal -->
+        <div class="modal fade" id="viewStudentsModal" tabindex="-1" aria-labelledby="viewStudentsModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="viewStudentsModalLabel">Enrolled Students</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
-              <div v-else>
-                <table class="table table-hover table-bordered">
-                  <thead class="table-dark text-center">
-                    <tr>
-                      <th>Student Name</th>
-                      <th>Class</th>
-                      <th>Parent Contact</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="student in selectedStudents" :key="student.id">
-                      <td>{{ student.name }}</td>
-                      <td>{{ student.className }}</td>
-                      <td>{{ student.parent_contact }}</td>
-                      <td class="text-center">
-                        <button
-                          class="btn btn-danger btn-sm"
-                          @click="removeStudentFromBatch(currentBatch.id, student.id)"
-                        >
-                          Remove
-                        </button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+              <div class="modal-body">
+                <div v-if="selectedStudents.length === 0" class="text-center text-muted">
+                  No students enrolled in this batch.
+                </div>
+                <div v-else>
+                  <table class="table table-hover table-bordered">
+                    <thead class="table-dark text-center">
+                      <tr>
+                        <th>Student Name</th>
+                        <th>Class</th>
+                        <th>Parent Contact</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="student in selectedStudents" :key="student.id">
+                        <td>{{ student.name }}</td>
+                        <td>{{ student.className }}</td>
+                        <td>{{ student.parent_contact }}</td>
+                        <td class="text-center">
+                          <button
+                            class="btn btn-danger btn-sm"
+                            @click="removeStudentFromBatch(currentBatch.id, student.id)"
+                          >
+                            Remove
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              </div>
             </div>
           </div>
         </div>
