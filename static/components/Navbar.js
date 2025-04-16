@@ -9,7 +9,15 @@ const Navbar = {
         </router-link>
 
         <!-- Toggler Button for Mobile -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button 
+          class="navbar-toggler position-absolute top-1 end-0 m-2" 
+          type="button" 
+          data-bs-toggle="collapse" 
+          data-bs-target="#navbarNav" 
+          aria-controls="navbarNav" 
+          aria-expanded="false" 
+          aria-label="Toggle navigation"
+        >
           <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -47,7 +55,7 @@ const Navbar = {
               </router-link>
             </li>
             <li class="nav-item" v-if="isLoggedIn">
-              <button type="button" class="btn btn-danger ms-3" @click="logout">
+              <button type="button" class="btn btn-danger me-3" @click="logout">
                 Logout
               </button>
             </li>
