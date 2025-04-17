@@ -1,4 +1,5 @@
 import store from '../utils/store.js'; // Import the Vuex store
+import { apiRequest } from '../utils/api.js'; // Import the apiRequest utility function
 
 const AddCourses = {
   template: `
@@ -280,7 +281,7 @@ const AddCourses = {
     async fetchCourses() {
       try {
         const token = store.getters.authToken; // Get the token from Vuex store
-        const response = await fetch(window.location.origin + "/api/get_courses", {
+        const response = await apiRequest(window.location.origin + "/api/get_courses", {
           headers: {
             "Authentication-Token": `${token}`, // Include the token in the Authentication-Token header
           },
@@ -313,7 +314,7 @@ const AddCourses = {
     async addCourse() {
       try {
         const token = store.getters.authToken; // Get the token from Vuex store
-        const response = await fetch(window.location.origin + "/api/create_course", {
+        const response = await apiRequest(window.location.origin + "/api/create_course", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -342,7 +343,7 @@ const AddCourses = {
     async updateCourse() {
       try {
         const token = store.getters.authToken; // Get the token from Vuex store
-        const response = await fetch(window.location.origin + `/api/update_course/${this.updateCourseForm.id}`, {
+        const response = await apiRequest(window.location.origin + `/api/update_course/${this.updateCourseForm.id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -364,7 +365,7 @@ const AddCourses = {
     async deleteCourse(courseId) {
       try {
         const token = store.getters.authToken; // Get the token from Vuex store
-        const response = await fetch(window.location.origin + `/api/delete_course/${courseId}`, {
+        const response = await apiRequest(window.location.origin + `/api/delete_course/${courseId}`, {
           method: "DELETE",
           headers: {
             "Authentication-Token": `${token}`, // Include the token in the Authentication-Token header

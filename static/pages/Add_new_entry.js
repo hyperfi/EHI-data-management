@@ -1,4 +1,5 @@
 import store from '../utils/store.js'; // Import the Vuex store
+import { apiRequest } from '../utils/api.js'; // Import the apiRequest utility function
 
 const AddParent = {
   template: `
@@ -137,17 +138,16 @@ const AddParent = {
       const url = window.location.origin + "/api/get_courses";
       const token = store.getters.authToken; // Get the token from Vuex store
       try {
-        const response = await fetch(url, {
+        const response = await apiRequest(url, {
           headers: {
             'Authentication-Token': `${token}` // Include the token in the Authorization header
           }
         });
-        if (!response.ok) {
-          let data = await response.json();
-          console.error('Failed to fetch courses:', data.message);
-        } else {
+        if (response.ok) {
           this.courses = await response.json(); // Assuming the API returns an array of courses
           console.log('Courses fetched successfully:', this.courses);
+        } else {
+          console.error('Failed to fetch courses');
         }
       } catch (error) {
         console.error('Error fetching courses:', error);
@@ -163,35 +163,38 @@ const AddParent = {
         return;
       }
       let newEntry = { ...this.formData }; // Create a new entry object from form data
-      const url = window.location.origin;
+      const url = window.location.origin + "/api/entry";
       const token = store.getters.authToken; // Get the token from Vuex store
-      const response = await fetch(url + "/api/entry", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authentication-Token': store.getters.authToken // Include the token in the Authorization header
-        },
-        body: JSON.stringify(newEntry)
-      });
-      if (!response.ok) {
-        let data = await response.json();
-
-        if (data.message === "Entry already exists") {
-          this.errorMessage = "Entry already exists. Please use a different contact number.";
+      try {
+        const response = await apiRequest(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authentication-Token': `${token}` // Include the token in the Authorization header
+          },
+          body: JSON.stringify(newEntry)
+        });
+        if (response.ok) {
+          console.log('Data sent to API successfully');
+          this.errorMessage = ''; // Clear any previous error message
+          this.formData = {
+            parentName: '',
+            address: '',
+            visitingDate: '',
+            childName: '',
+            courseEnrolled: '',
+            parentContact: '',
+          };
         } else {
-          console.error('Failed to send data to API:', data.message);
+          const data = await response.json();
+          if (data.message === "Entry already exists") {
+            this.errorMessage = "Entry already exists. Please use a different contact number.";
+          } else {
+            console.error('Failed to send data to API:', data.message);
+          }
         }
-      } else {
-        console.log('Data sent to API successfully');
-        this.errorMessage = ''; // Clear any previous error message
-        this.formData = {
-          parentName: '',
-          address: '',
-          visitingDate: '',
-          childName: '',
-          courseEnrolled: '',
-          parentContact: '',
-        };
+      } catch (error) {
+        console.error('Error submitting form:', error);
       }
     },
   },

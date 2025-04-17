@@ -1,4 +1,5 @@
 import store from '../utils/store.js'; // Import the Vuex store
+import { apiRequest } from '../utils/api.js'; // Import the apiRequest utility function
 
 const ViewAllStudents = {
     template: `
@@ -199,49 +200,61 @@ const ViewAllStudents = {
     },
     methods: {
         async fetchStudents() {
-            const url = window.location.origin;
+            const url = window.location.origin + "/api/entry";
             const token = store.getters.authToken; // Get the token from Vuex store
-            const response = await fetch(url + "/api/entry", {
-                headers: {
-                     'Authentication-Token': `${token}`, // Include the token in the Authorization header
-                },
-            });
-            if (response.ok) {
-                const data = await response.json();
-                this.students = data;
-            } else {
-                this.showNotification("Failed to fetch students.", "danger");
+            try {
+                const response = await apiRequest(url, {
+                    headers: {
+                        'Authentication-Token': `${token}`, // Include the token in the Authorization header
+                    },
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    this.students = data;
+                } else {
+                    this.showNotification("Failed to fetch students.", "danger");
+                }
+            } catch (error) {
+                console.error("Error fetching students:", error);
             }
         },
         async fetchBatches() {
-            const url = window.location.origin;
+            const url = window.location.origin + "/api/get_batches";
             const token = store.getters.authToken; // Get the token from Vuex store
-            const response = await fetch(url + "/api/get_batches", {
-                headers: {
-                'Authentication-Token': `${token}`, // Include the token in the Authentication-Token header
-                },
-            });
-            if (response.ok) {
-                const data = await response.json();
-                this.batches = data;
-            } else {
-                this.showNotification("Failed to fetch batches.", "danger");
+            try {
+                const response = await apiRequest(url, {
+                    headers: {
+                        'Authentication-Token': `${token}`, // Include the token in the Authorization header
+                    },
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    this.batches = data;
+                } else {
+                    this.showNotification("Failed to fetch batches.", "danger");
+                }
+            } catch (error) {
+                console.error("Error fetching batches:", error);
             }
         },
         async deleteStudent(parentContact, childName) {
-            const url = window.location.origin;
+            const url = window.location.origin + `/api/entry/${parentContact}/${childName}`;
             const token = store.getters.authToken; // Get the token from Vuex store
-            const response = await fetch(url + `/api/entry/${parentContact}/${childName}`, {
-                method: 'DELETE',
-                headers: {
-                     'Authentication-Token': `${token}`, // Include the token in the Authorization header
-                },
-            });
-            if (response.ok) {
-                this.fetchStudents();
-                this.showNotification("Student deleted successfully.", "success");
-            } else {
-                this.showNotification("Failed to delete student.", "danger");
+            try {
+                const response = await apiRequest(url, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authentication-Token': `${token}`, // Include the token in the Authorization header
+                    },
+                });
+                if (response.ok) {
+                    this.fetchStudents();
+                    this.showNotification("Student deleted successfully.", "success");
+                } else {
+                    this.showNotification("Failed to delete student.", "danger");
+                }
+            } catch (error) {
+                console.error("Error deleting student:", error);
             }
         },
         openUpdateModal(student) {
@@ -315,22 +328,26 @@ const ViewAllStudents = {
 
             const url = window.location.origin + `/api/add_student_to_batch/${this.selectedBatchId}/${this.selectedStudent.id}`;
             const token = store.getters.authToken; // Get the token from Vuex store
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Authentication-Token': `${token}`, // Include the token in the Authorization header
-                },
-            });
+            try {
+                const response = await apiRequest(url, {
+                    method: 'GET',
+                    headers: {
+                        'Authentication-Token': `${token}`, // Include the token in the Authorization header
+                    },
+                });
 
-            if (response.ok) {
-                const modalElement = document.getElementById('assignBatchModal');
-                const modal = bootstrap.Modal.getInstance(modalElement); // Get the modal instance
-                modal.hide(); // Hide the modal
-                this.fetchStudents(); // Refresh the student list
-                this.showNotification("Student assigned to batch successfully.", "success");
-            } else {
-                const responseData = await response.json();
-                this.showNotification(`Failed to assign student to batch: ${responseData.message}`, "danger");
+                if (response.ok) {
+                    const modalElement = document.getElementById('assignBatchModal');
+                    const modal = bootstrap.Modal.getInstance(modalElement); // Get the modal instance
+                    modal.hide(); // Hide the modal
+                    this.fetchStudents(); // Refresh the student list
+                    this.showNotification("Student assigned to batch successfully.", "success");
+                } else {
+                    const responseData = await response.json();
+                    this.showNotification(`Failed to assign student to batch: ${responseData.message}`, "danger");
+                }
+            } catch (error) {
+                console.error("Error assigning student to batch:", error);
             }
         },
         sortTable(key) {

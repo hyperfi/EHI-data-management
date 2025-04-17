@@ -15,6 +15,8 @@ export default new Vuex.Store({
     logout(state) {
       state.isLoggedIn = false; // Set logged-in state to false
       state.authToken = null; // Clear the auth token
+      // this.$router.push('/login'); // Redirect to login page
+      // this.$router.go(0); // Force reload the page
     },
     setAuthToken(state, token) {
       state.authToken = token; // Set the auth token

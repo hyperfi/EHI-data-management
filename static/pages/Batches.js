@@ -1,4 +1,5 @@
 import store from '../utils/store.js'; // Import the Vuex store
+import { apiRequest } from '../utils/api.js'; // Import the apiRequest utility function
 
 const Batches = {
   template: `
@@ -275,9 +276,10 @@ const Batches = {
   },
   methods: {
     async fetchBatches() {
+      const url = "/api/get_batches";
+      const token = store.getters.authToken; // Get the token from Vuex store
       try {
-        const token = store.getters.authToken; // Get the token from Vuex store
-        const response = await fetch("/api/get_batches", {
+        const response = await apiRequest(url, {
           headers: {
             "Authentication-Token": `${token}`, // Include the token in the Authentication-Token header
           },
@@ -289,13 +291,13 @@ const Batches = {
         }
       } catch (error) {
         console.error("Error fetching batches:", error);
-        this.showNotification("Error fetching batches", "danger");
       }
     },
     async fetchCourses() {
+      const url = "/api/get_courses";
+      const token = store.getters.authToken; // Get the token from Vuex store
       try {
-        const token = store.getters.authToken; // Get the token from Vuex store
-        const response = await fetch("/api/get_courses", {
+        const response = await apiRequest(url, {
           headers: {
             "Authentication-Token": `${token}`, // Include the token in the Authentication-Token header
           },
@@ -307,13 +309,13 @@ const Batches = {
         }
       } catch (error) {
         console.error("Error fetching courses:", error);
-        this.showNotification("Error fetching courses", "danger");
       }
     },
     async addBatch() {
+      const url = "/api/add_batch";
+      const token = store.getters.authToken; // Get the token from Vuex store
       try {
-        const token = store.getters.authToken; // Get the token from Vuex store
-        const response = await fetch("/api/add_batch", {
+        const response = await apiRequest(url, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -332,13 +334,13 @@ const Batches = {
         }
       } catch (error) {
         console.error("Error adding batch:", error);
-        this.showNotification("Error adding batch", "danger");
       }
     },
     async updateBatch() {
+      const url = `/api/update_batch/${this.updateBatchForm.id}`;
+      const token = store.getters.authToken; // Get the token from Vuex store
       try {
-        const token = store.getters.authToken; // Get the token from Vuex store
-        const response = await fetch(`/api/update_batch/${this.updateBatchForm.id}`, {
+        const response = await apiRequest(url, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -357,13 +359,13 @@ const Batches = {
         }
       } catch (error) {
         console.error("Error updating batch:", error);
-        this.showNotification("Error updating batch", "danger");
       }
     },
     async deleteBatch(batchId) {
+      const url = `/api/delete_batch/${batchId}`;
+      const token = store.getters.authToken; // Get the token from Vuex store
       try {
-        const token = store.getters.authToken; // Get the token from Vuex store
-        const response = await fetch(`/api/delete_batch/${batchId}`, {
+        const response = await apiRequest(url, {
           method: "DELETE",
           headers: {
             "Authentication-Token": `${token}`, // Include the token in the Authentication-Token header
@@ -378,7 +380,6 @@ const Batches = {
         }
       } catch (error) {
         console.error("Error deleting batch:", error);
-        this.showNotification("Error deleting batch", "danger");
       }
     },
     openAddBatchModal() {

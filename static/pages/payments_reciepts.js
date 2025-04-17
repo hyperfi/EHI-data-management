@@ -1,4 +1,5 @@
 import store from '../utils/store.js'; // Import the Vuex store
+import { apiRequest } from '../utils/api.js'; // Import the apiRequest utility function
 
 const PaymentStatus = {
   template: `
@@ -180,9 +181,10 @@ const PaymentStatus = {
   },
   methods: {
     async fetchPayments() {
+      const url = "/api/payment_status";
+      const token = store.getters.authToken; // Get the token from Vuex store
       try {
-        const token = store.getters.authToken; // Get the token from Vuex store
-        const response = await fetch("/api/payment_status", {
+        const response = await apiRequest(url, {
           headers: {
             "Authentication-Token": `${token}`, // Include the token in the Authentication-Token header
           },
@@ -194,7 +196,6 @@ const PaymentStatus = {
         }
       } catch (error) {
         console.error("Error fetching payment records:", error);
-        this.showNotification("Error fetching payment records", "danger");
       }
     },
     toggleSortOrder() {
@@ -211,9 +212,10 @@ const PaymentStatus = {
       modal.show();
     },
     async updatePaymentStatus() {
+      const url = "/api/payment_status_update";
+      const token = store.getters.authToken; // Get the token from Vuex store
       try {
-        const token = store.getters.authToken; // Get the token from Vuex store
-        const response = await fetch("/api/payment_status_update", {
+        const response = await apiRequest(url, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -232,7 +234,6 @@ const PaymentStatus = {
         }
       } catch (error) {
         console.error("Error updating payment status:", error);
-        this.showNotification("Error updating payment status", "danger");
       }
     },
 
