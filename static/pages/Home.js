@@ -44,7 +44,11 @@ const Home = {
                       />
                       <small class="text-danger" v-if="passwordError">{{ passwordError }}</small>
                   </div>
-                  <button type="submit" class="btn btn-primary w-100">Login</button>
+                  <button type="submit" class="btn btn-primary w-100" :disabled="isLoading">
+                      <span v-if="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                      <span v-if="!isLoading">Login</span>
+                      <span v-else>Loading...</span>
+                  </button>
               </form>
           </div>
       </div>
@@ -60,6 +64,7 @@ const Home = {
       errorMessage: '', // To store the error message for display
       emailError: '', // To store email validation error
       passwordError: '', // To store password validation error
+      isLoading: false, // To track the loading state of the login button
     };
   },
   methods: {
@@ -90,6 +95,7 @@ const Home = {
         return; // Stop if there are validation errors
       }
 
+      this.isLoading = true; // Set loading state to true
       const url = window.location.origin + "/api/login";
       try {
         const response = await fetch(url, {
@@ -127,6 +133,8 @@ const Home = {
       } catch (error) {
         console.error('Error during login:', error);
         this.errorMessage = 'An error occurred. Please try again later.';
+      } finally {
+        this.isLoading = false; // Reset loading state
       }
     },
   },
