@@ -5,11 +5,9 @@ const Batches = {
   template: `
     <div class="position-relative">
       <!-- Background Video -->
-      <video autoplay loop muted playsinline class="position-absolute w-100 h-100" style="object-fit: cover; z-index: -1;">
-            <source src="/static/videos/background.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-      </video>
-      <div class="d-flex justify-content-center align-items-center vh-100 bg-light bg-opacity-25" style="height: 80vh;">
+      
+      
+      <div class="d-flex justify-content-center align-items-center homestyle" style="background-color: rgba(255, 255, 255, 0.1);">
 
         <div class="card shadow-lg p-4" style="width: 90%; max-height: 90%; overflow-y: auto; background-color: rgba(255, 255, 255, 0.9);">
           <h1 class="text-center mb-4 display-5">Batches</h1>

@@ -4,13 +4,10 @@ const Home = {
   template: `
   <div class="position-relative">
       <!-- Background Video -->
-      <video autoplay loop muted playsinline class="position-absolute w-100 h-100" style="object-fit: cover; z-index: -1;">
-            <source src="/static/videos/background.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-      </video>
+      
 
       <!-- Login Card -->
-      <div class="d-flex justify-content-center align-items-center bg-light bg-opacity-25 homestyle" >
+      <div class="d-flex justify-content-center align-items-center homestyle" style="background-color: rgba(255, 255, 255, 0.1);">
           <div class="card shadow-lg p-4 w-100" style="max-width: 400px; max-height: 90%; overflow-y: auto; background-color: rgba(255, 255, 255, 0.8);">
               <h1 class="text-center mb-4 display-6">Login</h1>
               <!-- Display error message if it exists -->
