@@ -38,7 +38,8 @@ const AddParent = {
                     <label for="courseEnrolled" class="form-label">Course Enrolled:</label>
                     <select id="courseEnrolled" v-model="formData.courseEnrolled" class="form-select" required>
                         <option value="" disabled>Select a course</option>
-                        <option v-for="course in courses" :key="course.id" :value="course.course_name">{{ course.course_name }}</option>
+                        <option v-if="loading" disabled>Loading courses...</option>
+                        <option v-else v-for="course in courses" :key="course.id" :value="course.course_name">{{ course.course_name }}</option>
                     </select>
                 </div>
                 <div class="mb-3">
@@ -71,6 +72,7 @@ const AddParent = {
         visitingDate: '',
       },
       errorMessage: '', // To store the error message for display
+      loading: true, // To track the loading state of the courses dropdown
     };
   },
   computed: {
@@ -132,9 +134,8 @@ const AddParent = {
       }
     },
     async fetchCourses() {
-      // this.$router.go()
       const url = window.location.origin + "/api/get_courses";
-      const token = store.getters.authToken; // Get the token from Vuex store
+      const token = sessionStorage.getItem('authToken'); // Get the token from Vuex store
       console.log('Token:', token); // Log the token for debugging
       try {
         const response = await apiRequest(url, {
@@ -150,6 +151,8 @@ const AddParent = {
         }
       } catch (error) {
         console.error('Error fetching courses:', error);
+      } finally {
+        this.loading = false; // Set loading to false after fetching courses
       }
     },
     async submitForm() {

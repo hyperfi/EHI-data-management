@@ -108,7 +108,7 @@ const Home = {
           this.errorMessage = data.message || 'Login failed. Please try again.';
         } else {
           const data = await response.json();
-          console.log('Login successful:', data.message);
+          console.log('Login successful:', data.message, data.token);
           this.errorMessage = ''; // Clear any previous error message
 
           // Save the token and login state in sessionStorage
@@ -124,7 +124,7 @@ const Home = {
           }, 3600000); // 1 hour in milliseconds
 
           // Redirect to /add_parent
-          this.$router.go(); // Force a reload to ensure the new route is rendered
+          // this.$router.go(); // Force a reload to ensure the new route is rendered
           this.$router.push('/add_parent');
         }
       } catch (error) {
