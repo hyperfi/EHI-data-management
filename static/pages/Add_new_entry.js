@@ -132,8 +132,10 @@ const AddParent = {
       }
     },
     async fetchCourses() {
+      // this.$router.go()
       const url = window.location.origin + "/api/get_courses";
       const token = store.getters.authToken; // Get the token from Vuex store
+      console.log('Token:', token); // Log the token for debugging
       try {
         const response = await apiRequest(url, {
           headers: {
