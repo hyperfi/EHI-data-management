@@ -179,7 +179,7 @@ const PaymentStatus = {
   methods: {
     async fetchPayments() {
       const url = "/api/payment_status";
-      const token = store.getters.authToken; // Get the token from Vuex store
+      const token = sessionStorage.getItem('authToken'); // Get the token from Vuex store
       try {
         const response = await apiRequest(url, {
           headers: {
@@ -210,7 +210,7 @@ const PaymentStatus = {
     },
     async updatePaymentStatus() {
       const url = "/api/payment_status_update";
-      const token = store.getters.authToken; // Get the token from Vuex store
+      const token = sessionStorage.getItem('authToken'); // Get the token from Vuex store
       try {
         const response = await apiRequest(url, {
           method: "PUT",

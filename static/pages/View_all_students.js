@@ -199,7 +199,7 @@ const ViewAllStudents = {
     methods: {
         async fetchStudents() {
             const url = window.location.origin + "/api/entry";
-            const token = store.getters.authToken; // Get the token from Vuex store
+            const token = sessionStorage.getItem('authToken'); // Get the token from Vuex store
             try {
                 const response = await apiRequest(url, {
                     headers: {
@@ -218,7 +218,7 @@ const ViewAllStudents = {
         },
         async fetchBatches() {
             const url = window.location.origin + "/api/get_batches";
-            const token = store.getters.authToken; // Get the token from Vuex store
+            const token = sessionStorage.getItem('authToken'); // Get the token from Vuex store
             try {
                 const response = await apiRequest(url, {
                     headers: {
@@ -237,7 +237,7 @@ const ViewAllStudents = {
         },
         async deleteStudent(parentContact, childName) {
             const url = window.location.origin + `/api/entry/${parentContact}/${childName}`;
-            const token = store.getters.authToken; // Get the token from Vuex store
+            const token = sessionStorage.getItem('authToken'); // Get the token from Vuex store
             try {
                 const response = await apiRequest(url, {
                     method: 'DELETE',
@@ -293,7 +293,7 @@ const ViewAllStudents = {
 
             const { parentContact, childName } = this.updateForm;
             const url = window.location.origin + `/api/entry/${parentContact}/${childName}`;
-            const token = store.getters.authToken; // Get the token from Vuex store
+            const token = sessionStorage.getItem('authToken'); // Get the token from Vuex store
             const response = await fetch(url, {
                 method: 'PUT',
                 headers: {
@@ -325,7 +325,7 @@ const ViewAllStudents = {
             }
 
             const url = window.location.origin + `/api/add_student_to_batch/${this.selectedBatchId}/${this.selectedStudent.id}`;
-            const token = store.getters.authToken; // Get the token from Vuex store
+            const token = sessionStorage.getItem('authToken'); // Get the token from Vuex store
             try {
                 const response = await apiRequest(url, {
                     method: 'GET',

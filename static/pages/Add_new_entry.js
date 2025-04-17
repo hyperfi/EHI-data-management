@@ -166,7 +166,7 @@ const AddParent = {
       }
       let newEntry = { ...this.formData }; // Create a new entry object from form data
       const url = window.location.origin + "/api/entry";
-      const token = store.getters.authToken; // Get the token from Vuex store
+      const token = sessionStorage.getItem('authToken'); // Get the token from Vuex store
       try {
         const response = await apiRequest(url, {
           method: 'POST',

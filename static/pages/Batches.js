@@ -275,7 +275,7 @@ const Batches = {
   methods: {
     async fetchBatches() {
       const url = "/api/get_batches";
-      const token = store.getters.authToken; // Get the token from Vuex store
+      const token = sessionStorage.getItem('authToken'); // Get the token from Vuex store
       try {
         const response = await apiRequest(url, {
           headers: {
@@ -293,7 +293,7 @@ const Batches = {
     },
     async fetchCourses() {
       const url = "/api/get_courses";
-      const token = store.getters.authToken; // Get the token from Vuex store
+      const token = sessionStorage.getItem('authToken'); // Get the token from Vuex store
       try {
         const response = await apiRequest(url, {
           headers: {
@@ -311,7 +311,7 @@ const Batches = {
     },
     async addBatch() {
       const url = "/api/add_batch";
-      const token = store.getters.authToken; // Get the token from Vuex store
+      const token = sessionStorage.getItem('authToken'); // Get the token from Vuex store
       try {
         const response = await apiRequest(url, {
           method: "POST",
@@ -336,7 +336,7 @@ const Batches = {
     },
     async updateBatch() {
       const url = `/api/update_batch/${this.updateBatchForm.id}`;
-      const token = store.getters.authToken; // Get the token from Vuex store
+      const token = sessionStorage.getItem('authToken'); // Get the token from Vuex store
       try {
         const response = await apiRequest(url, {
           method: "PUT",
@@ -361,7 +361,7 @@ const Batches = {
     },
     async deleteBatch(batchId) {
       const url = `/api/delete_batch/${batchId}`;
-      const token = store.getters.authToken; // Get the token from Vuex store
+      const token = sessionStorage.getItem('authToken'); // Get the token from Vuex store
       try {
         const response = await apiRequest(url, {
           method: "DELETE",
@@ -397,7 +397,7 @@ const Batches = {
     },
     async fetchStudentDetails(enrolledStudents) {
       try {
-        const token = store.getters.authToken; // Get the token from Vuex store
+        const token = sessionStorage.getItem('authToken'); // Get the token from Vuex store
         const response = await fetch("/api/get_student_details", {
           method: "POST",
           headers: {
@@ -421,7 +421,7 @@ const Batches = {
 
     async removeStudentFromBatch(batchId, studentId) {
       try {
-        const token = store.getters.authToken; // Get the token from Vuex store
+        const token = sessionStorage.getItem('authToken'); // Get the token from Vuex store
         const response = await fetch(`/api/remove_student_from_batch/${batchId}/${studentId}`, {
           method: "GET",
           headers: {

@@ -276,7 +276,7 @@ const AddCourses = {
   methods: {
     async fetchCourses() {
       try {
-        const token = store.getters.authToken; // Get the token from Vuex store
+        const token = sessionStorage.getItem('authToken'); // Get the token from Vuex store
         const response = await apiRequest(window.location.origin + "/api/get_courses", {
           headers: {
             "Authentication-Token": `${token}`, // Include the token in the Authentication-Token header
@@ -309,7 +309,7 @@ const AddCourses = {
     },
     async addCourse() {
       try {
-        const token = store.getters.authToken; // Get the token from Vuex store
+        const token = sessionStorage.getItem('authToken'); // Get the token from Vuex store
         const response = await apiRequest(window.location.origin + "/api/create_course", {
           method: "POST",
           headers: {
@@ -338,7 +338,7 @@ const AddCourses = {
     },
     async updateCourse() {
       try {
-        const token = store.getters.authToken; // Get the token from Vuex store
+        const token = sessionStorage.getItem('authToken'); // Get the token from Vuex store
         const response = await apiRequest(window.location.origin + `/api/update_course/${this.updateCourseForm.id}`, {
           method: "PUT",
           headers: {
@@ -360,7 +360,7 @@ const AddCourses = {
     },
     async deleteCourse(courseId) {
       try {
-        const token = store.getters.authToken; // Get the token from Vuex store
+        const token = sessionStorage.getItem('authToken'); // Get the token from Vuex store
         const response = await apiRequest(window.location.origin + `/api/delete_course/${courseId}`, {
           method: "DELETE",
           headers: {
