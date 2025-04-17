@@ -88,8 +88,6 @@ This project is licensed under the MIT License. See the `LICENSE` file for detai
 ## **Contact**
 For any queries or support, please contact us at:
 - **Email**: [eventhorizoninstitute25@gmail.com](mailto:eventhorizoninstitute25@gmail.com)
-- **Phone**: +91-82954-33285
-
 ---
 
 Thank you for using the Event Horizon Institute web application! 🚀
