@@ -124,8 +124,8 @@ const Home = {
           }, 3600000); // 1 hour in milliseconds
 
           // Redirect to /add_parent
-          this.$router.push('/add_parent');
           this.$router.go(); // Force a reload to ensure the new route is rendered
+          this.$router.push('/add_parent');
         }
       } catch (error) {
         console.error('Error during login:', error);
