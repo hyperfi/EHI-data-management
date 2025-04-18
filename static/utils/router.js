@@ -6,6 +6,7 @@ import AddCourses from "../pages/add_courses.js";
 import Batches from "../pages/Batches.js";
 import Pay from "../pages/payments_reciepts.js";
 import AddParent from "../pages/Add_new_entry.js";
+import Login from "../pages/login.js"; // Import the Login component
 
 
 const routes = [
@@ -13,6 +14,12 @@ const routes = [
     path: "/",
     name: "/",
     component: Home,
+    meta: { requiresLogout: true }, // Accessible only when logged out
+  },
+  {
+    path: "/login",
+    name: "/login",
+    component: Login,
     meta: { requiresLogout: true }, // Accessible only when logged out
   },
   {

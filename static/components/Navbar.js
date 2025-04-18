@@ -29,6 +29,11 @@ const Navbar = {
                 Home
               </router-link>
             </li>
+            <li class="nav-item" v-if="!isLoggedIn">
+              <router-link to="/login" exact class="nav-link">
+                Login
+              </router-link>
+            </li>
             <li class="nav-item" v-if="isLoggedIn">
               <router-link to="/add_parent" exact class="nav-link">
                 Add Parent

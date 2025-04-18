@@ -1,137 +1,111 @@
-import store from '../utils/store.js'; // Import the Vuex store
-
 const Home = {
   template: `
-  <div class="position-relative">
-      <!-- Background Video -->
-      
-
-      <!-- Login Card -->
-      <div class="d-flex justify-content-center align-items-center homestyle" style="background-color: rgba(255, 255, 255, 0.1);">
-          <div class="card shadow-lg p-4 w-100" style="max-width: 400px; max-height: 90%; overflow-y: auto; background-color: rgba(255, 255, 255, 0.8);">
-              <h1 class="text-center mb-4 display-6">Login</h1>
-              <!-- Display error message if it exists -->
-              <div v-if="errorMessage" class="alert alert-danger text-center" role="alert">
-                  {{ errorMessage }}
-              </div>
-              <form @submit.prevent="login" class="needs-validation" novalidate>
-                  <div class="mb-3">
-                      <label for="email" class="form-label">Email:</label>
-                      <input 
-                        type="email" 
-                        id="email" 
-                        v-model="formData.email" 
-                        class="form-control" 
-                        placeholder="Enter your email"
-                        required
-                        @input="validateEmail">
-                      <small class="text-danger" v-if="emailError">{{ emailError }}</small>
-                  </div>
-                  <div class="mb-3">
-                      <label for="password" class="form-label">Password:</label>
-                      <input 
-                        type="password" 
-                        id="password" 
-                        v-model="formData.password" 
-                        class="form-control" 
-                        placeholder="Enter your password"
-                        required
-                        minlength="6"
-                        @input="validatePassword" 
-                      />
-                      <small class="text-danger" v-if="passwordError">{{ passwordError }}</small>
-                  </div>
-                  <button type="submit" class="btn btn-primary w-100" :disabled="isLoading">
-                      <span v-if="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                      <span v-if="!isLoading">Login</span>
-                      <span v-else>Loading...</span>
-                  </button>
-              </form>
-          </div>
+  <div>
+    <!-- Hero Section -->
+    <div class="hero-section position-relative text-white text-center" style="min-height: 100vh; background: rgba(22,34,58,0.0);">
+      <div class="overlay position-absolute w-100 h-100" style="top:0; left:0; background-color: rgba(0, 0, 0, 0.3); z-index: 1;"></div>
+      <div class="content position-relative" style="z-index: 2; padding-top: 100px;">
+        <h1 class="display-3 fw-bold mt-5">Welcome to Event Horizon Institute</h1>
+        <p class="lead mt-3">Empowering students with quality education and training for a brighter future.</p>
+        <p class="lead mt-3">
+          Join the premier foundation program for Classes 
+          <span style="color: #ffd700; font-weight: bold;">
+            9<sup>th</sup> to 12<sup>th</sup>
+          </span>
+          </br> and unlock your academic potential!
+        </p>
+        <button class="btn btn-primary btn-lg mt-4" @click="scrollToSection('about')">Learn More</button>
       </div>
-  </div>
+    </div>
+
+    <!-- About Section -->
+    <div id="about" class="about-section py-5" style="background-color: rgb(34, 52, 89);">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-md-6 d-flex justify-content-center">
+            <div class="founder-images d-flex flex-column flex-md-row align-items-center w-100">
+              <div class="text-center me-md-4 mb-4 mb-md-0" style="width: 48%;">
+                <img src="/static/images/founder1.jpg" alt="Founder 1" class="img-fluid shadow mb-2" style="width: 180px; height: 180px; object-fit: cover; border-radius: 50%; border: 4px solid #fff;">
+                <div class="mt-2 text-white">
+                  <h5 class="mb-1">Dr. Abhishek Sharma</h5>
+                  <div><small>PhD IIT Roorkee</small></div>
+                  <div><small>MSc NIT Jalandhar</small></div>
+                  <div><small>Scientist, University of Surrey</small></div>
+                  </div>
+                  </div>
+                  <div class="text-center" style="width: 48%;">
+                  <img src="/static/images/founder2.jpg" alt="Founder 2" class="img-fluid shadow mb-2" style="width: 180px; height: 180px; object-fit: cover; border-radius: 50%; border: 4px solid #fff;">
+                  <div class="mt-2 text-white">
+                  <h5 class="mb-1">Dr. Bharti Bhoy</h5>
+                  <div><small>PhD IIT Roorkee</small></div>
+                  <div><small>MSc Central University, CG</small></div>
+                  <div><small>Scientist, University of Surrey</small></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 text-white">
+            <h2 class="fw-bold">About Us</h2>
+            <p class="mt-3">
+              Event Horizon Institute was founded with the vision of providing top-notch education and training to students. 
+              Our mission is to empower individuals with the knowledge and skills they need to excel in their careers and make a positive impact on society.
+            </p>
+            <p class="mt-3">
+              With a team of dedicated educators and state-of-the-art facilities, we strive to create an environment where students can thrive and achieve their full potential.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+        <!-- Why Choose Us Section -->
+    <div class="why-choose-section position-relative text-white text-center py-5" style="no-repeat center center/cover; margin-bottom: 20px;">
+      <div class="overlay position-absolute w-100 h-100" style="background-color: rgba(4, 15, 36, 0.6); z-index: 1;"></div>
+      <div class="content position-relative" style="z-index: 2; max-width: 700px; margin: 0 auto;">
+        <h2 class="display-4 fw-bold mb-4">Why Choose Us?</h2>
+        <ul class="list-unstyled text-start mx-auto" style="max-width: 600px;">
+          <li class="d-flex align-items-start mb-3">
+            <span style="min-width: 2.5rem; display: inline-block; font-size:1.5rem; color:#ffd700; margin-right: 15px; text-align: center;">&#9733;</span>
+            <span>Our faculty consists of highly experienced and qualified educators from top institutes.</span>
+          </li>
+          <li class="d-flex align-items-start mb-3">
+            <span style="min-width: 2.5rem; display: inline-block; font-size:1.5rem; color:#00e6e6; margin-right: 15px; text-align: center;">&#9679;</span>
+            <span>We provide personalized attention and dedicated mentoring to every student.</span>
+          </li>
+          <li class="d-flex align-items-start mb-3">
+            <span style="min-width: 2.5rem; display: inline-block; font-size:1.5rem; color:#ff69b4; margin-right: 15px; text-align: center;">&#10024;</span>
+            <span>Our teaching methods use engaging animations and illustrations to simplify complex concepts.</span>
+          </li>
+          <li class="d-flex align-items-start mb-3">
+            <span style="min-width: 2.5rem; display: inline-block; font-size:1.5rem; color:#90ee90; margin-right: 15px; text-align: center;">&#127891;</span>
+            <span>We focus on nurturing leadership qualities and fostering innovation in our students.</span>
+          </li>
+          <li class="d-flex align-items-start mb-3">
+            <span style="min-width: 2.5rem; display: inline-block; font-size:1.5rem; color:#ffa500; margin-right: 15px; text-align: center;">&#128640;</span>
+            <span>Regular assessments and exclusive doubt-solving sessions ensure continuous progress.</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <!-- Contact Section -->
+    <div class="contact-section py-5 text-white text-center" style="background-color:rgb(34, 52, 89); margin-top: 50px;">
+      <div class="container">
+        <h2 class="fw-bold">Contact Us</h2>
+        <p class="mt-2">Have questions? Reach out to us at:</p>
+        <p class="mt-2">
+          <span class="fw-bold">Phone:</span> +91-8295433285, +91-9650287641
+        </p>
+        <p class="mt-0">
+          <span class="fw-bold">Address:</span> SCO 26 Nagarpalika Campus, </br> Indri, Karnal, India
+        </p>
+      </div>
+    </div>
   `,
-  
-  data() {
-    return {
-      formData: {
-        email: '',
-        password: '',
-      },
-      errorMessage: '', // To store the error message for display
-      emailError: '', // To store email validation error
-      passwordError: '', // To store password validation error
-      isLoading: false, // To track the loading state of the login button
-    };
-  },
   methods: {
-    validateEmail() {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!this.formData.email) {
-        this.emailError = 'Email is required.';
-      } else if (!emailRegex.test(this.formData.email)) {
-        this.emailError = 'Please enter a valid email address.';
-      } else {
-        this.emailError = '';
-      }
-    },
-    validatePassword() {
-      if (!this.formData.password) {
-        this.passwordError = 'Password is required.';
-      } else if (this.formData.password.length < 6) {
-        this.passwordError = 'Password must be at least 6 characters long.';
-      } else {
-        this.passwordError = '';
-      }
-    },
-    async login() {
-      this.validateEmail();
-      this.validatePassword();
-
-      if (this.emailError || this.passwordError) {
-        return; // Stop if there are validation errors
-      }
-
-      this.isLoading = true; // Set loading state to true
-      const url = window.location.origin + "/api/login";
-      try {
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(this.formData),
-        });
-
-        if (!response.ok) {
-          const data = await response.json();
-          this.errorMessage = data.message || 'Login failed. Please try again.';
-        } else {
-          const data = await response.json();
-          console.log('Login successful:', data.message, data.token);
-          this.errorMessage = ''; // Clear any previous error message
-
-          // Save the token and login state in sessionStorage
-          sessionStorage.setItem('authToken', data.token);
-          sessionStorage.setItem('isLoggedIn', 'true');
-
-          // Update the Vuex store
-          store.dispatch('login');
-          // clear session storage after a time
-          setTimeout(() => {
-            sessionStorage.removeItem('authToken');
-            sessionStorage.removeItem('isLoggedIn');
-          }, 3600000); // 1 hour in milliseconds
-
-          // Redirect to /add_parent
-          // this.$router.go(); // Force a reload to ensure the new route is rendered
-          this.$router.push('/add_parent');
-        }
-      } catch (error) {
-        console.error('Error during login:', error);
-        this.errorMessage = 'An error occurred. Please try again later.';
-      } finally {
-        this.isLoading = false; // Reset loading state
+    scrollToSection(sectionId) {
+      const section = document.getElementById(sectionId);
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth' });
       }
     },
   },
