@@ -2,7 +2,7 @@ const Home = {
   template: `
   <div>
     <!-- Hero Section -->
-    <div class="hero-section position-relative text-white text-center" style="min-height: 100vh; background: rgba(22,34,58,0.0);">
+    <div class="hero-section position-relative text-white text-center mb-3" style="min-height: 100vh; background: rgba(22,34,58,0.0);">
       <div class="overlay position-absolute w-100 h-100" style="top:0; left:0; background-color: rgba(0, 0, 0, 0.3); z-index: 1;"></div>
       <div class="content position-relative" style="z-index: 2; padding-top: 100px;">
         <h1 class="display-3 fw-bold mt-4">Welcome to Event Horizon Institute</h1>
@@ -27,7 +27,7 @@ const Home = {
               <div class="text-center me-md-4 mb-4 mb-md-0" style="width: 48%;">
                 <img src="/static/images/founder1.jpg" alt="Founder 1" class="img-fluid shadow mb-2" style="width: 180px; height: 180px; object-fit: cover; border-radius: 50%; border: 4px solid #fff;">
                 <div class="mt-2 text-white">
-                  <h5 class="mb-1">Dr. Abhishek Sharma</h5>
+                  <h5 class="mb-1">Dr. Abhishek</h5>
                   <div><small>PhD IIT Roorkee</small></div>
                   <div><small>MSc NIT Jalandhar</small></div>
                   <div><small>Scientist, University of Surrey</small></div>
@@ -36,7 +36,7 @@ const Home = {
                   <div class="text-center" style="width: 48%;">
                   <img src="/static/images/founder2.jpg" alt="Founder 2" class="img-fluid shadow mb-2" style="width: 180px; height: 180px; object-fit: cover; border-radius: 50%; border: 4px solid #fff;">
                   <div class="mt-2 text-white">
-                  <h5 class="mb-1">Dr. Bharti Bhoy</h5>
+                  <h5 class="mb-1">Dr. Bharti</h5>
                   <div><small>PhD IIT Roorkee</small></div>
                   <div><small>MSc Central University, CG</small></div>
                   <div><small>Scientist, University of Surrey</small></div>
@@ -130,6 +130,7 @@ const Home = {
           <span class="fw-bold">Address:</span> SCO 26 Nagarpalika Campus, </br> Indri, Karnal, India
         </p>
       </div>
+    </div>
     </div>
   `,
   methods: {
