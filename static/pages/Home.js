@@ -2,7 +2,7 @@ const Home = {
   template: `
   <div>
     <!-- Hero Section -->
-    <div class="hero-section position-relative text-white text-center mb-3" style="min-height: 100vh; background: rgba(22,34,58,0.0);">
+    <div class="hero-section position-relative text-white text-center mb-0" style="min-height: 100vh; background: rgba(22,34,58,0.0);">
       <div class="overlay position-absolute w-100 h-100" style="top:0; left:0; background-color: rgba(0, 0, 0, 0.3); z-index: 1;"></div>
       <div class="content position-relative" style="z-index: 2; padding-top: 100px;">
         <h1 class="display-3 fw-bold mt-4">Welcome to Event Horizon Institute</h1>
@@ -58,7 +58,7 @@ const Home = {
       </div>
     </div>
         <!-- Available Courses Section -->
-    <div class="courses-section py-5" style="background-color:rgb(31, 69, 110);">
+    <div class="courses-section py-5" style="background-color:rgb(31, 69, 110); margin-bottom: 0px;">
       <div class="container">
         <h2 class="text-center fw-bold mb-4 display-6" style="color:rgb(246, 247, 249);">Available Courses</h2>
         <div class="row justify-content-center">
@@ -89,8 +89,8 @@ const Home = {
     </div>
 
         <!-- Why Choose Us Section -->
-    <div class="why-choose-section position-relative text-white text-center py-5" style="no-repeat center center/cover; margin-bottom: 20px;">
-      <div class="overlay position-absolute w-100 h-100" style="background-color: rgba(4, 15, 36, 0.6); z-index: 1;"></div>
+    <div class="why-choose-section position-relative text-white text-center py-5" style="no-repeat center center/cover; margin-bottom: 0px; background-color: rgba(4, 15, 36, 0.6)">
+
       <div class="content position-relative" style="z-index: 2; max-width: 700px; margin: 0 auto;">
         <h2 class="display-4 fw-bold mb-4">Why Choose Us?</h2>
         <ul class="list-unstyled text-start mx-auto" style="max-width: 600px;">
@@ -116,10 +116,10 @@ const Home = {
           </li>
         </ul>
       </div>
-    </div>
+      </div>
 
     <!-- Contact Section -->
-    <div class="contact-section py-5 text-white text-center" style="background-color:rgb(34, 52, 89); margin-top: 50px;">
+    <div class="contact-section py-5 text-white text-center" style="background-color:rgb(34, 52, 89);">
       <div class="container">
         <h2 class="fw-bold">Contact Us</h2>
         <p class="mt-2">Have questions? Reach out to us at:</p>
