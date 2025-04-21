@@ -9,7 +9,7 @@ export default defineComponent({
       <div class="container-fluid">
         <!-- Logo -->
         <router-link to="/" v-if="!isLoggedIn" class="navbar-brand d-flex align-items-center">
-          <img src="/static/images/logo.jpg" alt="Logo" width="40" height="40" class="rounded-circle me-2">
+          <img src="/static/images/logo1.jpg" alt="Logo" width="40" height="40" class="rounded-circle me-2">
           <span class="display-6 brand-text">Event Horizon Institute</span>
         </router-link>
         <router-link to="/add_parent" v-else class="navbar-brand d-flex align-items-center">

@@ -28,7 +28,7 @@
     <link rel="stylesheet" href="{{url_for('static', filename="styles.css")}}" />
     <link rel="stylesheet" href="{{url_for('static', filename="solar.css")}}" />
 
-    <link rel="icon" type="image/png" href="/static/images/logo.jpg" sizes="32x32" />
+    <link rel="icon" type="image/png" href="/static/images/logo1.jpg" sizes="32x32" />
 
     <script type="application/ld+json">
     {
@@ -71,11 +71,14 @@
     <script src="{{url_for('static', filename="app.js")}}" type="module"></script>
     
     <script>
+        // Adjust parallax effect for touch devices
         window.addEventListener('scroll', () => {
             const scrollPosition = window.scrollY;
             const solarSyst = document.querySelector('.solar-syst');
             if (solarSyst) {
-                solarSyst.style.transform = `translateY(${scrollPosition * -0.1}px)`; // Adjust the multiplier for desired parallax speed
+                const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+                const parallaxSpeed = isTouchDevice ? 0.05 : 0.1; // Reduce speed for touch devices
+                solarSyst.style.transform = `translateY(${scrollPosition * -parallaxSpeed}px)`;
             }
         });
     </script>
