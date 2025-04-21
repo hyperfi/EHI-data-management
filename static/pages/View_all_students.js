@@ -47,9 +47,9 @@ export default defineComponent({
                             <td>{{ student.courseEnrolled }}</td>
                             <td>{{ student.parentContact }}</td>
                             <td>
-                                <button class="btn btn-danger btn-sm me-1" @click="deleteStudent(student.parentContact, student.childName)">Delete</button>
-                                <button class="btn btn-info btn-sm me-1" @click="openUpdateModal(student)">Update</button>
-                                <button class="btn btn-success btn-sm me-1" @click="openAssignBatchModal(student)">Assign to Batch</button>
+                                <button class="btn btn-danger btn-sm m-1" @click="deleteStudent(student.parentContact, student.childName)">Delete</button>
+                                <button class="btn btn-info btn-sm m-1" @click="openUpdateModal(student)">Update</button>
+                                <button class="btn btn-success btn-sm m-1" @click="openAssignBatchModal(student)">Assign to Batch</button>
                             </td>
                         </tr>
                     </tbody>
