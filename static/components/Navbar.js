@@ -1,4 +1,9 @@
-const Navbar = {
+const { defineComponent, computed, onMounted, onBeforeUnmount } = Vue;
+const { useStore } = Vuex;
+const { useRouter } = VueRouter;
+
+export default defineComponent({
+  name: 'Navbar',
   template: `
     <nav class="navbar sticky-top navbar-expand-lg" style="background-color:rgb(22, 34, 58);" data-bs-theme="dark">
       <div class="container-fluid">
@@ -69,31 +74,37 @@ const Navbar = {
       </div>
     </nav>
   `,
-  computed: {
-    isLoggedIn() {
-      return this.$store.getters.isLoggedIn; // Access the login state from Vuex store
-    },
-  },
-  methods: {
-    logout() {
-      this.$store.dispatch("logout"); // Dispatch the logout action
-      this.$router.push("/"); // Redirect to the login page
-    },
-    handleOutsideClick(event) {
-      const navbar = document.getElementById("navbarNav");
-      const toggler = document.querySelector(".navbar-toggler");
+  setup() {
+    const store = useStore();
+    const router = useRouter();
 
-      if (navbar.classList.contains("show") && !navbar.contains(event.target) && !toggler.contains(event.target)) {
-        toggler.click(); // Programmatically trigger the collapse
+    const isLoggedIn = computed(() => store.getters.isLoggedIn);
+
+    const logout = () => {
+      store.dispatch('logout');
+      router.push('/');
+    };
+
+    const handleOutsideClick = (event) => {
+      const navbar = document.getElementById('navbarNav');
+      const toggler = document.querySelector('.navbar-toggler');
+
+      if (navbar.classList.contains('show') && !navbar.contains(event.target) && !toggler.contains(event.target)) {
+        toggler.click();
       }
-    },
-  },
-  mounted() {
-    document.addEventListener("click", this.handleOutsideClick);
-  },
-  beforeUnmount() {
-    document.removeEventListener("click", this.handleOutsideClick);
-  },
-};
+    };
 
-export default Navbar;
+    onMounted(() => {
+      document.addEventListener('click', handleOutsideClick);
+    });
+
+    onBeforeUnmount(() => {
+      document.removeEventListener('click', handleOutsideClick);
+    });
+
+    return {
+      isLoggedIn,
+      logout,
+    };
+  },
+});

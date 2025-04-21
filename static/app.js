@@ -1,18 +1,18 @@
-import router from "./utils/router.js";
-import Navbar from "./components/Navbar.js";
-import store from "./utils/store.js";
+import Navbar from './components/Navbar.js';
+import store from './utils/store.js';
+import router from './utils/router.js';
 
-new Vue({
-  el: "#app",
+const { createApp, ref } = Vue
+const app = createApp({
+  components: { Navbar },
   template: `
-  <div>
-    <Navbar/>
-    <router-view/>
+    <div>
+      <Navbar />
+      <router-view />
     </div>
-    `,
-  router,
-  store, // Include the Vuex store
-  components: {
-    Navbar,
-  },
+  `,
 });
+
+app.use(store);
+app.use(router);
+app.mount('#app');

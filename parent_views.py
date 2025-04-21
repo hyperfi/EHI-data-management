@@ -78,16 +78,29 @@ def create_parent_views(app):
         db.session.commit()
         return jsonify({"message": "Entry deleted successfully"}), 200
 
-    @app.route('/api/entry/<contact>/<child_name>', methods=['PUT'])
+    @app.route('/api/entry/<id>', methods=['PUT'])
     @roles_required('admin')  # Require admin role
-    def update_entry(contact, child_name):
+    def update_entry(id):
         entry = parent_customer.query.filter(
-            (parent_customer.parent_contact == contact) & (parent_customer.child_name == child_name)).first()
+            (parent_customer.id == id)).first()
         if not entry:
             return jsonify({"message": "Entry not found"}), 404
+        student = Student.query.filter(
+            (Student.parent_contact == entry.parent_contact) & (Student.name == entry.child_name)).first()
+        print(student, entry)
+        if not student:
+            return jsonify({"message": "Student not found"}), 404
+
         data = request.get_json()
+        class_name = data['courseEnrolled'].split(' ')[0]
         if not data:
             return jsonify({"message": "No data provided"}), 400
+
+        if not data.get('visitingDate'):
+            return jsonify({"message": "Visiting Date is required."}), 400
+        student.name = data['childName']
+        student.className = class_name
+        student.parent_contact = data['parentContact']
         entry.parent_name = data.get('parentName', entry.parent_name)
         entry.address = data.get('address', entry.address)
         entry.visiting_date = data.get('visitingDate', entry.visiting_date)
@@ -95,5 +108,6 @@ def create_parent_views(app):
         entry.course_enrolled = data.get(
             'courseEnrolled', entry.course_enrolled)
         entry.parent_contact = data.get('parentContact', entry.parent_contact)
+
         db.session.commit()
         return jsonify({"message": "Entry updated successfully"}), 200
