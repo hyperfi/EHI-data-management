@@ -44,7 +44,7 @@ export default defineComponent({
                       <small class="text-danger" v-if="passwordError">{{ passwordError }}</small>
                   </div>
                   <button type="submit" class="btn btn-primary w-100" :disabled="isLoading">
-                      <span v-if="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                      <span v-if="isLoading" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
                       <span v-if="!isLoading">Login</span>
                       <span v-else>Loading...</span>
                   </button>
