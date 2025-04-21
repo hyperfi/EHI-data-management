@@ -1,7 +1,9 @@
+const { defineComponent } = Vue;
 import store from '../utils/store.js'; // Import the Vuex store
 import { apiRequest } from '../utils/api.js'; // Import the apiRequest utility function
 
-const AddParent = {
+export default defineComponent({
+  name: 'AddParent',
   template: `
    <div class="position-relative">
       <!-- Background Video -->
@@ -53,7 +55,6 @@ const AddParent = {
     </div>
   </div>
   `,
-  
   data() {
     return {
       formData: {
@@ -203,6 +204,4 @@ const AddParent = {
   mounted() {
     this.fetchCourses(); // Fetch courses when the component is mounted
   },
-};
-
-export default AddParent;
+});

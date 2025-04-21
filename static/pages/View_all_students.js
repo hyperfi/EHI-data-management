@@ -1,8 +1,10 @@
+const { defineComponent } = Vue;
 import store from '../utils/store.js'; // Import the Vuex store
 import { apiRequest } from '../utils/api.js'; // Import the apiRequest utility function
 
-const ViewAllStudents = {
-    template: `
+export default defineComponent({
+  name: 'ViewAllStudents',
+  template: `
     <div class="position-relative">
       <!-- Background Video -->
         
@@ -146,241 +148,239 @@ const ViewAllStudents = {
         </div>
     </div>
     </div>
-    `,
-    data() {
-        return {
-            students: [],
-            batches: [], // List of available batches
-            searchQuery: '',
-            sortKey: '',
-            sortOrder: 'asc', // 'asc' or 'desc'
-            currentPage: 1,
-            itemsPerPage: 5,
-            updateForm: {
-                parentName: '',
-                address: '',
-                visitingDate: '',
-                childName: '',
-                courseEnrolled: '',
-                parentContact: '',
-            },
-            updateErrors: [], // To store validation errors for the update form
-            selectedStudent: null, // Student to be assigned to a batch
-            selectedBatchId: '', // Selected batch ID
-            notification: {
-                message: '',
-                type: '', // 'success' or 'danger'
-            },
-        };
+  `,
+  data() {
+    return {
+      students: [],
+      batches: [],
+      searchQuery: '',
+      sortKey: '',
+      sortOrder: 'asc',
+      currentPage: 1,
+      itemsPerPage: 5,
+      updateForm: {
+        parentName: '',
+        address: '',
+        visitingDate: '',
+        childName: '',
+        courseEnrolled: '',
+        parentContact: '',
+      },
+      updateErrors: [],
+      selectedStudent: null,
+      selectedBatchId: '',
+      notification: {
+        message: '',
+        type: '',
+      },
+    };
+  },
+  computed: {
+    filteredStudents() {
+      return this.students.filter(student => {
+        const query = this.searchQuery.toLowerCase();
+        return (
+          student.parentName.toLowerCase().includes(query) ||
+          student.childName.toLowerCase().includes(query) ||
+          student.courseEnrolled.toLowerCase().includes(query) ||
+          student.parentContact.includes(query)
+        );
+      });
     },
-    computed: {
-        filteredStudents() {
-            return this.students.filter(student => {
-                const query = this.searchQuery.toLowerCase();
-                return (
-                    student.parentName.toLowerCase().includes(query) ||
-                    student.childName.toLowerCase().includes(query) ||
-                    student.courseEnrolled.toLowerCase().includes(query) ||
-                    student.parentContact.includes(query)
-                );
-            });
-        },
-        paginatedStudents() {
-            const pages = [];
-            for (let i = 0; i < this.filteredStudents.length; i += this.itemsPerPage) {
-                pages.push(this.filteredStudents.slice(i, i + this.itemsPerPage));
-            }
-            return pages;
-        },
-        currentStudents() {
-            return this.paginatedStudents[this.currentPage - 1] || [];
-        },
+    paginatedStudents() {
+      const pages = [];
+      for (let i = 0; i < this.filteredStudents.length; i += this.itemsPerPage) {
+        pages.push(this.filteredStudents.slice(i, i + this.itemsPerPage));
+      }
+      return pages;
     },
-    methods: {
-        async fetchStudents() {
-            const url = window.location.origin + "/api/entry";
-            const token = sessionStorage.getItem('authToken'); // Get the token from Vuex store
-            try {
-                const response = await apiRequest(url, {
-                    headers: {
-                        'Authentication-Token': `${token}`, // Include the token in the Authorization header
-                    },
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    this.students = data;
-                } else {
-                    this.showNotification("Failed to fetch students.", "danger");
-                }
-            } catch (error) {
-                console.error("Error fetching students:", error);
-            }
-        },
-        async fetchBatches() {
-            const url = window.location.origin + "/api/get_batches";
-            const token = sessionStorage.getItem('authToken'); // Get the token from Vuex store
-            try {
-                const response = await apiRequest(url, {
-                    headers: {
-                        'Authentication-Token': `${token}`, // Include the token in the Authorization header
-                    },
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    this.batches = data;
-                } else {
-                    this.showNotification("Failed to fetch batches.", "danger");
-                }
-            } catch (error) {
-                console.error("Error fetching batches:", error);
-            }
-        },
-        async deleteStudent(parentContact, childName) {
-            const url = window.location.origin + `/api/entry/${parentContact}/${childName}`;
-            const token = sessionStorage.getItem('authToken'); // Get the token from Vuex store
-            try {
-                const response = await apiRequest(url, {
-                    method: 'DELETE',
-                    headers: {
-                        'Authentication-Token': `${token}`, // Include the token in the Authorization header
-                    },
-                });
-                if (response.ok) {
-                    this.fetchStudents();
-                    this.showNotification("Student deleted successfully.", "success");
-                } else {
-                    this.showNotification("Failed to delete student.", "danger");
-                }
-            } catch (error) {
-                console.error("Error deleting student:", error);
-            }
-        },
-        openUpdateModal(student) {
-            this.updateForm = { ...student };
-            const modalElement = document.getElementById('updateModal');
-            const modal = new bootstrap.Modal(modalElement); // Initialize the modal
-            modal.show(); // Show the modal
-        },
-        validateUpdateForm() {
-            const errors = [];
-            if (!this.updateForm.parentName || !/^[a-zA-Z\s]+$/.test(this.updateForm.parentName)) {
-                errors.push("Parent Name must contain only letters and spaces. Name is required.");
-            }
-            if (!this.updateForm.address) {
-                errors.push("Address is required.");
-            }
-            const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
-            if (!this.updateForm.visitingDate || this.updateForm.visitingDate < today) {
-                errors.push("Visiting Date must be today or in the future.");
-            }
-            if (!this.updateForm.childName || !/^[a-zA-Z\s]+$/.test(this.updateForm.childName)) {
-                errors.push("Child Name must contain only letters and spaces.");
-            }
-            if (!this.updateForm.courseEnrolled) {
-                errors.push("Course Enrolled is required.");
-            }
-            if (!this.updateForm.parentContact || !/^\d{10}$/.test(this.updateForm.parentContact)) {
-                errors.push("Parent Contact must be a 10-digit number.");
-            }
-            this.updateErrors = errors; // Bind errors to the modal
-            return errors;
-        },
-        async updateStudent() {
-            const errors = this.validateUpdateForm();
-            if (errors.length > 0) {
-                return; // Stop if there are validation errors
-            }
-
-            const { parentContact, childName } = this.updateForm;
-            const url = window.location.origin + `/api/entry/${parentContact}/${childName}`;
-            const token = sessionStorage.getItem('authToken'); // Get the token from Vuex store
-            const response = await fetch(url, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authentication-Token': `${token}`, // Include the token in the Authorization header
-                },
-                body: JSON.stringify(this.updateForm),
-            });
-            if (response.ok) {
-                const modalElement = document.getElementById('updateModal');
-                const modal = bootstrap.Modal.getInstance(modalElement); // Get the modal instance
-                modal.hide(); // Hide the modal
-                this.fetchStudents();
-                this.showNotification("Student updated successfully.", "success");
-            } else {
-                this.showNotification("Failed to update student.", "danger");
-            }
-        },
-        openAssignBatchModal(student) {
-            this.selectedStudent = student;
-            const modalElement = document.getElementById('assignBatchModal');
-            const modal = new bootstrap.Modal(modalElement); // Initialize the modal
-            modal.show(); // Show the modal
-        },
-        async assignStudentToBatch() {
-            if (!this.selectedBatchId || !this.selectedStudent) {
-                this.showNotification("Please select a batch and a student.", "danger");
-                return;
-            }
-
-            const url = window.location.origin + `/api/add_student_to_batch/${this.selectedBatchId}/${this.selectedStudent.id}`;
-            const token = sessionStorage.getItem('authToken'); // Get the token from Vuex store
-            try {
-                const response = await apiRequest(url, {
-                    method: 'GET',
-                    headers: {
-                        'Authentication-Token': `${token}`, // Include the token in the Authorization header
-                    },
-                });
-
-                if (response.ok) {
-                    const modalElement = document.getElementById('assignBatchModal');
-                    const modal = bootstrap.Modal.getInstance(modalElement); // Get the modal instance
-                    modal.hide(); // Hide the modal
-                    this.fetchStudents(); // Refresh the student list
-                    this.showNotification("Student assigned to batch successfully.", "success");
-                } else {
-                    const responseData = await response.json();
-                    this.showNotification(`Failed to assign student to batch: ${responseData.message}`, "danger");
-                }
-            } catch (error) {
-                console.error("Error assigning student to batch:", error);
-            }
-        },
-        sortTable(key) {
-            if (this.sortKey === key) {
-                this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
-            } else {
-                this.sortKey = key;
-                this.sortOrder = 'asc';
-            }
-            this.students.sort((a, b) => {
-                const aValue = a[key].toString().toLowerCase();
-                const bValue = b[key].toString().toLowerCase();
-                if (aValue < bValue) return this.sortOrder === 'asc' ? -1 : 1;
-                if (aValue > bValue) return this.sortOrder === 'asc' ? 1 : -1;
-                return 0;
-            });
-        },
-        changePage(page) {
-            if (page > 0 && page <= this.paginatedStudents.length) {
-                this.currentPage = page;
-            }
-        },
-        showNotification(message, type) {
-            this.notification.message = message;
-            this.notification.type = type;
-            setTimeout(() => {
-                this.notification.message = '';
-                this.notification.type = '';
-            }, 2000); // Clear the notification after 2 seconds
-        },
+    currentStudents() {
+      return this.paginatedStudents[this.currentPage - 1] || [];
     },
-    mounted() {
+  },
+  methods: {
+    async fetchStudents() {
+      const url = window.location.origin + "/api/entry";
+      const token = sessionStorage.getItem('authToken');
+      try {
+        const response = await apiRequest(url, {
+          headers: {
+            'Authentication-Token': `${token}`,
+          },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          this.students = data;
+        } else {
+          this.showNotification("Failed to fetch students.", "danger");
+        }
+      } catch (error) {
+        console.error("Error fetching students:", error);
+      }
+    },
+    async fetchBatches() {
+      const url = window.location.origin + "/api/get_batches";
+      const token = sessionStorage.getItem('authToken');
+      try {
+        const response = await apiRequest(url, {
+          headers: {
+            'Authentication-Token': `${token}`,
+          },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          this.batches = data;
+        } else {
+          this.showNotification("Failed to fetch batches.", "danger");
+        }
+      } catch (error) {
+        console.error("Error fetching batches:", error);
+      }
+    },
+    async deleteStudent(parentContact, childName) {
+      const url = window.location.origin + `/api/entry/${parentContact}/${childName}`;
+      const token = sessionStorage.getItem('authToken');
+      try {
+        const response = await apiRequest(url, {
+          method: 'DELETE',
+          headers: {
+            'Authentication-Token': `${token}`,
+          },
+        });
+        if (response.ok) {
+          this.fetchStudents();
+          this.showNotification("Student deleted successfully.", "success");
+        } else {
+          this.showNotification("Failed to delete student.", "danger");
+        }
+      } catch (error) {
+        console.error("Error deleting student:", error);
+      }
+    },
+    openUpdateModal(student) {
+      this.updateForm = { ...student };
+      const modalElement = document.getElementById('updateModal');
+      const modal = new bootstrap.Modal(modalElement);
+      modal.show();
+    },
+    validateUpdateForm() {
+      const errors = [];
+      if (!this.updateForm.parentName || !/^[a-zA-Z\s]+$/.test(this.updateForm.parentName)) {
+        errors.push("Parent Name must contain only letters and spaces. Name is required.");
+      }
+      if (!this.updateForm.address) {
+        errors.push("Address is required.");
+      }
+      const today = new Date().toISOString().split('T')[0];
+      if (!this.updateForm.visitingDate) {
+        errors.push("Visiting Date must be today or in the future.");
+      }
+      if (!this.updateForm.childName || !/^[a-zA-Z\s]+$/.test(this.updateForm.childName)) {
+        errors.push("Child Name must contain only letters and spaces.");
+      }
+      if (!this.updateForm.courseEnrolled) {
+        errors.push("Course Enrolled is required.");
+      }
+      if (!this.updateForm.parentContact || !/^\d{10}$/.test(this.updateForm.parentContact)) {
+        errors.push("Parent Contact must be a 10-digit number.");
+      }
+      this.updateErrors = errors;
+      return errors;
+    },
+    async updateStudent() {
+      const errors = this.validateUpdateForm();
+      if (errors.length > 0) {
+        return;
+      }
+
+      const { id } = this.updateForm;
+      const url = window.location.origin + `/api/entry/${id}`;
+      const token = sessionStorage.getItem('authToken');
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authentication-Token': `${token}`,
+        },
+        body: JSON.stringify(this.updateForm),
+      });
+      if (response.ok) {
+        const modalElement = document.getElementById('updateModal');
+        const modal = bootstrap.Modal.getInstance(modalElement);
+        modal.hide();
         this.fetchStudents();
-        this.fetchBatches();
+        this.showNotification("Student updated successfully.", "success");
+      } else {
+        this.showNotification("Failed to update student.", "danger");
+      }
     },
-};
+    openAssignBatchModal(student) {
+      this.selectedStudent = student;
+      const modalElement = document.getElementById('assignBatchModal');
+      const modal = new bootstrap.Modal(modalElement);
+      modal.show();
+    },
+    async assignStudentToBatch() {
+      if (!this.selectedBatchId || !this.selectedStudent) {
+        this.showNotification("Please select a batch and a student.", "danger");
+        return;
+      }
 
-export default ViewAllStudents;
+      const url = window.location.origin + `/api/add_student_to_batch/${this.selectedBatchId}/${this.selectedStudent.id}`;
+      const token = sessionStorage.getItem('authToken');
+      try {
+        const response = await apiRequest(url, {
+          method: 'GET',
+          headers: {
+            'Authentication-Token': `${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const modalElement = document.getElementById('assignBatchModal');
+          const modal = bootstrap.Modal.getInstance(modalElement);
+          modal.hide();
+          this.fetchStudents();
+          this.showNotification("Student assigned to batch successfully.", "success");
+        } else {
+          const responseData = await response.json();
+          this.showNotification(`Failed to assign student to batch: ${responseData.message}`, "danger");
+        }
+      } catch (error) {
+        console.error("Error assigning student to batch:", error);
+      }
+    },
+    sortTable(key) {
+      if (this.sortKey === key) {
+        this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+      } else {
+        this.sortKey = key;
+        this.sortOrder = 'asc';
+      }
+      this.students.sort((a, b) => {
+        const aValue = a[key].toString().toLowerCase();
+        const bValue = b[key].toString().toLowerCase();
+        if (aValue < bValue) return this.sortOrder === 'asc' ? -1 : 1;
+        if (aValue > bValue) return this.sortOrder === 'asc' ? 1 : -1;
+        return 0;
+      });
+    },
+    changePage(page) {
+      if (page > 0 && page <= this.paginatedStudents.length) {
+        this.currentPage = page;
+      }
+    },
+    showNotification(message, type) {
+      this.notification.message = message;
+      this.notification.type = type;
+      setTimeout(() => {
+        this.notification.message = '';
+        this.notification.type = '';
+      }, 2000);
+    },
+  },
+  mounted() {
+    this.fetchStudents();
+    this.fetchBatches();
+  },
+});

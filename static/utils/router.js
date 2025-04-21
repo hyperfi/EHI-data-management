@@ -6,6 +6,7 @@ import Batches from '../pages/Batches.js';
 import Pay from '../pages/payments_reciepts.js';
 import AddParent from '../pages/Add_new_entry.js';
 import Login from '../pages/login.js';
+const { createRouter, createWebHistory } = VueRouter;
 
 const routes = [
   { path: '/', name: 'Home', component: Home, meta: { requiresLogout: true } },

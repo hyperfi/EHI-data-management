@@ -1,6 +1,8 @@
-import store from '../utils/store.js'; // Import the Vuex store
+const { defineComponent } = Vue;
+import store from '../utils/store.js';
 
-const Login = {
+export default defineComponent({
+  name: 'Login',
   template: `
   <div class="position-relative">
       <!-- Background Video -->
@@ -51,7 +53,6 @@ const Login = {
       </div>
   </div>
   `,
-  
   data() {
     return {
       formData: {
@@ -135,6 +136,4 @@ const Login = {
       }
     },
   },
-};
-
-export default Login;
+});

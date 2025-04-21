@@ -1,7 +1,9 @@
+const { defineComponent } = Vue;
 import store from '../utils/store.js'; // Import the Vuex store
 import { apiRequest } from '../utils/api.js'; // Import the apiRequest utility function
 
-const PaymentStatus = {
+export default defineComponent({
+  name: 'PaymentStatus',
   template: `
     <div class="position-relative">
       <!-- Background Video -->
@@ -521,7 +523,5 @@ const PaymentStatus = {
   mounted() {
     this.fetchPayments();
   },
-};
-
-export default PaymentStatus;
+});
 

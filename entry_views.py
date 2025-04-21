@@ -11,7 +11,8 @@ from flask_security.utils import hash_password, verify_password
 def create_entery_view(app, user_datastore: SQLAlchemyUserDatastore):
 
     @app.route('/')
-    def home():
+    @app.route('/<path:path>')
+    def catch_all(path=''):
         return render_template('index.html')
 
     @app.route('/api/login', methods=['POST'])

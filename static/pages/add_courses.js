@@ -1,7 +1,9 @@
+const { defineComponent } = Vue;
 import store from '../utils/store.js'; // Import the Vuex store
 import { apiRequest } from '../utils/api.js'; // Import the apiRequest utility function
 
-const AddCourses = {
+export default defineComponent({
+  name: 'AddCourses',
   template: `
     <div class="position-relative">
       
@@ -396,6 +398,4 @@ const AddCourses = {
   mounted() {
     this.fetchCourses();
   },
-};
-
-export default AddCourses;
+});

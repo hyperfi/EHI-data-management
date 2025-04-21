@@ -1,7 +1,9 @@
-import store from '../utils/store.js'; // Import the Vuex store
-import { apiRequest } from '../utils/api.js'; // Import the apiRequest utility function
+const { defineComponent } = Vue;
+import store from '../utils/store.js';
+import { apiRequest } from '../utils/api.js';
 
-const Batches = {
+export default defineComponent({
+  name: 'Batches',
   template: `
     <div class="position-relative">
       <!-- Background Video -->
@@ -249,8 +251,8 @@ const Batches = {
   `,
   data() {
     return {
-      batches: [], // List of batches
-      courses: [], // List of available courses
+      batches: [],
+      courses: [],
       newBatch: {
         batchName: "",
         courseName: "",
@@ -264,22 +266,22 @@ const Batches = {
         startTime: "",
         endTime: "",
       },
-      selectedStudents: [], // List of students in the selected batch
-      currentBatch: null, // Current batch for which students are being viewed
+      selectedStudents: [],
+      currentBatch: null,
       notification: {
         message: "",
-        type: "", // 'success' or 'danger'
+        type: "",
       },
     };
   },
   methods: {
     async fetchBatches() {
       const url = "/api/get_batches";
-      const token = sessionStorage.getItem('authToken'); // Get the token from Vuex store
+      const token = sessionStorage.getItem('authToken');
       try {
         const response = await apiRequest(url, {
           headers: {
-            "Authentication-Token": `${token}`, // Include the token in the Authentication-Token header
+            "Authentication-Token": `${token}`,
           },
         });
         if (response.ok) {
@@ -293,11 +295,11 @@ const Batches = {
     },
     async fetchCourses() {
       const url = "/api/get_courses";
-      const token = sessionStorage.getItem('authToken'); // Get the token from Vuex store
+      const token = sessionStorage.getItem('authToken');
       try {
         const response = await apiRequest(url, {
           headers: {
-            "Authentication-Token": `${token}`, // Include the token in the Authentication-Token header
+            "Authentication-Token": `${token}`,
           },
         });
         if (response.ok) {
@@ -311,13 +313,13 @@ const Batches = {
     },
     async addBatch() {
       const url = "/api/add_batch";
-      const token = sessionStorage.getItem('authToken'); // Get the token from Vuex store
+      const token = sessionStorage.getItem('authToken');
       try {
         const response = await apiRequest(url, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authentication-Token": `${token}`, // Include the token in the Authentication-Token header
+            "Authentication-Token": `${token}`,
           },
           body: JSON.stringify(this.newBatch),
         });
@@ -336,13 +338,13 @@ const Batches = {
     },
     async updateBatch() {
       const url = `/api/update_batch/${this.updateBatchForm.id}`;
-      const token = sessionStorage.getItem('authToken'); // Get the token from Vuex store
+      const token = sessionStorage.getItem('authToken');
       try {
         const response = await apiRequest(url, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            "Authentication-Token": `${token}`, // Include the token in the Authentication-Token header
+            "Authentication-Token": `${token}`,
           },
           body: JSON.stringify(this.updateBatchForm),
         });
@@ -361,12 +363,12 @@ const Batches = {
     },
     async deleteBatch(batchId) {
       const url = `/api/delete_batch/${batchId}`;
-      const token = sessionStorage.getItem('authToken'); // Get the token from Vuex store
+      const token = sessionStorage.getItem('authToken');
       try {
         const response = await apiRequest(url, {
           method: "DELETE",
           headers: {
-            "Authentication-Token": `${token}`, // Include the token in the Authentication-Token header
+            "Authentication-Token": `${token}`,
           },
         });
         if (response.ok) {
@@ -397,12 +399,12 @@ const Batches = {
     },
     async fetchStudentDetails(enrolledStudents) {
       try {
-        const token = sessionStorage.getItem('authToken'); // Get the token from Vuex store
+        const token = sessionStorage.getItem('authToken');
         const response = await fetch("/api/get_student_details", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authentication-Token": `${token}`, // Include the token in the Authentication-Token header
+            "Authentication-Token": `${token}`,
           },
           body: JSON.stringify({ students: enrolledStudents }),
         });
@@ -418,21 +420,18 @@ const Batches = {
         this.showNotification("Error fetching student details", "danger");
       }
     },
-
     async removeStudentFromBatch(batchId, studentId) {
       try {
-        const token = sessionStorage.getItem('authToken'); // Get the token from Vuex store
+        const token = sessionStorage.getItem('authToken');
         const response = await fetch(`/api/remove_student_from_batch/${batchId}/${studentId}`, {
           method: "GET",
           headers: {
-            "Authentication-Token": `${token}`, // Include the token in the Authentication-Token header
+            "Authentication-Token": `${token}`,
           },
         });
         if (response.ok) {
           this.showNotification("Student removed from batch successfully", "success");
-          // Refresh the batch data
           this.fetchBatches();
-          // Remove the student from the modal view
           this.selectedStudents = this.selectedStudents.filter(student => student.id !== studentId);
         } else {
           const errorData = await response.json();
@@ -442,9 +441,7 @@ const Batches = {
         console.error("Error removing student from batch:", error);
         this.showNotification("Error removing student from batch", "danger");
       }
-      // console.log("Removing student from batch:", batchId, studentId);
     },
-
     viewStudents(batch) {
       this.selectedStudents = batch.enrolled_students;
       this.currentBatch = batch;
@@ -458,14 +455,12 @@ const Batches = {
       setTimeout(() => {
         this.notification.message = "";
         this.notification.type = "";
-      }, 2000); // Clear the notification after 2 seconds
+      }, 2000);
     },
   },
   mounted() {
     this.fetchBatches();
     this.fetchCourses();
   },
-};
-
-export default Batches;
+});
 

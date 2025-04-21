@@ -1,4 +1,4 @@
-export default defineComponent({
+export default Vue.defineComponent({
   name: 'Home',
   template: `
      <div>

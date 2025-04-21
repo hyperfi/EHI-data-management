@@ -1,6 +1,5 @@
 
-import { createStore } from 'vuex';
-export default createStore({
+export default Vuex.createStore({
   state: {
     isLoggedIn: sessionStorage.getItem('isLoggedIn') === 'true',
     authToken: sessionStorage.getItem('authToken') || null,

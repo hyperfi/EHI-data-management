@@ -106,6 +106,7 @@ def Create_business_view(app):
 
         student = db.session.query(Student).filter(
             (Student.name == found_entry.child_name) & (Student.parent_contact == found_entry.parent_contact)).first()
+        print(batch_id, student_id, batch, found_entry)
         if not student:
             return jsonify({"message": "Student not found"}), 404
         if student in batch.enrolled_students:
