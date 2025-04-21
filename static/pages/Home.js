@@ -1,9 +1,10 @@
-const Home = {
+export default Vue.defineComponent({
+  name: 'Home',
   template: `
-  <div>
+     <div>
     <!-- Hero Section -->
     <div class="hero-section position-relative text-white text-center mb-0" style="min-height: 100vh; background: rgba(22,34,58,0.0);">
-      <div class="overlay position-absolute w-100 h-100" style="top:0; left:0; background-color: rgba(0, 0, 0, 0.3); z-index: 1;"></div>
+      <div class="overlay position-absolute w-100 h-100" style="top:0; left:0; background-color: rgba(22, 34, 58, 0.49); z-index: 1;"></div>
       <div class="content position-relative" style="z-index: 2; padding-top: 100px;">
         <h1 class="display-3 fw-bold mt-4">Welcome to Event Horizon Institute</h1>
         <p class="lead mt-3">Empowering students with quality education and training for a brighter future.</p>
@@ -141,6 +142,4 @@ const Home = {
       }
     },
   },
-};
-
-export default Home;
+});

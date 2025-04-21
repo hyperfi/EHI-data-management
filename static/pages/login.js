@@ -1,6 +1,8 @@
-import store from '../utils/store.js'; // Import the Vuex store
+const { defineComponent } = Vue;
+import store from '../utils/store.js';
 
-const Login = {
+export default defineComponent({
+  name: 'Login',
   template: `
   <div class="position-relative">
       <!-- Background Video -->
@@ -42,7 +44,7 @@ const Login = {
                       <small class="text-danger" v-if="passwordError">{{ passwordError }}</small>
                   </div>
                   <button type="submit" class="btn btn-primary w-100" :disabled="isLoading">
-                      <span v-if="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                      <span v-if="isLoading" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
                       <span v-if="!isLoading">Login</span>
                       <span v-else>Loading...</span>
                   </button>
@@ -51,7 +53,6 @@ const Login = {
       </div>
   </div>
   `,
-  
   data() {
     return {
       formData: {
@@ -135,6 +136,4 @@ const Login = {
       }
     },
   },
-};
-
-export default Login;
+});
