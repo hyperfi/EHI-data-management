@@ -44,10 +44,12 @@
       }
     }
     </script>
+
+  
 </head>
 
 <body>
-    <div class='solar-syst' style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: -1;">
+    <div class='solar-syst'>
         <div class='sun'></div>
         <div class='mercury'></div>
         <div class='venus'></div>
@@ -58,7 +60,7 @@
         <div class='uranu'></div>
         <div class='neptue'></div>
         <div class='plut'></div>
-        <div class='asterois-belt'></div>
+        <div class='asteroids-belt'></div>
     </div>
     
     <!-- Vue App -->
@@ -68,6 +70,15 @@
 
     <script src="{{url_for('static', filename="app.js")}}" type="module"></script>
     
+    <script>
+        window.addEventListener('scroll', () => {
+            const scrollPosition = window.scrollY;
+            const solarSyst = document.querySelector('.solar-syst');
+            if (solarSyst) {
+                solarSyst.style.transform = `translateY(${scrollPosition * -0.1}px)`; // Adjust the multiplier for desired parallax speed
+            }
+        });
+    </script>
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"

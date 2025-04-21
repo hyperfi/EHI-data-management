@@ -1,3 +1,16 @@
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+
+#app {
+    position: relative;
+
+}
+
+
 link[rel="icon"] {
     border-radius: 50%;
 }
@@ -115,4 +128,59 @@ link[rel="icon"] {
     transform: translateY(-5px); /* Move up slightly */
     scale: 1.05; /* Slightly increase the size at the peak of the jump */
   }
+}
+
+
+/* Updated styles for the Available Courses section */
+.courses-section {
+    background-color: rgba(240, 243, 245, 0.85);
+    padding: 60px 20px;
+    color: #f6f7f9;
+    text-align: center;
+}
+
+.courses-section h2 {
+    font-size: 2.5rem;
+    margin-bottom: 40px;
+    color: #ffd700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.courses-section .card {
+    background: linear-gradient(145deg, #ffffff, #436891);
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.courses-section .card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    background: #f6f7f9;
+}
+
+.courses-section .card-title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #f6f7f9;
+}
+
+.courses-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.courses-section ul li {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: #ffd700;
+    font-weight: bold;
+}
+
+.courses-section ul li span {
+    color: #f6f7f9;
+    font-weight: normal;
 }

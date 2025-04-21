@@ -106,9 +106,17 @@ code {
 
 .solar-syst {
     margin: 0 auto;
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    position: relative;
+    z-index: -1;
+    background-attachment: fixed;
+    background-size: cover;
+    background-position: center;
+    transform: translateY(0);
+    /* Initial position */
 }
 
 .solar-syst:after {

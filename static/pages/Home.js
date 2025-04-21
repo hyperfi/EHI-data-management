@@ -4,7 +4,7 @@ export default Vue.defineComponent({
      <div>
     <!-- Hero Section -->
     <div class="hero-section position-relative text-white text-center mb-0" style="min-height: 100vh; background: rgba(22,34,58,0.0);">
-      <div class="overlay position-absolute w-100 h-100" style="top:0; left:0; background-color: rgba(22, 34, 58, 0.49); z-index: 1;"></div>
+      <div class="overlay position-absolute w-100 h-100" style="top:0; left:0; background-color: rgba(22, 34, 58, 0.22); z-index: 1;"></div>
       <div class="content position-relative" style="z-index: 2; padding-top: 100px;">
         <h1 class="display-3 fw-bold mt-4">Welcome to Event Horizon Institute</h1>
         <p class="lead mt-3">Empowering students with quality education and training for a brighter future.</p>
@@ -20,7 +20,7 @@ export default Vue.defineComponent({
     </div>
 
     <!-- About Section -->
-    <div id="about" class="about-section py-5" style="background-color: rgb(34, 52, 89);">
+    <div id="about" class="about-section py-5" style="background-color: rgba(34, 52, 89, 0.76);">
       <div class="container">
         <div class="row align-items-center">
           <div class="col-md-6 d-flex justify-content-center">
@@ -59,7 +59,7 @@ export default Vue.defineComponent({
       </div>
     </div>
         <!-- Available Courses Section -->
-    <div class="courses-section py-5" style="background-color:rgb(31, 69, 110); margin-bottom: 0px;">
+    <div class="courses-section py-5" style="background-color:rgba(31, 69, 110, 0.75); margin-bottom: 0px;">
       <div class="container">
         <h2 class="text-center fw-bold mb-4 display-6" style="color:rgb(246, 247, 249);">Available Courses</h2>
         <div class="row justify-content-center">
@@ -68,8 +68,8 @@ export default Vue.defineComponent({
               <div class="card-body">
                 <h4 class="card-title text-center display-6" style="color: #223459; font-size: 2rem">Classes 9<sup>th</sup> &amp; 10<sup>th</sup></h4>
                 <ul class="list-unstyled mt-3 mb-0 text-center">
-                  <li class="mb-2"><span style="color:#007bff; font-weight:bold; font-size: 1.2rem;">Science</span></li>
-                  <li><span style="color:#28a745; font-weight:bold; font-size: 1.2rem;">Mathematics</span></li>
+                  <li class="mb-2"><span style="color:#007bff; font-weight:bold; ">Science</span></li>
+                  <li><span style="color:rgb(60, 255, 0); font-weight:bold; ">Mathematics</span></li>
                 </ul>
               </div>
             </div>
@@ -79,8 +79,8 @@ export default Vue.defineComponent({
               <div class="card-body">
                 <h4 class="card-title text-center display-6" style="color: #223459; font-size:2rem">Classes 11<sup>th</sup> &amp; 12<sup>th</sup></h4>
                 <ul class="list-unstyled mt-3 mb-0 text-center">
-                  <li class="mb-2"><span style="color:#e83e8c; font-weight:bold; font-size: 1.2rem;">Physics</span></li>
-                  <li><span style="color:#fd7e14; font-weight:bold; font-size: 1.2rem;">Mathematics</span></li>
+                  <li class="mb-2"><span style="color:#e83e8c; font-weight:bold; ">Physics</span></li>
+                  <li><span style="color:rgb(255, 187, 0); font-weight:bold; ">Mathematics</span></li>
                 </ul>
               </div>
             </div>
@@ -90,7 +90,7 @@ export default Vue.defineComponent({
     </div>
 
         <!-- Why Choose Us Section -->
-    <div class="why-choose-section position-relative text-white text-center py-5" style="no-repeat center center/cover; margin-bottom: 0px; background-color: rgba(4, 15, 36, 0.6)">
+    <div class="why-choose-section position-relative text-white text-center py-5" style="no-repeat center center/cover; margin-bottom: 0px; background-color: rgba(4, 15, 36, 0.61)">
 
       <div class="content position-relative" style="z-index: 2; max-width: 700px; margin: 0 auto;">
         <h2 class="display-4 fw-bold mb-4">Why Choose Us?</h2>
@@ -138,7 +138,12 @@ export default Vue.defineComponent({
     scrollToSection(sectionId) {
       const section = document.getElementById(sectionId);
       if (section) {
-        section.scrollIntoView({ behavior: 'smooth' });
+        const navbarHeight = document.querySelector('.navbar')?.offsetHeight || 0; // Get the navbar height
+        const sectionTop = section.getBoundingClientRect().top + window.scrollY;
+        window.scrollTo({
+          top: sectionTop - navbarHeight, // Adjust scroll position to stop at the navbar
+          behavior: 'smooth',
+        });
       }
     },
   },
