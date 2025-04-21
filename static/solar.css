@@ -37,6 +37,12 @@ body {
     background-attachment: fixed;
 }
 
+/* Add smooth scrolling for touch devices */
+html {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch; /* Enable momentum scrolling for iOS */
+}
+
 /* h1 {
     font-weight: 300;
     font-size: 2.5em;
@@ -151,6 +157,22 @@ code {
 
 .solar-syst div:not(.asteroids-belt):before {
     box-shadow: inset 0 6px 0 -2px rgba(0, 0, 0, 0.25);
+}
+
+/* Adjust parallax effect for touch devices */
+@media (hover: none) and (pointer: coarse) {
+    .solar-syst {
+        background-attachment: scroll; /* Disable fixed background for better performance */
+        transform: none; /* Remove transform to avoid jittery behavior */
+    }
+
+    window.addEventListener('scroll', () => {
+        const scrollPosition = window.scrollY;
+        const solarSyst = document.querySelector('.solar-syst');
+        if (solarSyst) {
+            solarSyst.style.transform = `translateY(${scrollPosition * 0.05}px)`; // Reduce parallax speed for touch devices
+        }
+    });
 }
 
 .sun {
