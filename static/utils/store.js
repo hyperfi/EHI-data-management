@@ -1,43 +1,38 @@
-// import Vue from 'vue';
-// import Vuex from 'vuex';
 
-// Vue.use(Vuex);
-
-export default new Vuex.Store({
+import { createStore } from 'vuex';
+export default createStore({
   state: {
-    isLoggedIn: sessionStorage.getItem('isLoggedIn') === 'true', // Initialize from sessionStorage
-    authToken: sessionStorage.getItem('authToken') || null, // Initialize token from sessionStorage
+    isLoggedIn: sessionStorage.getItem('isLoggedIn') === 'true',
+    authToken: sessionStorage.getItem('authToken') || null,
   },
   mutations: {
     login(state) {
-      state.isLoggedIn = true; // Set logged-in state to true
+      state.isLoggedIn = true;
     },
     logout(state) {
-      state.isLoggedIn = false; // Set logged-in state to false
-      state.authToken = null; // Clear the auth token
-      // this.$router.push('/login'); // Redirect to login page
-      // this.$router.go(0); // Force reload the page
+      state.isLoggedIn = false;
+      state.authToken = null;
+      sessionStorage.removeItem('authToken');
+      sessionStorage.removeItem('isLoggedIn');
     },
     setAuthToken(state, token) {
-      state.authToken = token; // Set the auth token
+      state.authToken = token;
+      sessionStorage.setItem('authToken', token);
     },
   },
   actions: {
     login({ commit }) {
-      commit('login'); // Commit the login mutation
+      commit('login');
     },
     logout({ commit }) {
-      commit('logout'); // Commit the logout mutation
-      sessionStorage.removeItem('authToken'); // Remove token from sessionStorage
-      sessionStorage.removeItem('isLoggedIn'); // Remove login state from sessionStorage
+      commit('logout');
     },
     setAuthToken({ commit }, token) {
-      commit('setAuthToken', token); // Commit the token mutation
-      sessionStorage.setItem('authToken', token); // Save token to sessionStorage
+      commit('setAuthToken', token);
     },
   },
   getters: {
-    isLoggedIn: (state) => state.isLoggedIn, // Getter to access the logged-in state
-    authToken: (state) => state.authToken, // Getter to access the auth token
+    isLoggedIn: (state) => state.isLoggedIn,
+    authToken: (state) => state.authToken,
   },
 });
