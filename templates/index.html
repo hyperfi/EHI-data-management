@@ -77,7 +77,7 @@
             const solarSyst = document.querySelector('.solar-syst');
             if (solarSyst) {
                 const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-                const parallaxSpeed = isTouchDevice ? 0.05 : 0.1; // Reduce speed for touch devices
+                const parallaxSpeed = isTouchDevice ? 0.02 : 0.1; // Reduce speed for touch devices
                 solarSyst.style.transform = `translateY(${scrollPosition * -parallaxSpeed}px)`;
             }
         });
