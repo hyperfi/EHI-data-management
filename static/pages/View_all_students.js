@@ -89,24 +89,29 @@ export default defineComponent({
                         </div>
                         <form>
                             <div class="mb-3">
-                                <label for="updateParentName" class="form-label">Parent Name</label>
+                                <label for="updateParentName" class="form-label text-dark">Parent Name</label>
                                 <input type="text" id="updateParentName" v-model="updateForm.parentName" class="form-control">
                             </div>
                             <div class="mb-3">
-                                <label for="updateAddress" class="form-label">Address</label>
+                                <label for="updateAddress" class="form-label text-dark">Address</label>
                                 <input type="text" id="updateAddress" v-model="updateForm.address" class="form-control">
                             </div>
                             <div class="mb-3">
-                                <label for="updateVisitingDate" class="form-label">Visiting Date</label>
+                                <label for="updateVisitingDate" class="form-label text-dark">Visiting Date</label>
                                 <input type="date" id="updateVisitingDate" v-model="updateForm.visitingDate" class="form-control">
                             </div>
                             <div class="mb-3">
-                                <label for="updateChildName" class="form-label">Child Name</label>
+                                <label for="updateChildName" class="form-label text-dark">Child Name</label>
                                 <input type="text" id="updateChildName" v-model="updateForm.childName" class="form-control">
                             </div>
                             <div class="mb-3">
-                                <label for="updateCourseEnrolled" class="form-label">Course Enrolled</label>
-                                <input type="text" id="updateCourseEnrolled" v-model="updateForm.courseEnrolled" class="form-control">
+                                <label for="updateCourseEnrolled" class="form-label text-dark">Course Enrolled</label>
+                                <select id="updateCourseEnrolled" v-model="updateForm.courseEnrolled" class="form-select">
+                                    <option value="" disabled>Select a course</option>
+                                    <option v-for="course in courses" :key="course.id" :value="course.course_name">
+                                      {{ course.course_name }}
+                                    </option>
+                                </select>
                             </div>
                         </form>
                     </div>
@@ -129,7 +134,7 @@ export default defineComponent({
                     <div class="modal-body">
                         <form>
                             <div class="mb-3">
-                                <label for="batchSelect" class="form-label">Select Batch</label>
+                                <label for="batchSelect" class="form-label text-dark">Select Batch</label>
                                 <select id="batchSelect" v-model="selectedBatchId" class="form-select" required>
                                     <option value="" disabled>Select a batch</option>
                                     <option v-for="batch in batches" :key="batch.id" :value="batch.id">
@@ -153,6 +158,7 @@ export default defineComponent({
     return {
       students: [],
       batches: [],
+      courses: [], // Add courses array to store fetched courses
       searchQuery: '',
       sortKey: '',
       sortOrder: 'asc',
@@ -235,6 +241,26 @@ export default defineComponent({
         }
       } catch (error) {
         console.error("Error fetching batches:", error);
+      }
+    },
+    async fetchCourses() {
+      const url = window.location.origin + "/api/get_courses";
+      const token = sessionStorage.getItem('authToken');
+      try {
+        const response = await apiRequest(url, {
+          headers: {
+            'Authentication-Token': `${token}`,
+          },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          this.courses = data;
+          console.log("Fetched courses:", this.courses);
+        } else {
+          this.showNotification("Failed to fetch courses.", "danger");
+        }
+      } catch (error) {
+        console.error("Error fetching courses:", error);
       }
     },
     async deleteStudent(parentContact, childName) {
@@ -382,5 +408,6 @@ export default defineComponent({
   mounted() {
     this.fetchStudents();
     this.fetchBatches();
+    this.fetchCourses(); // Fetch courses on component mount
   },
 });

@@ -6,22 +6,20 @@ fsq.FsModels.set_db_info(db)
 
 
 class ParentCustomer(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     parent_name = db.Column(db.String(100), nullable=False)
     address = db.Column(db.String(200), nullable=False)
     visiting_date = db.Column(db.String(50), nullable=False)
     child_name = db.Column(db.String(100), nullable=False)
     course_enrolled = db.Column(db.String(100), nullable=False)
     parent_contact = db.Column(db.String(15), nullable=False)
-    payment_status = db.Column(
-        db.String(50), nullable=False)  # e.g., paid, unpaid
-    payment_date = db.Column(db.String(50), nullable=True)  # Date of payment
+    # Removed payment_status and payment_date from here
 
     # Number of months enrolled
     no_of_months = db.Column(db.Integer, nullable=True)
 
     def __repr__(self):
-        return f'<ParentCustomer {self.parent_name} - {self.child_name}>'
+        return f'<ParentCustomer {self.parent_name} - {self.child_name} - {self.id}>'
 
 
 class User(db.Model, UserMixin):
@@ -106,6 +104,20 @@ class batch_students(db.Model):
     batch_id = db.Column(db.Integer, db.ForeignKey('batch.id'), nullable=False)
     student_id = db.Column(db.Integer, db.ForeignKey(
         'student.id'), nullable=False)
+
+
+class Payment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    parent_customer_id = db.Column(db.Integer, db.ForeignKey('parent_customer.id'), nullable=False)
+    payment_status = db.Column(db.String(50), nullable=False)  # e.g., Paid, Unpaid
+    payment_date = db.Column(db.String(50), nullable=True)  # Date of payment
+    amount_paid = db.Column(db.Float, nullable=True)  # Amount paid
+
+    parent_customer = db.relationship('ParentCustomer', backref='payments', lazy=True)
+
+    def __repr__(self):
+        return f'<Payment {self.payment_status} - {self.amount_paid}>'
+
 
 # class Instructor(db.Model):
 #     id = db.Column(db.Integer, primary_key=True)

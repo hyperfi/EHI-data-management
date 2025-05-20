@@ -1,6 +1,6 @@
 from flask import jsonify, render_template, render_template_string, request, send_file
 from extentions import db
-from models import ParentCustomer, Course
+from models import ParentCustomer, Course, Payment
 from flask_security import roles_required  # Import roles_required decorator
 
 
@@ -8,24 +8,26 @@ def create_payment_view(app):
     @app.route('/api/payment_status', methods=['GET'])
     @roles_required('admin')  # Require admin role
     def get_payment_status():
-        entries = ParentCustomer.query.all()
+        payments = Payment.query.all()
         data = []
-        for entry in entries:
+        for payment in payments:
+            parent = ParentCustomer.query.get(payment.parent_customer_id)
             course = db.session.query(Course).filter_by(
-                name=entry.course_enrolled).first()
-            fee = course.fee
+                name=parent.course_enrolled).first()
+            fee = course.fee if course else None
             data.append({
-                'id': entry.id,
-                'parentName': entry.parent_name,
-                'address': entry.address,
-                'visitingDate': entry.visiting_date,
-                'childName': entry.child_name,
-                'courseEnrolled': entry.course_enrolled,
-                'parentContact': entry.parent_contact,
+                'id': payment.id,
+                'parentName': parent.parent_name,
+                'address': parent.address,
+                'visitingDate': parent.visiting_date,
+                'childName': parent.child_name,
+                'courseEnrolled': parent.course_enrolled,
+                'parentContact': parent.parent_contact,
                 'fee': fee,
-                'paymentStatus': entry.payment_status,
-                'paymentDate': entry.payment_date,
-                'noOfMonths': entry.no_of_months if entry.no_of_months else 1,
+                'paymentStatus': payment.payment_status,
+                'paymentDate': payment.payment_date,
+                'amountPaid': payment.amount_paid,
+                'noOfMonths': parent.no_of_months
             })
         return jsonify(data), 200
 
@@ -36,16 +38,19 @@ def create_payment_view(app):
         if not data:
             return jsonify({"message": "No data provided"}), 400
 
-        # Find the entry by ID
-        entry = ParentCustomer.query.filter_by(id=data['id']).first()
-        if not entry:
-            return jsonify({"message": "Entry not found"}), 404
+        # Find the payment entry by ID
+        payment = Payment.query.filter_by(id=data['id']).first()
+        if not payment:
+            return jsonify({"message": "Payment entry not found"}), 404
 
-        # Update the payment status and date
-        entry.payment_status = data['paymentStatus']
-        entry.payment_date = data['paymentDate']
-        entry.no_of_months = data['noOfMonths']
-
+        # Update the payment details
+        payment.payment_status = data['paymentStatus']
+        payment.payment_date = data['paymentDate']
+        payment.amount_paid = data.get('amountPaid', payment.amount_paid) # Default to current amount if not provided
+        # Update the parent customer details if necessary
+        parent = ParentCustomer.query.get(payment.parent_customer_id)
+        if parent:
+            parent.no_of_months = data.get('noOfMonths', parent.no_of_months)
         db.session.commit()
 
         return jsonify({"message": "Payment status updated successfully"}), 200

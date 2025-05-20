@@ -53,12 +53,13 @@ export default defineComponent({
                 <th>No. of Months</th>
                 <th>Payment Status</th>
                 <th>Payment Date</th>
+                <th>Amount Paid (₹)</th>
                 <th>Action</th>
               </tr>
             </thead>
             <tbody class="text-center">
               <tr v-if="filteredAndSortedPayments.length === 0">
-                <td colspan="11" class="text-center text-muted">No payment records found</td>
+                <td colspan="12" class="text-center text-muted">No payment records found</td>
               </tr>
               <tr v-else v-for="payment in filteredAndSortedPayments" :key="payment.id">
                 <td>{{ payment.parentName }}</td>
@@ -81,8 +82,9 @@ export default defineComponent({
                   </span>
                 </td>
                 <td>{{ payment.paymentDate }}</td>
+                <td>{{ payment.amountPaid }}</td>
                 <td>
-                  <button class="btn btn-info btn-sm mb-2" @click="openUpdateModal(payment)">Update</button> <!-- Added 'me-3' for spacing -->
+                  <button class="btn btn-info btn-sm mb-2" @click="openUpdateModal(payment)">Update</button>
                   <button
                     v-if="payment.paymentStatus === 'Paid'"
                     class="btn btn-primary btn-sm"
@@ -112,7 +114,7 @@ export default defineComponent({
             <div class="modal-body">
               <form>
                 <div class="mb-3">
-                  <label for="paymentStatus" class="form-label">Payment Status</label>
+                  <label for="paymentStatus" class="form-label text-dark">Payment Status</label>
                   <select id="paymentStatus" v-model="updateForm.paymentStatus" class="form-select" required>
                     <option value="" disabled>Select status</option>
                     <option value="Paid">Paid</option>
@@ -120,11 +122,15 @@ export default defineComponent({
                   </select>
                 </div>
                 <div class="mb-3">
-                  <label for="paymentDate" class="form-label">Payment Date</label>
+                  <label for="paymentDate" class="form-label text-dark">Payment Date</label>
                   <input type="date" id="paymentDate" v-model="updateForm.paymentDate" class="form-control" required />
                 </div>
                 <div class="mb-3">
-                  <label for="noOfMonths" class="form-label">No. of Months</label>
+                  <label for="amountPaid" class="form-label text-dark">Amount Paid (₹)</label>
+                  <input type="number" id="amountPaid" v-model="updateForm.amountPaid" class="form-control" min="0" required />
+                </div>
+                <div class="mb-3">
+                  <label for="noOfMonths" class="form-label text-dark">No. of Months</label>
                   <input type="number" id="noOfMonths" v-model="updateForm.noOfMonths" class="form-control" min="1" required />
                 </div>
               </form>
@@ -149,6 +155,7 @@ export default defineComponent({
         id: null,
         paymentStatus: "",
         paymentDate: "",
+        amountPaid: 0, // Default value for amountPaid
         noOfMonths: 1, // Default value for noOfMonths
       },
       notification: {
@@ -205,12 +212,23 @@ export default defineComponent({
         id: payment.id,
         paymentStatus: payment.paymentStatus,
         paymentDate: payment.paymentDate,
+        amountPaid: payment.amountPaid || 0, // Default to 0 if no value is provided
         noOfMonths: payment.noOfMonths || 1, // Default to 1 if no value is provided
       };
       const modal = new bootstrap.Modal(document.getElementById("updatePaymentModal"));
       modal.show();
     },
     async updatePaymentStatus() {
+      if (this.updateForm.amountPaid > 0 && !this.updateForm.paymentDate) {
+        this.showNotification("Please enter a payment date if an amount is entered.", "danger");
+        return;
+      }
+
+      // Automatically set payment status to 'Paid' if amount and date are provided
+      if (this.updateForm.amountPaid > 0 && this.updateForm.paymentDate) {
+        this.updateForm.paymentStatus = 'Paid';
+      }
+
       const url = "/api/payment_status_update";
       const token = sessionStorage.getItem('authToken'); // Get the token from Vuex store
       try {
@@ -256,19 +274,14 @@ export default defineComponent({
       return receiptNumber.toString().padStart(6, '0'); // Pad with leading zeros if necessary
     },
     generateReceipt(payment) {
-      const { parentName, childName, courseEnrolled, paymentDate, paymentStatus, fee, noOfMonths } = payment;
-      const receiptNumber = this.generateReceiptNumber(parentName, childName, fee); // Generate a receipt number from the parentName and childName and fee using a math function
-      const totalFee = Number(fee) * Number(noOfMonths); // Calculate the total fee based on the number of months
-      // Get the current date and time for the "Generated On" timestamp
+      const { parentName, childName, courseEnrolled, paymentDate, paymentStatus, fee, noOfMonths, amountPaid } = payment;
+      const receiptNumber = this.generateReceiptNumber(parentName, childName, fee);
+      const totalFee = Number(fee) * Number(noOfMonths);
+      const discount = totalFee - amountPaid;
+      const discountPercentage = ((discount / totalFee) * 100).toFixed(2);
       const generatedOn = new Date().toLocaleString();
-      let months = noOfMonths; // Store the number of months in a variable for later use
-      if (Number(noOfMonths) > 1) {
-        months = Number(noOfMonths) + " Months";
-      } else {
-        months = Number(noOfMonths) + " Month";
-      }
-      
-      // Create a new HTML structure for the receipt
+      const months = noOfMonths > 1 ? `${noOfMonths} Months` : `${noOfMonths} Month`;
+
       const receiptHTML = `
       <!DOCTYPE html>
       <html lang="en">
@@ -448,8 +461,10 @@ export default defineComponent({
             <p><strong>Parent Name:</strong> ${parentName}</p>
             <p><strong>Student Name:</strong> ${childName}</p>
             <p><strong>Course Enrolled:</strong> ${courseEnrolled}</p>
-            <p><strong>Enrolled for: </strong> ${months}</p>
-            <p><strong>Amount Paid:</strong> ₹${totalFee}</p>
+            <p><strong>Enrolled for:</strong> ${months}</p>
+            <p><strong>Total Fee:</strong> ₹${totalFee}</p>
+            <p><strong>Amount Paid:</strong> ₹${amountPaid}</p>
+            <p><strong>Discount:</strong> ₹${discount} (${discountPercentage}%)</p>
           </div>
 
           <div class="footer">
@@ -457,14 +472,10 @@ export default defineComponent({
             <p>&copy; ${new Date().getFullYear()} Event Horizon Institute. All rights reserved.</p>
             <p class="generated-on"><strong>Generated On:</strong> ${generatedOn}</p>
           </div>
-          <button onclick="window.print()" class = "no-print" >Print Receipt</button>
-
-
-          
+          <button onclick="window.print()" class="no-print">Print Receipt</button>
         </div>
       </body>
       </html>
-
       `;
 
       // Open the receipt in a new tab
@@ -479,45 +490,7 @@ export default defineComponent({
       setTimeout(() => {
         this.notification.message = "";
         this.notification.type = "";
-      }, 2000); // Clear the notification after 2 seconds
-    },
-    downloadCSV() {
-      const headers = [
-        "Parent Name",
-        "Address",
-        "Visiting Date",
-        "Child Name",
-        "Course Enrolled",
-        "Parent Contact",
-        "Fee (₹)",
-        "No. of Months",
-        "Payment Status",
-        "Payment Date",
-      ];
-      const rows = this.filteredAndSortedPayments.map((payment) => [
-        payment.parentName,
-        payment.address,
-        payment.visitingDate,
-        payment.childName,
-        payment.courseEnrolled,
-        payment.parentContact,
-        payment.fee,
-        payment.noOfMonths,
-        payment.paymentStatus,
-        payment.paymentDate,
-      ]);
-
-      const csvContent =
-        "data:text/csv;charset=utf-8," +
-        [headers, ...rows].map((e) => e.join(",")).join("\n");
-
-      const encodedUri = encodeURI(csvContent);
-      const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", "payment_records.csv");
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      }, 3000);
     },
   },
   mounted() {

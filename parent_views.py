@@ -1,6 +1,6 @@
 from flask import jsonify, render_template, render_template_string, request, send_file
 from extentions import db
-from models import ParentCustomer as parent_customer, Student
+from models import ParentCustomer as parent_customer, Student, Payment
 from models import student_course as StudentCourse
 from models import batch_students as BatchStudents
 from flask_security import roles_required  # Import roles_required decorator
@@ -26,8 +26,7 @@ def create_parent_views(app):
             child_name=data['childName'],
             course_enrolled=data['courseEnrolled'],
             parent_contact=data['parentContact'],
-            payment_status='unpaid',
-            payment_date=None
+            no_of_months=data.get('noOfMonths', 1),  # Default to 1 month if not provided
         )
         class_name = data['courseEnrolled'].split(' ')[0]
         student = Student(name=data['childName'], className=class_name,
@@ -35,6 +34,17 @@ def create_parent_views(app):
         db.session.add(student)
         db.session.add(entry)
         db.session.commit()
+
+        # Add a default payment entry
+        payment = Payment(
+            parent_customer_id=entry.id,
+            payment_status='Unpaid',
+            payment_date=None,
+            amount_paid=0.0
+        )
+        db.session.add(payment)
+        db.session.commit()
+
         return jsonify({"message": "Entry added successfully"}), 201
 
     @app.route('/api/entry', methods=['GET'])
@@ -62,6 +72,10 @@ def create_parent_views(app):
             (parent_customer.parent_contact == contact) & (parent_customer.child_name == child_name)).first()
         if not entry:
             return jsonify({"message": "Entry not found"}), 404
+
+        # Delete associated payments
+        Payment.query.filter_by(parent_customer_id=entry.id).delete()
+
         db.session.delete(entry)
         student_entry = Student.query.filter(
             (Student.parent_contact == contact) & (Student.name == child_name)).first()
@@ -98,6 +112,14 @@ def create_parent_views(app):
 
         if not data.get('visitingDate'):
             return jsonify({"message": "Visiting Date is required."}), 400
+
+        # Check if the course enrolled is updated
+        if data.get('courseEnrolled') and data['courseEnrolled'] != entry.course_enrolled:
+            # Update payment status to 'Unpaid' if it is currently 'Paid'
+            payment = Payment.query.filter_by(parent_customer_id=entry.id).first()
+            if payment and payment.payment_status == 'Paid':
+                payment.payment_status = 'Unpaid'
+
         student.name = data['childName']
         student.className = class_name
         student.parent_contact = data['parentContact']
