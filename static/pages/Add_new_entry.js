@@ -16,7 +16,7 @@ export default defineComponent({
             <div v-if="errorMessage" class="alert alert-danger text-center" role="alert">
                 {{ errorMessage }}
             </div>
-            <form class="needs-validation" novalidate>
+            <form class="needs-validation" novalidate @submit.prevent="submitForm">
                 <div class="mb-3">
                     <label for="parentName" class="form-label">Parent Name:</label>
                     <input type="text" id="parentName" v-model="formData.parentName" @input="validateParentName" class="form-control" required>
@@ -36,20 +36,29 @@ export default defineComponent({
                     <input type="text" id="childName" v-model="formData.childName" @input="validateChildName" class="form-control" required>
                     <small class="text-danger" v-if="errors.childName">{{ errors.childName }}</small>
                 </div>
+           
                 <div class="mb-3">
-                    <label for="courseEnrolled" class="form-label">Course Enrolled:</label>
-                    <select id="courseEnrolled" v-model="formData.courseEnrolled" class="form-select" required>
-                        <option value="" disabled>Select a course</option>
-                        <option v-if="loading" disabled>Loading courses...</option>
-                        <option v-else v-for="course in courses" :key="course.id" :value="course.course_name">{{ course.course_name }}</option>
-                    </select>
+                    <label class="form-label text-dark">Courses Enrolled</label>
+                    <div v-for="course in courses" :key="course.course_name+'-'+course.id" class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        :id="'course-' + course.course_name + '-' + course.id"
+                        :value="course.course_name + '-' + course.id"
+                        v-model="formData.courses_enrolled"
+                      />
+                      <label class="form-check-label" :for="'course-' + course.course_name + '-' + course.id">
+                        {{ course.course_name }} by {{ course.instructor }}
+                      </label>
+                    </div>
                 </div>
+
                 <div class="mb-3">
                     <label for="parentContact" class="form-label">Parent Contact:</label>
                     <input type="text" id="parentContact" v-model="formData.parentContact" @input="validateParentContact" class="form-control" required>
                     <small class="text-danger" v-if="errors.parentContact">{{ errors.parentContact }}</small>
                 </div>
-                <button type="submit" class="btn btn-primary w-100" @click="submitForm" :disabled="isFormInvalid">Submit</button>
+                <button type="submit" class="btn btn-primary w-100" :disabled="isFormInvalid">Submit</button>
             </form>
         </div>
     </div>
@@ -60,9 +69,9 @@ export default defineComponent({
       formData: {
         parentName: '',
         address: '',
-        visitingDate: '',
+        visitingDate: new Date().toISOString().split('T')[0], // current date
         childName: '',
-        courseEnrolled: '',
+        courses_enrolled: [], // Array to store selected courses
         parentContact: '',
       },
       courses: [], // Array to store courses fetched from the API
@@ -89,7 +98,7 @@ export default defineComponent({
         !this.formData.parentContact ||
         !this.formData.address ||
         !this.formData.visitingDate ||
-        !this.formData.courseEnrolled
+        !this.formData.courses_enrolled
       );
     }
   },
@@ -179,6 +188,7 @@ export default defineComponent({
         });
         if (response.ok) {
           console.log('Data sent to API successfully');
+          this.$router.push('/view_all_students'); // Redirect to the home page after successful submission
           this.errorMessage = ''; // Clear any previous error message
           this.formData = {
             parentName: '',

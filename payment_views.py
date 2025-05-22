@@ -12,18 +12,24 @@ def create_payment_view(app):
         data = []
         for payment in payments:
             parent = ParentCustomer.query.get(payment.parent_customer_id)
-            course = db.session.query(Course).filter_by(
-                name=parent.course_enrolled).first()
-            fee = course.fee if course else None
+            all_courses = parent.course_enrolled.split(',')
+            all_fees = []
+            for crs in all_courses:
+                course = db.session.query(Course).filter_by(
+                    id=crs.split('-')[1]).first()
+                all_fees.append(course.fee if course else None)
+
+            print(all_fees)
             data.append({
                 'id': payment.id,
                 'parentName': parent.parent_name,
                 'address': parent.address,
                 'visitingDate': parent.visiting_date,
                 'childName': parent.child_name,
-                'courseEnrolled': parent.course_enrolled,
+                'courseEnrolled': [course.split('-')[0] for course in parent.course_enrolled.split(',')],
                 'parentContact': parent.parent_contact,
-                'fee': fee,
+                'allFees': all_fees,
+                'totalFees': sum(all_fees) if all_fees else 0,
                 'paymentStatus': payment.payment_status,
                 'paymentDate': payment.payment_date,
                 'amountPaid': payment.amount_paid,
@@ -46,7 +52,8 @@ def create_payment_view(app):
         # Update the payment details
         payment.payment_status = data['paymentStatus']
         payment.payment_date = data['paymentDate']
-        payment.amount_paid = data.get('amountPaid', payment.amount_paid) # Default to current amount if not provided
+        # Default to current amount if not provided
+        payment.amount_paid = data.get('amountPaid', payment.amount_paid)
         # Update the parent customer details if necessary
         parent = ParentCustomer.query.get(payment.parent_customer_id)
         if parent:

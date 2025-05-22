@@ -104,15 +104,28 @@ export default defineComponent({
                                 <label for="updateChildName" class="form-label text-dark">Child Name</label>
                                 <input type="text" id="updateChildName" v-model="updateForm.childName" class="form-control">
                             </div>
+
+                            
+
                             <div class="mb-3">
-                                <label for="updateCourseEnrolled" class="form-label text-dark">Course Enrolled</label>
-                                <select id="updateCourseEnrolled" v-model="updateForm.courseEnrolled" class="form-select">
-                                    <option value="" disabled>Select a course</option>
-                                    <option v-for="course in courses" :key="course.id" :value="course.course_name">
-                                      {{ course.course_name }}
-                                    </option>
-                                </select>
+                              <label class="form-label text-dark">Courses Enrolled</label>
+                              <div v-for="course in courses" :key="course.course_name+'-'+course.id" class="form-check">
+                                <input
+                                  class="form-check-input"
+                                  type="checkbox"
+                                  :id="'course-' + course.course_name + '-' + course.id"
+                                  :value="course.course_name + '-' + course.id"
+                                  v-model="updateForm.courseEnrolled"
+                                />
+                                <label class="form-check-label text-dark" :for="'course-' + course.course_name + '-' + course.id" >
+                                  {{ course.course_name }} by {{ course.instructor }}
+                                </label>
+                              </div>
                             </div>
+                            
+
+
+
                         </form>
                     </div>
                     <div class="modal-footer">
@@ -169,7 +182,7 @@ export default defineComponent({
         address: '',
         visitingDate: '',
         childName: '',
-        courseEnrolled: '',
+        courseEnrolled: [], // Changed to courses (plural) to reflect multiple courses
         parentContact: '',
       },
       updateErrors: [],
@@ -217,6 +230,9 @@ export default defineComponent({
         if (response.ok) {
           const data = await response.json();
           this.students = data;
+          console.log("Fetched students:", data);
+          // this.updateForm.courses = data.courseEnrolled.split(',').map(course => course.trim());
+          // console.log("Courses enrolled:",data.courseEnrolled);
         } else {
           this.showNotification("Failed to fetch students.", "danger");
         }
@@ -285,6 +301,8 @@ export default defineComponent({
     },
     openUpdateModal(student) {
       this.updateForm = { ...student };
+      this.updateForm.courseEnrolled = student.courseEnrolled.split(',').map(course => course.trim());
+      console.log("Update form data:", this.updateForm);
       const modalElement = document.getElementById('updateModal');
       const modal = new bootstrap.Modal(modalElement);
       modal.show();
@@ -304,8 +322,8 @@ export default defineComponent({
       if (!this.updateForm.childName || !/^[a-zA-Z\s]+$/.test(this.updateForm.childName)) {
         errors.push("Child Name must contain only letters and spaces.");
       }
-      if (!this.updateForm.courseEnrolled) {
-        errors.push("Course Enrolled is required.");
+      if (!this.updateForm.courseEnrolled.length) {
+        errors.push("At least one Course Enrolled is required.");
       }
       if (!this.updateForm.parentContact || !/^\d{10}$/.test(this.updateForm.parentContact)) {
         errors.push("Parent Contact must be a 10-digit number.");

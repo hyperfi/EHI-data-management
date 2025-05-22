@@ -54,7 +54,7 @@ class Course(db.Model):
     instructor = db.Column(db.String(100), nullable=False)
     # many-to-many relationship with Student
     enrolled_students = db.relationship(
-        'Student', backref='course', lazy=True, secondary='student_course')
+        'Student', secondary='student_course', back_populates='enrolled_courses', lazy=True)
 
     def __repr__(self):
         return f'<Course {self.name}>'
@@ -65,12 +65,16 @@ class Student(db.Model):
     name = db.Column(db.String(100), nullable=False)
     className = db.Column(db.String(50), nullable=False)
     parent_contact = db.Column(db.String(15), nullable=False)
+    # many-to-many relationship with Course
+    enrolled_courses = db.relationship(
+        'Course', secondary='student_course', back_populates='enrolled_students', lazy=True)
 
     def __repr__(self):
         return f'<Student {self.name}>'
 
 
 class student_course(db.Model):
+    __tablename__ = 'student_course'
     id = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer, db.ForeignKey(
         'student.id'), nullable=False)  # Foreign key to Student
@@ -108,12 +112,15 @@ class batch_students(db.Model):
 
 class Payment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    parent_customer_id = db.Column(db.Integer, db.ForeignKey('parent_customer.id'), nullable=False)
-    payment_status = db.Column(db.String(50), nullable=False)  # e.g., Paid, Unpaid
+    parent_customer_id = db.Column(db.Integer, db.ForeignKey(
+        'parent_customer.id'), nullable=False)
+    payment_status = db.Column(
+        db.String(50), nullable=False)  # e.g., Paid, Unpaid
     payment_date = db.Column(db.String(50), nullable=True)  # Date of payment
     amount_paid = db.Column(db.Float, nullable=True)  # Amount paid
 
-    parent_customer = db.relationship('ParentCustomer', backref='payments', lazy=True)
+    parent_customer = db.relationship(
+        'ParentCustomer', backref='payments', lazy=True)
 
     def __repr__(self):
         return f'<Payment {self.payment_status} - {self.amount_paid}>'

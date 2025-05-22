@@ -49,7 +49,7 @@ export default defineComponent({
                 <th>Student Name</th>
                 <th>Course Enrolled</th>
                 <th>Parent Contact</th>
-                <th>Fee (₹)</th>
+                <th>Total Fee (₹)</th>
                 <th>No. of Months</th>
                 <th>Payment Status</th>
                 <th>Payment Date</th>
@@ -66,9 +66,13 @@ export default defineComponent({
                 <td>{{ payment.address }}</td>
                 <td>{{ payment.visitingDate }}</td>
                 <td>{{ payment.childName }}</td>
-                <td>{{ payment.courseEnrolled }}</td>
+                <td>
+                <ul>
+                  <li v-for="course in payment.courseEnrolled" :key="course">{{ course }}</li>
+                </ul>
+                </td>
                 <td>{{ payment.parentContact }}</td>
-                <td>{{ payment.fee }}</td>
+                <td>{{ payment.totalFees }}</td>
                 <td>{{ payment.noOfMonths }}</td>
                 <td>
                   <span
@@ -274,13 +278,20 @@ export default defineComponent({
       return receiptNumber.toString().padStart(6, '0'); // Pad with leading zeros if necessary
     },
     generateReceipt(payment) {
-      const { parentName, childName, courseEnrolled, paymentDate, paymentStatus, fee, noOfMonths, amountPaid } = payment;
-      const receiptNumber = this.generateReceiptNumber(parentName, childName, fee);
-      const totalFee = Number(fee) * Number(noOfMonths);
+      const { parentName, childName, courseEnrolled, allFees, paymentDate, paymentStatus, totalFees, noOfMonths, amountPaid } = payment;
+      const receiptNumber = this.generateReceiptNumber(parentName, childName, totalFees);
+      const totalFee = Number(totalFees) * Number(noOfMonths);
       const discount = totalFee - amountPaid;
       const discountPercentage = ((discount / totalFee) * 100).toFixed(2);
       const generatedOn = new Date().toLocaleString();
       const months = noOfMonths > 1 ? `${noOfMonths} Months` : `${noOfMonths} Month`;
+
+      const coursesTableRows = courseEnrolled.map((course, index) => `
+        <tr style="text-align: center;">
+          <td>${course}</td>
+          <td>₹${allFees[index]}</td>
+        </tr>
+      `).join('');
 
       const receiptHTML = `
       <!DOCTYPE html>
@@ -460,7 +471,18 @@ export default defineComponent({
           <div class="details">
             <p><strong>Parent Name:</strong> ${parentName}</p>
             <p><strong>Student Name:</strong> ${childName}</p>
-            <p><strong>Course Enrolled:</strong> ${courseEnrolled}</p>
+            <p><strong>Courses Enrolled:</strong></p>
+            <table border="1" style="width: 100%; border-collapse: collapse; text-align: left;">
+              <thead>
+                <tr style="text-align: center;">
+                  <th>Course Name</th>
+                  <th>Fee (₹)</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${coursesTableRows}
+              </tbody>
+            </table>
             <p><strong>Enrolled for:</strong> ${months}</p>
             <p><strong>Total Fee:</strong> ₹${totalFee}</p>
             <p><strong>Amount Paid:</strong> ₹${amountPaid}</p>
@@ -491,6 +513,45 @@ export default defineComponent({
         this.notification.message = "";
         this.notification.type = "";
       }, 3000);
+    },
+
+    downloadCSV() {
+      const headers = [
+        "Parent Name",
+        "Address",
+        "Visiting Date",
+        "Child Name",
+        "Course Enrolled",
+        "Parent Contact",
+        "Fee (₹)",
+        "No. of Months",
+        "Payment Status",
+        "Payment Date",
+      ];
+      const rows = this.filteredAndSortedPayments.map((payment) => [
+        payment.parentName,
+        payment.address,
+        payment.visitingDate,
+        payment.childName,
+        payment.courseEnrolled.join(" and "),
+        payment.parentContact,
+        payment.fee,
+        payment.noOfMonths,
+        payment.paymentStatus,
+        payment.paymentDate,
+      ]);
+
+      const csvContent =
+        "data:text/csv;charset=utf-8," +
+        [headers, ...rows].map((e) => e.join(",")).join("\n");
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "payment_records.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     },
   },
   mounted() {
