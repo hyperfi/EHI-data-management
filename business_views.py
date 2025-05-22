@@ -110,12 +110,13 @@ def Create_business_view(app):
         if not student:
             return jsonify({"message": "Student not found"}), 404
         if student in batch.enrolled_students:
+            print("Student already enrolled in the batch")
             return jsonify({"message": "Student already enrolled in the batch"}), 400
         batch.enrolled_students.append(student)
-        course_batch = batch.course
-        if student in course_batch.enrolled_students:
-            return jsonify({"message": "Student already enrolled in the course"}), 400
-        course_batch.enrolled_students.append(student)
+        # course_batch = batch.course
+        # if student in course_batch.enrolled_students:
+        #     return jsonify({"message": "Student already enrolled in the course"}), 400
+        # course_batch.enrolled_students.append(student)
         db.session.commit()
         return jsonify({"message": "Student added to batch successfully"}), 201
 
