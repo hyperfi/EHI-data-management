@@ -96,7 +96,7 @@ export default defineComponent({
             <div class="modal-body">
               <form @submit.prevent="addCourse">
                 <div class="mb-3">
-                  <label for="courseName" class="form-label">Course Name</label>
+                  <label for="courseName" class="form-label dark">Course Name</label>
                   <input
                     type="text"
                     id="courseName"
@@ -107,7 +107,7 @@ export default defineComponent({
                   />
                 </div>
                 <div class="mb-3">
-                  <label for="description" class="form-label">Description</label>
+                  <label for="description" class="form-label dark">Description</label>
                   <textarea
                     id="description"
                     v-model="newCourse.description"
@@ -117,7 +117,7 @@ export default defineComponent({
                   ></textarea>
                 </div>
                 <div class="mb-3">
-                  <label for="duration" class="form-label">Duration (Hrs)</label>
+                  <label for="duration" class="form-label dark">Duration (Hrs)</label>
                   <input
                     type="number"
                     id="duration"
@@ -128,7 +128,7 @@ export default defineComponent({
                   />
                 </div>
                 <div class="mb-3">
-                  <label for="fee" class="form-label">Fee</label>
+                  <label for="fee" class="form-label dark">Fee</label>
                   <input
                     type="number"
                     id="fee"
@@ -139,7 +139,7 @@ export default defineComponent({
                   />
                 </div>
                 <div class="mb-3">
-                  <label for="instructor" class="form-label">Instructor</label>
+                  <label for="instructor" class="form-label dark">Instructor</label>
                   <input
                     type="text"
                     id="instructor"
