@@ -40,8 +40,8 @@ export default defineComponent({
 
         <!-- Payment Status Table -->
         <div class="table-responsive">
-          <table class="table table-hover table-bordered">
-            <thead class="table-dark text-center">
+          <table class="table table-hover table-bordered align-middle  table-striped">
+            <thead class="table-dark text-center ">
               <tr>
                 <th>Parent Name</th>
                 <th>Address</th>
@@ -57,7 +57,16 @@ export default defineComponent({
                 <th>Action</th>
               </tr>
             </thead>
-            <tbody class="text-center">
+            <!-- Loading Spinner -->
+            <tr v-if="loadingPayments">
+              <td colspan="12" class="text-center">
+                <div class="spinner-border" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              </td>
+            </tr>
+            <!-- Table Body -->
+            <tbody v-else class="text-center">
               <tr v-if="filteredAndSortedPayments.length === 0">
                 <td colspan="12" class="text-center text-muted">No payment records found</td>
               </tr>
@@ -88,13 +97,13 @@ export default defineComponent({
                 <td>{{ payment.paymentDate }}</td>
                 <td>{{ payment.amountPaid }}</td>
                 <td>
-                  <button class="btn btn-info btn-sm mb-2" @click="openUpdateModal(payment)">Update</button>
+                  <button class="btn btn-info btn-sm mb-2" @click="openUpdateModal(payment)"><i class="bi bi-pencil"></i> Update</button>
                   <button
                     v-if="payment.paymentStatus === 'Paid'"
                     class="btn btn-primary btn-sm"
                     @click="generateReceipt(payment)"
                   >
-                    Generate Receipt
+                    <i class="bi bi-file-earmark-text"></i> Generate Receipt
                   </button>
                 </td>
               </tr>
@@ -102,7 +111,10 @@ export default defineComponent({
           </table>
           <!-- Add the Download CSV Button -->
           <div class="text-center mt-3">
-            <button class="btn btn-success" @click="downloadCSV">Download Table</button>
+            <button class="btn btn-success" @click="downloadCSV">
+              <span v-if="loadingDownload" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              <span v-else class="me-2"> <i class="bi bi-download"></i> Download Table </span>
+            </button>
           </div>
         </div>
       </div>
@@ -166,6 +178,8 @@ export default defineComponent({
         message: "",
         type: "", // 'success' or 'danger'
       },
+      loadingPayments: true, // Loading state for payments
+      loadingDownload: false, // Loading state for download
     };
   },
   computed: {
@@ -201,6 +215,7 @@ export default defineComponent({
         });
         if (response.ok) {
           this.payments = await response.json();
+          this.loadingPayments = false; // Set loading to false after fetching
         } else {
           this.showNotification("Error fetching payment records", "danger");
         }
@@ -516,6 +531,7 @@ export default defineComponent({
     },
 
     downloadCSV() {
+      this.loadingDownload = true; // Set loading to true while downloading
       const headers = [
         "Parent Name",
         "Address",
@@ -552,6 +568,7 @@ export default defineComponent({
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      this.loadingDownload = false; // Set loading to false after downloading
     },
   },
   mounted() {

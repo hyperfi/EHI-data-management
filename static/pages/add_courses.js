@@ -54,7 +54,16 @@ export default defineComponent({
                 <th>Action</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody v-if="loadingCourses">
+              <tr>
+                <td colspan="7" class="text-center">
+                  <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+            <tbody v-else>
               <tr v-if="filteredCourses.length === 0">
                 <td colspan="7" class="text-center text-muted">No courses available</td>
               </tr>
@@ -70,12 +79,14 @@ export default defineComponent({
                     class="btn btn-danger btn-sm me-2"
                     @click="deleteCourse(course.id)"
                   >
+                  <i class="bi bi-trash"></i>
                     Delete
                   </button>
                   <button
                     class="btn btn-info btn-sm"
                     @click="openUpdateCourseModal(course)"
                   >
+                    <i class="bi bi-pencil"></i>
                     Update
                   </button>
                 </td>
@@ -250,6 +261,7 @@ export default defineComponent({
         fee: "",
         instructor: "",
       },
+      loadingCourses: true, // Loading state for courses
     };
   },
   computed: {
@@ -286,6 +298,7 @@ export default defineComponent({
         });
         if (response.ok) {
           this.courses = await response.json();
+          this.loadingCourses = false;
         } else {
           console.error("Failed to fetch courses");
         }

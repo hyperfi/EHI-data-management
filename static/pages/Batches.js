@@ -40,7 +40,16 @@ export default defineComponent({
                   <th>Action</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody v-if="loadingBatches">
+                <tr>
+                  <td colspan="7" class="text-center">
+                    <div class="spinner-border" role="status">
+                      <span class="visually-hidden">Loading...</span>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+              <tbody v-else>
                 <tr v-if="batches.length === 0">
                   <td colspan="7" class="text-center text-muted">No batches available</td>
                 </tr>
@@ -61,12 +70,14 @@ export default defineComponent({
                       class="btn btn-danger btn-sm me-2"
                       @click="deleteBatch(batch.id)"
                     >
+                    <i class="bi bi-trash"></i>
                       Delete
                     </button>
                     <button
                       class="btn btn-info btn-sm"
                       @click="openUpdateBatchModal(batch)"
                     >
+                      <i class="bi bi-pencil"></i>
                       Update
                     </button>
                   </td>
@@ -272,6 +283,7 @@ export default defineComponent({
         message: "",
         type: "",
       },
+      loadingBatches: true,
     };
   },
   methods: {
@@ -286,6 +298,7 @@ export default defineComponent({
         });
         if (response.ok) {
           this.batches = await response.json();
+          this.loadingBatches = false;
         } else {
           this.showNotification("Error fetching batches", "danger");
         }

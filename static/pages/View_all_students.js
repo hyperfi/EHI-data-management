@@ -38,7 +38,21 @@ export default defineComponent({
                             <th>Action</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <!-- Table Body -->
+                    <tbody v-if="loadingStudents">
+                        <tr>
+                            <td colspan="7" class="text-center">
+                                <div class="spinner-border" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tbody v-else>
+                        <tr v-if="currentStudents.length === 0">
+                            <td colspan="7" class="text-center">No students found.</td>
+                        </tr>
+                        <!-- Table Rows -->
                         <tr v-for="student in currentStudents" :key="student.parentContact + student.childName">
                             <td>{{ student.parentName }}</td>
                             <td>{{ student.address }}</td>
@@ -47,9 +61,9 @@ export default defineComponent({
                             <td>{{ student.courseEnrolled }}</td>
                             <td>{{ student.parentContact }}</td>
                             <td>
-                                <button class="btn btn-danger btn-sm m-1" @click="deleteStudent(student.parentContact, student.childName)">Delete</button>
-                                <button class="btn btn-info btn-sm m-1" @click="openUpdateModal(student)">Update</button>
-                                <button class="btn btn-success btn-sm m-1" @click="openAssignBatchModal(student)">Assign to Batch</button>
+                                <button class="btn btn-danger btn-sm m-1" @click="deleteStudent(student.parentContact, student.childName)"> <i class="bi bi-trash"></i> Delete</button>
+                                <button class="btn btn-info btn-sm m-1" @click="openUpdateModal(student)"> <i class="bi bi-pencil"></i> Update</button>
+                                <button class="btn btn-success btn-sm m-1" @click="openAssignBatchModal(student)"> <i class="bi bi-plus-circle"></i> Assign to Batch</button>
                             </td>
                         </tr>
                     </tbody>
@@ -130,7 +144,11 @@ export default defineComponent({
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" @click="updateStudent">Save Changes</button>
+                        <button type="button" class="btn btn-primary" @click="updateStudent">
+                          <span v-if="isLoading_update" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                          <span v-if="!isLoading_update"> <i class="bi bi-check-lg"></i>  Save Changes</span>
+
+                        </button>
                     </div>
                 </div>
             </div>
@@ -159,7 +177,10 @@ export default defineComponent({
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" @click="assignStudentToBatch">Assign</button>
+                        <button type="button" class="btn btn-primary" @click="assignStudentToBatch">
+                          <span v-if="isLoading_assign" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                          <span v-if="!isLoading_assign"> <i class="bi bi-check-lg"></i>  Assign</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -192,6 +213,9 @@ export default defineComponent({
         message: '',
         type: '',
       },
+      isLoading_update: false,
+      isLoading_assign: false,
+      loadingStudents: true,
     };
   },
   computed: {
@@ -231,6 +255,7 @@ export default defineComponent({
           const data = await response.json();
           this.students = data;
           console.log("Fetched students:", data);
+          this.loadingStudents = false;
           // this.updateForm.courses = data.courseEnrolled.split(',').map(course => course.trim());
           // console.log("Courses enrolled:",data.courseEnrolled);
         } else {
@@ -336,6 +361,7 @@ export default defineComponent({
       if (errors.length > 0) {
         return;
       }
+      this.isLoading_update = true;
 
       const { id } = this.updateForm;
       const url = window.location.origin + `/api/entry/${id}`;
@@ -348,14 +374,17 @@ export default defineComponent({
         },
         body: JSON.stringify(this.updateForm),
       });
+      const modalElement = document.getElementById('updateModal');
+      const modal = bootstrap.Modal.getInstance(modalElement);
       if (response.ok) {
-        const modalElement = document.getElementById('updateModal');
-        const modal = bootstrap.Modal.getInstance(modalElement);
+        this.isLoading_update = false;
         modal.hide();
         this.fetchStudents();
         this.showNotification("Student updated successfully.", "success");
       } else {
         this.showNotification("Failed to update student.", "danger");
+        this.isLoading_update = false;
+        modal.hide();
       }
     },
     openAssignBatchModal(student) {
@@ -369,7 +398,7 @@ export default defineComponent({
         this.showNotification("Please select a batch and a student.", "danger");
         return;
       }
-
+      this.isLoading_assign = true;
       const url = window.location.origin + `/api/add_student_to_batch/${this.selectedBatchId}/${this.selectedStudent.id}`;
       const token = sessionStorage.getItem('authToken');
       try {
@@ -380,18 +409,23 @@ export default defineComponent({
           },
         });
 
+        const modalElement = document.getElementById('assignBatchModal');
+        const modal = bootstrap.Modal.getInstance(modalElement);
         if (response.ok) {
-          const modalElement = document.getElementById('assignBatchModal');
-          const modal = bootstrap.Modal.getInstance(modalElement);
+          this.isLoading_assign = false;
           modal.hide();
           this.fetchStudents();
           this.showNotification("Student assigned to batch successfully.", "success");
         } else {
           const responseData = await response.json();
           this.showNotification(`Failed to assign student to batch: ${responseData.message}`, "danger");
+          this.isLoading_assign = false;
+          modal.hide();
         }
       } catch (error) {
         console.error("Error assigning student to batch:", error);
+        this.isLoading_assign = false;
+        modal.hide();
       }
     },
     sortTable(key) {

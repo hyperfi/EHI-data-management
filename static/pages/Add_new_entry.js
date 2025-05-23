@@ -39,18 +39,26 @@ export default defineComponent({
            
                 <div class="mb-3">
                     <label class="form-label text-dark">Courses Enrolled</label>
-                    <div v-for="course in courses" :key="course.course_name+'-'+course.id" class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        :id="'course-' + course.course_name + '-' + course.id"
-                        :value="course.course_name + '-' + course.id"
-                        v-model="formData.courses_enrolled"
-                      />
-                      <label class="form-check-label" :for="'course-' + course.course_name + '-' + course.id">
-                        {{ course.course_name }} by {{ course.instructor }}
-                      </label>
+                    <div v-if="loading" class="text-center">
+                      <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                      </div>
                     </div>
+                    <div v-else>
+                      <div v-for="course in courses" :key="course.course_name+'-'+course.id" class="form-check">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          :id="'course-' + course.course_name + '-' + course.id"
+                          :value="course.course_name + '-' + course.id"
+                          v-model="formData.courses_enrolled"
+                        />
+                        <label class="form-check-label" :for="'course-' + course.course_name + '-' + course.id">
+                          {{ course.course_name }} by {{ course.instructor }}
+                        </label>
+                      </div>
+                    </div>
+                    
                 </div>
 
                 <div class="mb-3">
@@ -58,7 +66,10 @@ export default defineComponent({
                     <input type="text" id="parentContact" v-model="formData.parentContact" @input="validateParentContact" class="form-control" required>
                     <small class="text-danger" v-if="errors.parentContact">{{ errors.parentContact }}</small>
                 </div>
-                <button type="submit" class="btn btn-primary w-100" :disabled="isFormInvalid">Submit</button>
+                <button type="submit" class="btn btn-primary w-100" :disabled="isFormInvalid">
+                  <span v-if="loadingSubmit" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                  <span v-else> <i class="bi bi-send-fill"></i> Submit</span>
+                </button>
             </form>
         </div>
     </div>
@@ -83,6 +94,7 @@ export default defineComponent({
       },
       errorMessage: '', // To store the error message for display
       loading: true, // To track the loading state of the courses dropdown
+      loadingSubmit: false, // To track the loading state of the form submission
     };
   },
   computed: {
@@ -174,6 +186,7 @@ export default defineComponent({
         console.error('Form contains errors. Please fix them before submitting.');
         return;
       }
+      this.loadingSubmit = true; // Set loading to true before submitting the form
       let newEntry = { ...this.formData }; // Create a new entry object from form data
       const url = window.location.origin + "/api/entry";
       const token = sessionStorage.getItem('authToken'); // Get the token from Vuex store
@@ -187,6 +200,7 @@ export default defineComponent({
           body: JSON.stringify(newEntry)
         });
         if (response.ok) {
+          this.loadingSubmit = false;
           console.log('Data sent to API successfully');
           this.$router.push('/view_all_students'); // Redirect to the home page after successful submission
           this.errorMessage = ''; // Clear any previous error message
