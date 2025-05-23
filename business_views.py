@@ -74,21 +74,13 @@ def Create_business_view(app):
         batch.batch_name = data.get('batchName', batch.batch_name)
         batch.start_time = data['startTime']
         batch.end_time = data['endTime']
-        course_name = data.get('courseName', batch.course_name)
+        course_name = data.get('courseName', batch.course.name)
         course = db.session.query(Course).filter_by(
-            course_name=course_name).first()
+            name=course_name).first()
         if course:
             batch.course = course
         else:
             return jsonify({"message": "Course not found"}), 404
-        enrolled_students = data.get('enrolledStudents', [])
-        batch.enrolled_students = []
-        for student_name in enrolled_students:
-            student = Student.query.filter_by(name=student_name).first()
-            if student:
-                batch.enrolled_students.append(student)
-            else:
-                return jsonify({"message": f"Student '{student_name}' not found"}), 404
 
         db.session.commit()
         return jsonify({"message": "Batch updated successfully"}), 200

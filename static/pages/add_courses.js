@@ -96,7 +96,7 @@ export default defineComponent({
             <div class="modal-body">
               <form @submit.prevent="addCourse">
                 <div class="mb-3">
-                  <label for="courseName" class="form-label dark">Course Name</label>
+                  <label for="courseName" class="form-label text-dark">Course Name</label>
                   <input
                     type="text"
                     id="courseName"
@@ -107,7 +107,7 @@ export default defineComponent({
                   />
                 </div>
                 <div class="mb-3">
-                  <label for="description" class="form-label dark">Description</label>
+                  <label for="description" class="form-label text-dark">Description</label>
                   <textarea
                     id="description"
                     v-model="newCourse.description"
@@ -117,7 +117,7 @@ export default defineComponent({
                   ></textarea>
                 </div>
                 <div class="mb-3">
-                  <label for="duration" class="form-label dark">Duration (Hrs)</label>
+                  <label for="duration" class="form-label text-dark">Duration (Hrs)</label>
                   <input
                     type="number"
                     id="duration"
@@ -128,7 +128,7 @@ export default defineComponent({
                   />
                 </div>
                 <div class="mb-3">
-                  <label for="fee" class="form-label dark">Fee</label>
+                  <label for="fee" class="form-label text-dark">Fee</label>
                   <input
                     type="number"
                     id="fee"
@@ -139,7 +139,7 @@ export default defineComponent({
                   />
                 </div>
                 <div class="mb-3">
-                  <label for="instructor" class="form-label dark">Instructor</label>
+                  <label for="instructor" class="form-label text-dark">Instructor</label>
                   <input
                     type="text"
                     id="instructor"
@@ -167,7 +167,7 @@ export default defineComponent({
             <div class="modal-body">
               <form @submit.prevent="updateCourse">
                 <div class="mb-3">
-                  <label for="updateCourseName" class="form-label">Course Name</label>
+                  <label for="updateCourseName" class="form-label text-dark">Course Name</label>
                   <input
                     type="text"
                     id="updateCourseName"
@@ -178,7 +178,7 @@ export default defineComponent({
                   />
                 </div>
                 <div class="mb-3">
-                  <label for="updateDescription" class="form-label">Description</label>
+                  <label for="updateDescription" class="form-label text-dark">Description</label>
                   <textarea
                     id="updateDescription"
                     v-model="updateCourseForm.description"
@@ -188,7 +188,7 @@ export default defineComponent({
                   ></textarea>
                 </div>
                 <div class="mb-3">
-                  <label for="updateDuration" class="form-label">Duration (hrs)</label>
+                  <label for="updateDuration" class="form-label text-dark">Duration (hrs)</label>
                   <input
                     type="number"
                     id="updateDuration"
@@ -199,7 +199,7 @@ export default defineComponent({
                   />
                 </div>
                 <div class="mb-3">
-                  <label for="updateFee" class="form-label">Fee</label>
+                  <label for="updateFee" class="form-label text-dark">Fee</label>
                   <input
                     type="number"
                     id="updateFee"
@@ -210,7 +210,7 @@ export default defineComponent({
                   />
                 </div>
                 <div class="mb-3">
-                  <label for="updateInstructor" class="form-label">Instructor</label>
+                  <label for="updateInstructor" class="form-label text-dark">Instructor</label>
                   <input
                     type="text"
                     id="updateInstructor"

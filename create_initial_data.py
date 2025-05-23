@@ -18,9 +18,11 @@ def create_data(user_datastore: SQLAlchemyUserDatastore):
         user_datastore.create_user(fname='ADMIN', lname='ADMIN',
                                    email="admin@admin.com", password=hash_password('ourdream25'), active=True, roles=['admin'])
     if not user_datastore.find_user(email="abi00779@gmail.com"):
+        print('not found teacher')
         user_datastore.create_user(fname='Dr', lname='Abhishek',
                                    email="abi00779@gmail.com", password=hash_password('23021995'), active=True, roles=['teach'])
     if not user_datastore.find_user(email="charubharti14@gmail.com"):
+        print('not found teacher')
         user_datastore.create_user(fname='Dr', lname='Bharti',
                                    email="charubharti14@gmail.com", password=hash_password('14121994'), active=True, roles=['teach'])
 

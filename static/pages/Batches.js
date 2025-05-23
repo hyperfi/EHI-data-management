@@ -87,7 +87,7 @@ export default defineComponent({
               <div class="modal-body">
                 <form @submit.prevent="addBatch">
                   <div class="mb-3">
-                    <label for="batchName" class="form-label dark">Batch Name</label>
+                    <label for="batchName" class="form-label text-dark">Batch Name</label>
                     <input
                       type="text"
                       id="batchName"
@@ -98,7 +98,7 @@ export default defineComponent({
                     />
                   </div>
                   <div class="mb-3">
-                    <label for="courseName" class="form-label dark">Course Name</label>
+                    <label for="courseName" class="form-label text-dark">Course Name</label>
                     <select
                       id="courseName"
                       v-model="newBatch.courseName"
@@ -112,7 +112,7 @@ export default defineComponent({
                     </select>
                   </div>
                   <div class="mb-3">
-                    <label for="startTime" class="form-label dark">Start Time</label>
+                    <label for="startTime" class="form-label text-dark">Start Time</label>
                     <input
                       type="time"
                       id="startTime"
@@ -122,7 +122,7 @@ export default defineComponent({
                     />
                   </div>
                   <div class="mb-3">
-                    <label for="endTime" class="form-label dark">End Time</label>
+                    <label for="endTime" class="form-label text-dark">End Time</label>
                     <input
                       type="time"
                       id="endTime"
@@ -149,7 +149,7 @@ export default defineComponent({
               <div class="modal-body">
                 <form @submit.prevent="updateBatch">
                   <div class="mb-3">
-                    <label for="updateBatchName" class="form-label">Batch Name</label>
+                    <label for="updateBatchName" class="form-label text-dark">Batch Name</label>
                     <input
                       type="text"
                       id="updateBatchName"
@@ -160,7 +160,7 @@ export default defineComponent({
                     />
                   </div>
                   <div class="mb-3">
-                    <label for="updateCourseName" class="form-label">Course Name</label>
+                    <label for="updateCourseName" class="form-label text-dark">Course Name</label>
                     <select
                       id="updateCourseName"
                       v-model="updateBatchForm.courseName"
@@ -174,7 +174,7 @@ export default defineComponent({
                     </select>
                   </div>
                   <div class="mb-3">
-                    <label for="updateStartTime" class="form-label">Start Time</label>
+                    <label for="updateStartTime" class="form-label text-dark">Start Time</label>
                     <input
                       type="time"
                       id="updateStartTime"
@@ -184,7 +184,7 @@ export default defineComponent({
                     />
                   </div>
                   <div class="mb-3">
-                    <label for="updateEndTime" class="form-label">End Time</label>
+                    <label for="updateEndTime" class="form-label text-dark">End Time</label>
                     <input
                       type="time"
                       id="updateEndTime"

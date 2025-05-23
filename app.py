@@ -9,6 +9,12 @@ from flask_migrate import Migrate
 from create_initial_data import create_data
 from db_connection import connection_string
 
+from dotenv import load_dotenv
+# Load environment variables from .env file
+load_dotenv()
+
+ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
+
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
@@ -16,8 +22,12 @@ def create_app():
     app = Flask(__name__)
 
     app.config['SECRET_KEY'] = "should-not-be-exposed"
-    # app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///data.db"
-    app.config['SQLALCHEMY_DATABASE_URI'] = connection_string
+
+    if ENVIRONMENT == "production":
+        app.config['SQLALCHEMY_DATABASE_URI'] = connection_string
+    elif ENVIRONMENT == "development":
+        app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///data.db"
+
     app.config['SECURITY_PASSWORD_SALT'] = 'salty-password'
     app.config['UPLOAD_FOLDER'] = os.path.join(basedir, "static/images")
 
