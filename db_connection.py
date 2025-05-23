@@ -6,12 +6,19 @@ load_dotenv()
 
 
 connection_string = URL.create(
-    'postgresql',
+    os.getenv("DATABASE_DIALECT"),
     username=os.getenv("DATABASE_USER"),
     password=os.getenv("DATABASE_PASSWORD"),
     host=os.getenv("DATABASE_HOST"),
     database=os.getenv("DATABASE_NAME"),
 )
+
+
+DATABASE_URL = f"{os.getenv("DATABASE_DIALECT")}+psycopg2://{os.getenv("DATABASE_USER")}:{os.getenv("DATABASE_PASSWORD")}@{os.getenv("DATABASE_HOST")}:20087/{os.getenv("DATABASE_NAME")}?sslmode=require"
+
+if os.getenv("DB_SOURCE") == "avian":
+    connection_string = DATABASE_URL
+
 
 if __name__ == "__main__":
     engine = create_engine(connection_string)
