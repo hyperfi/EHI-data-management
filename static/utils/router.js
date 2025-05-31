@@ -6,6 +6,8 @@ import Batches from '../pages/Batches.js';
 import Pay from '../pages/payments_reciepts.js';
 import AddParent from '../pages/Add_new_entry.js';
 import Login from '../pages/login.js';
+import Tests from '../pages/Tests.js';
+import Test_performance from '../pages/Test_performance.js';
 const { createRouter, createWebHistory } = VueRouter;
 
 const routes = [
@@ -16,6 +18,8 @@ const routes = [
   { path: '/batches', name: 'Batches', component: Batches, meta: { requiresLogin: true } },
   { path: '/payments', name: 'Payments', component: Pay, meta: { requiresLogin: true } },
   { path: '/add_parent', name: 'AddParent', component: AddParent, meta: { requiresLogin: true } },
+  { path: '/tests', name: 'Tests', component: Tests, meta: { requiresLogin: true } },
+  { path: '/test_performance', name: 'TestPerformance', component: Test_performance, meta: { requiresLogin: true } },
 ];
 
 const router = createRouter({

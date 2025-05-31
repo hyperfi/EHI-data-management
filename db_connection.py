@@ -16,9 +16,13 @@ connection_string = URL.create(
 
 DATABASE_URL = f"{os.getenv("DATABASE_DIALECT")}+psycopg2://{os.getenv("DATABASE_USER")}:{os.getenv("DATABASE_PASSWORD")}@{os.getenv("DATABASE_HOST")}:20087/{os.getenv("DATABASE_NAME")}?sslmode=require"
 
+# print("password is", os.getenv("DATABASE_PASSWORD"))
+
+
 if os.getenv("DB_SOURCE") == "avian":
     connection_string = DATABASE_URL
 
+# print("Connection string:", connection_string)
 
 if __name__ == "__main__":
     engine = create_engine(connection_string)

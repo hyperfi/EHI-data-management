@@ -5,6 +5,7 @@ import entry_views
 import business_views
 import payment_views
 import parent_views
+import tests_views
 from flask_migrate import Migrate
 from create_initial_data import create_data
 from db_connection import connection_string
@@ -57,6 +58,7 @@ def create_app():
     business_views.Create_business_view(app)
     payment_views.create_payment_view(app)
     parent_views.create_parent_views(app)
+    tests_views.create_test_views(app)
     return app
 
 

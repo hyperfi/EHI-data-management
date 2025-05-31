@@ -268,3 +268,17 @@ def Create_business_view(app):
                 'parent_contact': student.parent_contact,
             })
         return jsonify(student_list), 200
+
+    @app.route('/api/students', methods=['GET'])
+    @roles_required('admin')  # Require admin role
+    def get_all_students():
+        students = Student.query.all()
+        student_list = []
+        for student in students:
+            student_list.append({
+                'id': student.id,
+                'name': student.name,
+                'className': student.className,
+                'parent_contact': student.parent_contact,
+            })
+        return jsonify(student_list), 200

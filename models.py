@@ -126,6 +126,43 @@ class Payment(db.Model):
         return f'<Payment {self.payment_status} - {self.amount_paid}>'
 
 
+class Test(db.Model):
+    __tablename__ = 'tests'
+    id = db.Column(db.Integer, primary_key=True)
+    course_id = db.Column(db.Integer, db.ForeignKey(
+        'course.id'), nullable=False)  # Foreign key to Course
+    test_name = db.Column(db.String(100), nullable=False)  # Name of the test
+    test_date = db.Column(db.String(50), nullable=False)  # Date of the test
+    # Maximum marks for the test
+    max_marks = db.Column(db.Integer, nullable=False)
+
+    # Relationship with Course
+    course = db.relationship('Course', backref='tests', lazy=True)
+
+    def __repr__(self):
+        return f'<Test {self.test_name} - {self.course.name}>'
+
+
+class TestResult(db.Model):
+    __tablename__ = 'test_results'
+    id = db.Column(db.Integer, primary_key=True)
+    test_id = db.Column(db.Integer, db.ForeignKey(
+        'tests.id'), nullable=False)  # Foreign key to Test
+    student_id = db.Column(db.Integer, db.ForeignKey(
+        'student.id'), nullable=False)  # Foreign key to Student
+    # Marks obtained by the student
+    marks_obtained = db.Column(db.Float, nullable=False)
+    # Optional remarks for the student
+    remarks = db.Column(db.String(200), nullable=True)
+
+    # Relationships
+    test = db.relationship('Test', backref='results', lazy=True)
+    student = db.relationship('Student', backref='test_results', lazy=True)
+
+    def __repr__(self):
+        return f'<TestResult {self.student.name} - {self.test.test_name} - {self.marks_obtained}>'
+
+
 # class Instructor(db.Model):
 #     id = db.Column(db.Integer, primary_key=True)
 #     name = db.Column(db.String(100), nullable=False)

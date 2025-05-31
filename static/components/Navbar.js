@@ -64,6 +64,16 @@ export default defineComponent({
               </router-link>
             </li>
             <li class="nav-item" v-if="isLoggedIn">
+              <router-link to="/tests" class="nav-link">
+                Tests
+              </router-link>
+            </li>
+            <li class="nav-item" v-if="isLoggedIn">
+              <router-link to="/test_performance" class="nav-link">
+                Test Performance
+              </router-link>
+            </li>
+            <li class="nav-item" v-if="isLoggedIn">
               <router-link to="/payments" class="nav-link">
                 Payments
               </router-link>
