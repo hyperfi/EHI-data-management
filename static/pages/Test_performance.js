@@ -14,6 +14,9 @@ export default defineComponent({
             <button class="btn btn-primary" @click="openAddPerformanceModal">
               Add New Performance
             </button>
+            <button class="btn btn-secondary ms-2" @click="downloadCSV">
+              <i class="bi bi-download"></i> Download CSV
+            </button>
           </div>
 
           <!-- Search Bar -->
@@ -333,7 +336,34 @@ export default defineComponent({
       const modal = new bootstrap.Modal(document.getElementById("updatePerformanceModal"));
       modal.show();
     },
+    
+    downloadCSV() {
+      const headers = ["Test Name", "Student Name", "Marks Obtained", "Max Marks", "Remarks"];
+      const rows = this.filteredPerformance.map((performance) => [
+        performance.test_name,
+        performance.student_name,
+        performance.marks_obtained,
+        performance.max_marks,
+        performance.remarks,
+      ]);
+
+      // Combine headers and rows into a CSV string
+      const csvContent = [headers, ...rows]
+      .map((row) => row.map((cell) => `"${cell}"`).join(","))
+      .join("\n");
+      
+      // Create a Blob and download the CSV file
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "test_performance.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    },
   },
+
   mounted() {
     this.fetchPerformanceData();
     this.fetchTests();
