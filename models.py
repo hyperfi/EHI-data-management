@@ -117,6 +117,10 @@ class Payment(db.Model):
     payment_status = db.Column(
         db.String(50), nullable=False)  # e.g., Paid, Unpaid
     payment_date = db.Column(db.String(50), nullable=True)  # Date of payment
+    # Start date of payment period
+    start_date = db.Column(db.String(50), nullable=True)
+    # End date of payment period
+    end_date = db.Column(db.String(50), nullable=True)
     amount_paid = db.Column(db.Float, nullable=True)  # Amount paid
 
     parent_customer = db.relationship(

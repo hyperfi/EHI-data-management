@@ -54,12 +54,14 @@ export default defineComponent({
                 <th>Payment Status</th>
                 <th>Payment Date</th>
                 <th>Amount Paid (₹)</th>
+                <th>Start Date</th>
+                <th>End Date</th>
                 <th>Action</th>
               </tr>
             </thead>
             <!-- Loading Spinner -->
             <tr v-if="loadingPayments">
-              <td colspan="12" class="text-center">
+              <td colspan="14" class="text-center">
                 <div class="spinner-border" role="status">
                   <span class="visually-hidden">Loading...</span>
                 </div>
@@ -68,7 +70,7 @@ export default defineComponent({
             <!-- Table Body -->
             <tbody v-else class="text-center">
               <tr v-if="filteredAndSortedPayments.length === 0">
-                <td colspan="12" class="text-center text-muted">No payment records found</td>
+                <td colspan="14" class="text-center text-muted">No payment records found</td>
               </tr>
               <tr v-else v-for="payment in filteredAndSortedPayments" :key="payment.id">
                 <td>{{ payment.parentName }}</td>
@@ -96,6 +98,8 @@ export default defineComponent({
                 </td>
                 <td>{{ payment.paymentDate }}</td>
                 <td>{{ payment.amountPaid }}</td>
+                <td>{{ payment.startDate }}</td>
+                <td>{{ payment.endDate }}</td>
                 <td>
                   <button class="btn btn-info btn-sm mb-2" @click="openUpdateModal(payment)"><i class="bi bi-pencil"></i> Update</button>
                   <button
@@ -149,6 +153,14 @@ export default defineComponent({
                   <label for="noOfMonths" class="form-label text-dark">No. of Months</label>
                   <input type="number" id="noOfMonths" v-model="updateForm.noOfMonths" class="form-control" min="1" required />
                 </div>
+                <div class="mb-3">
+                  <label for="startDate" class="form-label text-dark">Enrollment Start Date</label>
+                  <input type="date" id="startDate" v-model="updateForm.startDate" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                  <label for="endDate" class="form-label text-dark">Enrollment End Date</label>
+                  <input type="date" id="endDate" v-model="updateForm.endDate" class="form-control" required />
+                </div>
               </form>
             </div>
             <div class="modal-footer">
@@ -173,6 +185,8 @@ export default defineComponent({
         paymentDate: "",
         amountPaid: 0, // Default value for amountPaid
         noOfMonths: 1, // Default value for noOfMonths
+        startDate: "",
+        endDate: "",
       },
       notification: {
         message: "",
@@ -233,13 +247,15 @@ export default defineComponent({
         paymentDate: payment.paymentDate,
         amountPaid: payment.amountPaid || 0, // Default to 0 if no value is provided
         noOfMonths: payment.noOfMonths || 1, // Default to 1 if no value is provided
+        startDate: payment.startDate,
+        endDate: payment.endDate,
       };
       const modal = new bootstrap.Modal(document.getElementById("updatePaymentModal"));
       modal.show();
     },
     async updatePaymentStatus() {
-      if (this.updateForm.amountPaid > 0 && !this.updateForm.paymentDate) {
-        this.showNotification("Please enter a payment date if an amount is entered.", "danger");
+      if (this.updateForm.amountPaid > 0 && (!this.updateForm.startDate || !this.updateForm.endDate)) {
+        this.showNotification("Start and End dates are required for payments.", "danger");
         return;
       }
 
@@ -293,7 +309,7 @@ export default defineComponent({
       return receiptNumber.toString().padStart(6, '0'); // Pad with leading zeros if necessary
     },
     generateReceipt(payment) {
-      const { parentName, childName, courseEnrolled, allFees, paymentDate, paymentStatus, totalFees, noOfMonths, amountPaid } = payment;
+      const { parentName, childName, courseEnrolled, allFees, paymentDate, paymentStatus, totalFees, noOfMonths, amountPaid, startDate, endDate } = payment;
       const receiptNumber = this.generateReceiptNumber(parentName, childName, totalFees);
       const totalFee = Number(totalFees) * Number(noOfMonths);
       const discount = totalFee - amountPaid;
@@ -481,6 +497,7 @@ export default defineComponent({
             <p><strong>Receipt Number:</strong> #${receiptNumber}</p>
             <p><strong>Payment Date:</strong> ${paymentDate}</p>
             <p><strong>Payment Status:</strong> ${paymentStatus}</p>
+            <p><strong>Enrollment Period:</strong> ${startDate} to ${endDate}</p>
           </div>
 
           <div class="details">

@@ -19,7 +19,6 @@ def create_payment_view(app):
                     id=crs.split('-')[1]).first()
                 all_fees.append(course.fee if course else None)
 
-            print(all_fees)
             data.append({
                 'id': payment.id,
                 'parentName': parent.parent_name,
@@ -32,6 +31,8 @@ def create_payment_view(app):
                 'totalFees': sum(all_fees) if all_fees else 0,
                 'paymentStatus': payment.payment_status,
                 'paymentDate': payment.payment_date,
+                'startDate': payment.start_date,
+                'endDate': payment.end_date,
                 'amountPaid': payment.amount_paid,
                 'noOfMonths': parent.no_of_months
             })
@@ -52,6 +53,8 @@ def create_payment_view(app):
         # Update the payment details
         payment.payment_status = data['paymentStatus']
         payment.payment_date = data['paymentDate']
+        payment.start_date = data['startDate']
+        payment.end_date = data['endDate']
         # Default to current amount if not provided
         payment.amount_paid = data.get('amountPaid', payment.amount_paid)
         # Update the parent customer details if necessary

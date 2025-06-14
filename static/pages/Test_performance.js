@@ -35,6 +35,7 @@ export default defineComponent({
               <thead class="table-dark text-center">
                 <tr>
                   <th>Test Name</th>
+                  <th>Test Date</th>
                   <th>Student Name</th>
                   <th>Marks Obtained</th>
                   <th>Max Marks</th>
@@ -44,7 +45,7 @@ export default defineComponent({
               </thead>
               <tbody v-if="loadingPerformance">
                 <tr>
-                  <td colspan="6" class="text-center">
+                  <td colspan="7" class="text-center">
                     <div class="spinner-border" role="status">
                       <span class="visually-hidden">Loading...</span>
                     </div>
@@ -53,10 +54,11 @@ export default defineComponent({
               </tbody>
               <tbody v-else>
                 <tr v-if="filteredPerformance.length === 0">
-                  <td colspan="6" class="text-center text-muted">No performance data available</td>
+                  <td colspan="7" class="text-center text-muted">No performance data available</td>
                 </tr>
                 <tr v-else v-for="performance in filteredPerformance" :key="performance.id">
                   <td>{{ performance.test_name }}</td>
+                  <td>{{ performance.test_date }}</td>
                   <td>{{ performance.student_name }}</td>
                   <td class="text-center">{{ performance.marks_obtained }}</td>
                   <td class="text-center">{{ performance.max_marks }}</td>
@@ -210,8 +212,14 @@ export default defineComponent({
   computed: {
     filteredPerformance() {
       const query = this.searchQuery.toLowerCase();
-      return this.performanceData.filter(
-        (performance) =>
+      return this.performanceData.map(performance => {
+        const test = this.tests.find(test => test.id === performance.test_id);
+        return {
+          ...performance,
+          test_date: test ? test.test_date : 'N/A',
+        };
+      }).filter(
+        performance =>
           performance.test_name.toLowerCase().includes(query) ||
           performance.student_name.toLowerCase().includes(query) ||
           performance.remarks.toLowerCase().includes(query)
@@ -338,9 +346,10 @@ export default defineComponent({
     },
     
     downloadCSV() {
-      const headers = ["Test Name", "Student Name", "Marks Obtained", "Max Marks", "Remarks"];
+      const headers = ["Test Name", "Test Date" , "Student Name", "Marks Obtained", "Max Marks", "Remarks"];
       const rows = this.filteredPerformance.map((performance) => [
         performance.test_name,
+        performance.test_date,
         performance.student_name,
         performance.marks_obtained,
         performance.max_marks,
