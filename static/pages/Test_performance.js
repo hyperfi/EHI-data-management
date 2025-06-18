@@ -20,66 +20,83 @@ export default defineComponent({
           </div>
 
           <!-- Search Bar -->
-          <div class="mb-4">
+          <div class="mb-4 d-flex gap-2">
             <input
               type="text"
-              v-model="searchQuery"
+              v-model="searchTestName"
               class="form-control"
-              placeholder="Search by test name, student name, or remarks..."
+              placeholder="Search by test name..."
+            />
+            <input
+              type="text"
+              v-model="searchStudentName"
+              class="form-control"
+              placeholder="Search by student name..."
             />
           </div>
 
           <!-- Performance Table -->
-          <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
-            <table class="table table-hover table-striped table-bordered align-middle">
-              <thead class="table-dark text-center">
-                <tr>
-                  <th>Test Name</th>
-                  <th>Test Date</th>
-                  <th>Student Name</th>
-                  <th>Marks Obtained</th>
-                  <th>Max Marks</th>
-                  <th>Remarks</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody v-if="loadingPerformance">
-                <tr>
-                  <td colspan="7" class="text-center">
-                    <div class="spinner-border" role="status">
-                      <span class="visually-hidden">Loading...</span>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-              <tbody v-else>
-                <tr v-if="filteredPerformance.length === 0">
-                  <td colspan="7" class="text-center text-muted">No performance data available</td>
-                </tr>
-                <tr v-else v-for="performance in filteredPerformance" :key="performance.id">
-                  <td>{{ performance.test_name }}</td>
-                  <td>{{ performance.test_date }}</td>
-                  <td>{{ performance.student_name }}</td>
-                  <td class="text-center">{{ performance.marks_obtained }}</td>
-                  <td class="text-center">{{ performance.max_marks }}</td>
-                  <td>{{ performance.remarks }}</td>
-                  <td class="text-center">
-                    <button
-                      class="btn btn-danger btn-sm me-2"
-                      @click="deletePerformance(performance.id)"
-                    >
-                      <i class="bi bi-trash"></i> Delete
-                    </button>
-                    <button
-                      class="btn btn-info btn-sm"
-                      @click="openUpdatePerformanceModal(performance)"
-                    >
-                      <i class="bi bi-pencil"></i> Update
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <div class="d-flex flex-column align-items-center">
+            <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+              <table class="table table-hover table-striped table-bordered align-middle">
+                <thead class="table-dark text-center">
+                  <tr>
+                    <th>Test Name</th>
+                    <th>Test Date</th>
+                    <th>Student Name</th>
+                    <th>Marks Obtained</th>
+                    <th>Max Marks</th>
+                    <th>Remarks</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody v-if="loadingPerformance">
+                  <tr>
+                    <td colspan="7" class="text-center">
+                      <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+                <tbody v-else>
+                  <tr v-if="filteredPerformance.length === 0">
+                    <td colspan="7" class="text-center text-muted">No performance data available</td>
+                  </tr>
+                  <tr v-else v-for="performance in filteredPerformance" :key="performance.id">
+                    <td>{{ performance.test_name }}</td>
+                    <td>{{ performance.test_date }}</td>
+                    <td>{{ performance.student_name }}</td>
+                    <td class="text-center">{{ performance.marks_obtained }}</td>
+                    <td class="text-center">{{ performance.max_marks }}</td>
+                    <td>{{ performance.remarks }}</td>
+                    <td class="text-center">
+                      <button
+                        class="btn btn-danger btn-sm me-2"
+                        @click="deletePerformance(performance.id)"
+                      >
+                        <i class="bi bi-trash"></i> Delete
+                      </button>
+                      <button
+                        class="btn btn-info btn-sm"
+                        @click="openUpdatePerformanceModal(performance)"
+                      >
+                        <i class="bi bi-pencil"></i> Update
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Chart Container -->
+            <! add a button to redraw the chart -->
+            <button v-if="!this.loadingPerformance" class="btn btn-secondary mb-3" @click="reDrawChart">
+              <i class="bi bi-refresh"></i> Refresh Chart
+            </button>
+            <div class="chart-container mt-5" style="width: 80%; max-width: 100%; margin: auto;">
+              <canvas id="myChart"></canvas>
+            </div>
           </div>
         </div>
 
@@ -186,15 +203,17 @@ export default defineComponent({
             </div>
           </div>
         </div>
+        
       </div>
-    </div>
+      </div>
   `,
   data() {
     return {
       performanceData: [], // List of test performance data
       tests: [], // List of tests
       students: [], // List of students
-      searchQuery: "", // Search query for filtering performance data
+      searchTestName: "", // Search query for filtering performance data by test name
+      searchStudentName: "", // Search query for filtering performance data by student name
       loadingPerformance: true, // Loading state for performance data
       newPerformance: {
         test_id: "",
@@ -211,7 +230,8 @@ export default defineComponent({
   },
   computed: {
     filteredPerformance() {
-      const query = this.searchQuery.toLowerCase();
+      const testQuery = this.searchTestName.toLowerCase();
+      const studentQuery = this.searchStudentName.toLowerCase();
       return this.performanceData.map(performance => {
         const test = this.tests.find(test => test.id === performance.test_id);
         return {
@@ -220,9 +240,8 @@ export default defineComponent({
         };
       }).filter(
         performance =>
-          performance.test_name.toLowerCase().includes(query) ||
-          performance.student_name.toLowerCase().includes(query) ||
-          performance.remarks.toLowerCase().includes(query)
+          performance.test_name.toLowerCase().includes(testQuery) &&
+          performance.student_name.toLowerCase().includes(studentQuery)
       );
     },
   },
@@ -235,6 +254,7 @@ export default defineComponent({
         });
         if (response.ok) {
           this.performanceData = await response.json();
+          this.CreateChart();
           this.loadingPerformance = false;
         } else {
           console.error("Failed to fetch performance data");
@@ -371,11 +391,79 @@ export default defineComponent({
       link.click();
       document.body.removeChild(link);
     },
+
+    CreateChart() {
+      // console.log("data", this.filteredPerformance);
+      const ctx = document.getElementById("myChart");
+
+      const labels = this.filteredPerformance.map(performance => performance.test_name);
+      const data = {
+        labels: labels,
+        datasets: [{
+          label: '% of Marks',
+          data: this.filteredPerformance.map(performance => performance.marks_obtained / performance.max_marks * 100),
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 3, // Increased line thickness
+          fill: true // Fill the area between the line and x-axis
+        }]
+      };
+      const config = {
+        type: 'line',
+        data: data,
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              min: 0,
+              max: 100,
+              grace: '15%' // Add space between y-axis and x values
+            },
+            x: {
+              ticks: {
+                callback: function(value, index, ticks) {
+                  const label = this.getLabelForValue(value);
+                  if (/\s/.test(label)) { // Check for whitespace
+                    return label.split(' ').slice(1); // Split by space and choose from second word onwards
+                  } else {
+                    return label;
+                  }
+                },
+                maxRotation: 0, // Prevent rotation
+                minRotation: 0,
+                
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: true
+            }
+          }
+        }
+      };
+      const chartContainer = document.getElementById('myChart').parentElement;
+      chartContainer.style.height = '440px'; // Adjust height to fit the card
+      const myChart = new Chart(ctx, config);
+    },
+
+    reDrawChart() {
+      let chartStatus = Chart.getChart("myChart"); // <canvas> id
+      if (chartStatus != undefined) {
+        chartStatus.destroy();
+      }
+      this.CreateChart();
+    },
+
+    
   },
 
   mounted() {
     this.fetchPerformanceData();
     this.fetchTests();
     this.fetchStudents();
+    
   },
 });
