@@ -128,7 +128,7 @@ export default Vue.defineComponent({
           <span class="fw-bold">Phone:</span> +91-8295433285, +91-9650287641
         </p>
         <p class="mt-0">
-          <span class="fw-bold">Address:</span> SCO 26 Nagarpalika Campus, </br> Indri, Karnal, India
+          <span class="fw-bold">Address:</span> V.P.O. Khanpur, </br> Indri, Karnal, India
         </p>
       </div>
     </div>
