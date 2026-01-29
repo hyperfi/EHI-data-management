@@ -80,7 +80,7 @@ export default Vue.defineComponent({
                 <h4 class="card-title text-center display-6" style="color: #223459; font-size:2rem">Classes 11<sup>th</sup> &amp; 12<sup>th</sup></h4>
                 <ul class="list-unstyled mt-3 mb-0 text-center">
                   <li class="mb-2"><span style="color:#e83e8c; font-weight:bold; ">Physics</span></li>
-                  <li><span style="color:rgb(255, 187, 0); font-weight:bold; ">Mathematics</span></li>
+                  // <li><span style="color:rgb(255, 187, 0); font-weight:bold; ">Mathematics</span></li>
                 </ul>
               </div>
             </div>
@@ -147,4 +147,5 @@ export default Vue.defineComponent({
       }
     },
   },
+
 });
