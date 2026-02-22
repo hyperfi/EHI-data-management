@@ -48,7 +48,7 @@ def create_app():
         user_datastore = SQLAlchemyUserDatastore(db, User, Role)
         security.init_app(app, user_datastore)
         # db.create_all()
-        create_data(user_datastore)
+        # create_data(user_datastore)
     # user_datastore = None
     # disable CSRF security
     app.config['WTF_CSRF_CHECK_DEFAULT'] = False
@@ -74,6 +74,7 @@ app = create_app()
 if __name__ == "__main__":
     # app.run(debug=True)
     app.run(host='0.0.0.0', port='7000', debug=True)
+
 
 
 
