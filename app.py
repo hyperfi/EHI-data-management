@@ -62,18 +62,19 @@ def create_app():
     tests_views.create_test_views(app)
 
     
-    # Add this where you define your Flask routes
-    @app.route('/health')
-    def health_check():
-        return {"status": "healthy"}, 200
+
 
 
 app = create_app()
-
+# Add this where you define your Flask routes
+@app.route('/health')
+def health_check():
+    return {"status": "healthy"}, 200
 
 if __name__ == "__main__":
     # app.run(debug=True)
     app.run(host='0.0.0.0', port='7000', debug=True)
+
 
 
 
