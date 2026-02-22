@@ -60,7 +60,7 @@ def create_app():
     payment_views.create_payment_view(app)
     parent_views.create_parent_views(app)
     tests_views.create_test_views(app)
-
+    return app
     
 
 
@@ -74,6 +74,7 @@ def health_check():
 if __name__ == "__main__":
     # app.run(debug=True)
     app.run(host='0.0.0.0', port='7000', debug=True)
+
 
 
 
